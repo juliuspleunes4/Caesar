@@ -240,6 +240,54 @@ main.cpp.s:
 	cd /home/runner/work/Caesar/Caesar/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/caesar.dir/build.make src/CMakeFiles/caesar.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+parser/ast.o: parser/ast.cpp.o
+.PHONY : parser/ast.o
+
+# target to build an object file
+parser/ast.cpp.o:
+	cd /home/runner/work/Caesar/Caesar/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/caesar_lib.dir/build.make src/CMakeFiles/caesar_lib.dir/parser/ast.cpp.o
+.PHONY : parser/ast.cpp.o
+
+parser/ast.i: parser/ast.cpp.i
+.PHONY : parser/ast.i
+
+# target to preprocess a source file
+parser/ast.cpp.i:
+	cd /home/runner/work/Caesar/Caesar/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/caesar_lib.dir/build.make src/CMakeFiles/caesar_lib.dir/parser/ast.cpp.i
+.PHONY : parser/ast.cpp.i
+
+parser/ast.s: parser/ast.cpp.s
+.PHONY : parser/ast.s
+
+# target to generate assembly for a file
+parser/ast.cpp.s:
+	cd /home/runner/work/Caesar/Caesar/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/caesar_lib.dir/build.make src/CMakeFiles/caesar_lib.dir/parser/ast.cpp.s
+.PHONY : parser/ast.cpp.s
+
+parser/parser.o: parser/parser.cpp.o
+.PHONY : parser/parser.o
+
+# target to build an object file
+parser/parser.cpp.o:
+	cd /home/runner/work/Caesar/Caesar/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/caesar_lib.dir/build.make src/CMakeFiles/caesar_lib.dir/parser/parser.cpp.o
+.PHONY : parser/parser.cpp.o
+
+parser/parser.i: parser/parser.cpp.i
+.PHONY : parser/parser.i
+
+# target to preprocess a source file
+parser/parser.cpp.i:
+	cd /home/runner/work/Caesar/Caesar/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/caesar_lib.dir/build.make src/CMakeFiles/caesar_lib.dir/parser/parser.cpp.i
+.PHONY : parser/parser.cpp.i
+
+parser/parser.s: parser/parser.cpp.s
+.PHONY : parser/parser.s
+
+# target to generate assembly for a file
+parser/parser.cpp.s:
+	cd /home/runner/work/Caesar/Caesar/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/caesar_lib.dir/build.make src/CMakeFiles/caesar_lib.dir/parser/parser.cpp.s
+.PHONY : parser/parser.cpp.s
+
 repl.o: repl.cpp.o
 .PHONY : repl.o
 
@@ -285,6 +333,12 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... parser/ast.o"
+	@echo "... parser/ast.i"
+	@echo "... parser/ast.s"
+	@echo "... parser/parser.o"
+	@echo "... parser/parser.i"
+	@echo "... parser/parser.s"
 	@echo "... repl.o"
 	@echo "... repl.i"
 	@echo "... repl.s"

@@ -199,4 +199,6 @@ src/CMakeFiles/caesar.dir/main.cpp.o: \
  /usr/include/c++/13/bits/enable_special_members.h \
  /usr/include/c++/13/stack /usr/include/c++/13/deque \
  /usr/include/c++/13/bits/stl_deque.h /usr/include/c++/13/bits/deque.tcc \
- /usr/include/c++/13/bits/stl_stack.h
+ /usr/include/c++/13/bits/stl_stack.h \
+ /home/runner/work/Caesar/Caesar/include/caesar/parser.h \
+ /home/runner/work/Caesar/Caesar/include/caesar/ast.h

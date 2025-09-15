@@ -217,6 +217,19 @@ test_lexer/fast:
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_lexer.dir/build.make tests/CMakeFiles/test_lexer.dir/build
 .PHONY : test_lexer/fast
 
+#=============================================================================
+# Target rules for targets named test_parser
+
+# Build rule for target.
+test_parser: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_parser
+.PHONY : test_parser
+
+# fast build rule for target.
+test_parser/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_parser.dir/build.make tests/CMakeFiles/test_parser.dir/build
+.PHONY : test_parser/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -233,6 +246,7 @@ help:
 	@echo "... caesar_lib"
 	@echo "... caesar_repl"
 	@echo "... test_lexer"
+	@echo "... test_parser"
 .PHONY : help
 
 

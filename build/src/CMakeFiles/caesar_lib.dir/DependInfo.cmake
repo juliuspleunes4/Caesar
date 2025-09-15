@@ -10,6 +10,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/runner/work/Caesar/Caesar/src/lexer/lexer.cpp" "src/CMakeFiles/caesar_lib.dir/lexer/lexer.cpp.o" "gcc" "src/CMakeFiles/caesar_lib.dir/lexer/lexer.cpp.o.d"
   "/home/runner/work/Caesar/Caesar/src/lexer/token.cpp" "src/CMakeFiles/caesar_lib.dir/lexer/token.cpp.o" "gcc" "src/CMakeFiles/caesar_lib.dir/lexer/token.cpp.o.d"
+  "/home/runner/work/Caesar/Caesar/src/parser/ast.cpp" "src/CMakeFiles/caesar_lib.dir/parser/ast.cpp.o" "gcc" "src/CMakeFiles/caesar_lib.dir/parser/ast.cpp.o.d"
+  "/home/runner/work/Caesar/Caesar/src/parser/parser.cpp" "src/CMakeFiles/caesar_lib.dir/parser/parser.cpp.o" "gcc" "src/CMakeFiles/caesar_lib.dir/parser/parser.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

@@ -100,19 +100,51 @@ src/CMakeFiles/caesar_lib.dir/lexer/lexer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/caesar_lib.dir/lexer/lexer.cpp.s"
 	cd /home/runner/work/Caesar/Caesar/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/runner/work/Caesar/Caesar/src/lexer/lexer.cpp -o CMakeFiles/caesar_lib.dir/lexer/lexer.cpp.s
 
+src/CMakeFiles/caesar_lib.dir/parser/ast.cpp.o: src/CMakeFiles/caesar_lib.dir/flags.make
+src/CMakeFiles/caesar_lib.dir/parser/ast.cpp.o: /home/runner/work/Caesar/Caesar/src/parser/ast.cpp
+src/CMakeFiles/caesar_lib.dir/parser/ast.cpp.o: src/CMakeFiles/caesar_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/runner/work/Caesar/Caesar/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object src/CMakeFiles/caesar_lib.dir/parser/ast.cpp.o"
+	cd /home/runner/work/Caesar/Caesar/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/caesar_lib.dir/parser/ast.cpp.o -MF CMakeFiles/caesar_lib.dir/parser/ast.cpp.o.d -o CMakeFiles/caesar_lib.dir/parser/ast.cpp.o -c /home/runner/work/Caesar/Caesar/src/parser/ast.cpp
+
+src/CMakeFiles/caesar_lib.dir/parser/ast.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/caesar_lib.dir/parser/ast.cpp.i"
+	cd /home/runner/work/Caesar/Caesar/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/runner/work/Caesar/Caesar/src/parser/ast.cpp > CMakeFiles/caesar_lib.dir/parser/ast.cpp.i
+
+src/CMakeFiles/caesar_lib.dir/parser/ast.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/caesar_lib.dir/parser/ast.cpp.s"
+	cd /home/runner/work/Caesar/Caesar/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/runner/work/Caesar/Caesar/src/parser/ast.cpp -o CMakeFiles/caesar_lib.dir/parser/ast.cpp.s
+
+src/CMakeFiles/caesar_lib.dir/parser/parser.cpp.o: src/CMakeFiles/caesar_lib.dir/flags.make
+src/CMakeFiles/caesar_lib.dir/parser/parser.cpp.o: /home/runner/work/Caesar/Caesar/src/parser/parser.cpp
+src/CMakeFiles/caesar_lib.dir/parser/parser.cpp.o: src/CMakeFiles/caesar_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/runner/work/Caesar/Caesar/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object src/CMakeFiles/caesar_lib.dir/parser/parser.cpp.o"
+	cd /home/runner/work/Caesar/Caesar/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/caesar_lib.dir/parser/parser.cpp.o -MF CMakeFiles/caesar_lib.dir/parser/parser.cpp.o.d -o CMakeFiles/caesar_lib.dir/parser/parser.cpp.o -c /home/runner/work/Caesar/Caesar/src/parser/parser.cpp
+
+src/CMakeFiles/caesar_lib.dir/parser/parser.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/caesar_lib.dir/parser/parser.cpp.i"
+	cd /home/runner/work/Caesar/Caesar/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/runner/work/Caesar/Caesar/src/parser/parser.cpp > CMakeFiles/caesar_lib.dir/parser/parser.cpp.i
+
+src/CMakeFiles/caesar_lib.dir/parser/parser.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/caesar_lib.dir/parser/parser.cpp.s"
+	cd /home/runner/work/Caesar/Caesar/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/runner/work/Caesar/Caesar/src/parser/parser.cpp -o CMakeFiles/caesar_lib.dir/parser/parser.cpp.s
+
 # Object files for target caesar_lib
 caesar_lib_OBJECTS = \
 "CMakeFiles/caesar_lib.dir/lexer/token.cpp.o" \
-"CMakeFiles/caesar_lib.dir/lexer/lexer.cpp.o"
+"CMakeFiles/caesar_lib.dir/lexer/lexer.cpp.o" \
+"CMakeFiles/caesar_lib.dir/parser/ast.cpp.o" \
+"CMakeFiles/caesar_lib.dir/parser/parser.cpp.o"
 
 # External object files for target caesar_lib
 caesar_lib_EXTERNAL_OBJECTS =
 
 src/libcaesar_lib.a: src/CMakeFiles/caesar_lib.dir/lexer/token.cpp.o
 src/libcaesar_lib.a: src/CMakeFiles/caesar_lib.dir/lexer/lexer.cpp.o
+src/libcaesar_lib.a: src/CMakeFiles/caesar_lib.dir/parser/ast.cpp.o
+src/libcaesar_lib.a: src/CMakeFiles/caesar_lib.dir/parser/parser.cpp.o
 src/libcaesar_lib.a: src/CMakeFiles/caesar_lib.dir/build.make
 src/libcaesar_lib.a: src/CMakeFiles/caesar_lib.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/runner/work/Caesar/Caesar/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library libcaesar_lib.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/runner/work/Caesar/Caesar/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX static library libcaesar_lib.a"
 	cd /home/runner/work/Caesar/Caesar/build/src && $(CMAKE_COMMAND) -P CMakeFiles/caesar_lib.dir/cmake_clean_target.cmake
 	cd /home/runner/work/Caesar/Caesar/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/caesar_lib.dir/link.txt --verbose=$(VERBOSE)
 

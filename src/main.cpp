@@ -7,6 +7,7 @@
 
 #include "caesar/caesar.h"
 #include "caesar/lexer.h"
+#include "caesar/parser.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -89,10 +90,16 @@ int main(int argc, char* argv[]) {
             return 0;
         }
         
-        // TODO: Add parser, IR generation, and compilation stages
-        std::cout << "Successfully tokenized " << tokens.size() << " tokens from '" 
+        // Parse
+        caesar::Parser parser(tokens);
+        auto program = parser.parse();
+        
+        std::cout << "Successfully parsed " << tokens.size() << " tokens from '" 
                   << input_file << "'\n";
-        std::cout << "Note: Full compilation pipeline not yet implemented.\n";
+        std::cout << "AST:\n" << program->toString() << "\n";
+        
+        // TODO: Add IR generation and compilation stages
+        std::cout << "Note: IR generation and compilation not yet implemented.\n";
         
     } catch (const caesar::CaesarException& e) {
         std::cerr << "Error: " << e.what() << "\n";

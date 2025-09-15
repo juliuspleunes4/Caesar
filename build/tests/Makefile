@@ -140,6 +140,20 @@ test_lexer/fast:
 	cd /home/runner/work/Caesar/Caesar/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_lexer.dir/build.make tests/CMakeFiles/test_lexer.dir/build
 .PHONY : test_lexer/fast
 
+# Convenience name for target.
+tests/CMakeFiles/test_parser.dir/rule:
+	cd /home/runner/work/Caesar/Caesar/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_parser.dir/rule
+.PHONY : tests/CMakeFiles/test_parser.dir/rule
+
+# Convenience name for target.
+test_parser: tests/CMakeFiles/test_parser.dir/rule
+.PHONY : test_parser
+
+# fast build rule for target.
+test_parser/fast:
+	cd /home/runner/work/Caesar/Caesar/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_parser.dir/build.make tests/CMakeFiles/test_parser.dir/build
+.PHONY : test_parser/fast
+
 test_lexer.o: test_lexer.cpp.o
 .PHONY : test_lexer.o
 
@@ -164,6 +178,30 @@ test_lexer.cpp.s:
 	cd /home/runner/work/Caesar/Caesar/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_lexer.dir/build.make tests/CMakeFiles/test_lexer.dir/test_lexer.cpp.s
 .PHONY : test_lexer.cpp.s
 
+test_parser.o: test_parser.cpp.o
+.PHONY : test_parser.o
+
+# target to build an object file
+test_parser.cpp.o:
+	cd /home/runner/work/Caesar/Caesar/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_parser.dir/build.make tests/CMakeFiles/test_parser.dir/test_parser.cpp.o
+.PHONY : test_parser.cpp.o
+
+test_parser.i: test_parser.cpp.i
+.PHONY : test_parser.i
+
+# target to preprocess a source file
+test_parser.cpp.i:
+	cd /home/runner/work/Caesar/Caesar/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_parser.dir/build.make tests/CMakeFiles/test_parser.dir/test_parser.cpp.i
+.PHONY : test_parser.cpp.i
+
+test_parser.s: test_parser.cpp.s
+.PHONY : test_parser.s
+
+# target to generate assembly for a file
+test_parser.cpp.s:
+	cd /home/runner/work/Caesar/Caesar/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_parser.dir/build.make tests/CMakeFiles/test_parser.dir/test_parser.cpp.s
+.PHONY : test_parser.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -174,9 +212,13 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... test_lexer"
+	@echo "... test_parser"
 	@echo "... test_lexer.o"
 	@echo "... test_lexer.i"
 	@echo "... test_lexer.s"
+	@echo "... test_parser.o"
+	@echo "... test_parser.i"
+	@echo "... test_parser.s"
 .PHONY : help
 
 

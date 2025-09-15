@@ -4,9 +4,9 @@ set(CAESAR_SOURCES
     lexer/token.cpp
     lexer/lexer.cpp
     
-    # Parser (to be added)
-    # parser/ast.cpp
-    # parser/parser.cpp
+    # Parser
+    parser/ast.cpp
+    parser/parser.cpp
     
     # IR Generation (to be added)
     # ir/ir_generator.cpp

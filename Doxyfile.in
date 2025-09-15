@@ -1,0 +1,33 @@
+PROJECT_NAME           = "Caesar Programming Language"
+PROJECT_NUMBER         = @PROJECT_VERSION@
+PROJECT_BRIEF          = "A Python-like, C-speed programming language"
+
+OUTPUT_DIRECTORY       = @CMAKE_CURRENT_BINARY_DIR@/docs
+CREATE_SUBDIRS         = NO
+
+INPUT                  = @CMAKE_SOURCE_DIR@/include \
+                         @CMAKE_SOURCE_DIR@/src \
+                         @CMAKE_SOURCE_DIR@/README.md
+
+RECURSIVE              = YES
+FILE_PATTERNS          = *.h *.hpp *.cpp *.cc *.md
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_FILE_EXTENSION    = .html
+
+GENERATE_LATEX         = NO
+
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = NO
+
+CLASS_DIAGRAMS         = YES
+HAVE_DOT               = NO
+
+QUIET                  = YES
+WARNINGS               = YES

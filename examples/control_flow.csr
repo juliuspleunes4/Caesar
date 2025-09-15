@@ -1,0 +1,29 @@
+# Control Flow Examples in Caesar
+
+def test_conditionals(x):
+    if x > 0:
+        print("Positive")
+    elif x < 0:
+        print("Negative")
+    else:
+        print("Zero")
+
+def test_loops():
+    # While loop
+    i = 0
+    while i < 5:
+        print("Count:", i)
+        i = i + 1
+    
+    # For loop (conceptual - iteration not fully implemented yet)
+    for j in range(3):
+        print("Iteration:", j)
+
+def main():
+    test_conditionals(5)
+    test_conditionals(-3)
+    test_conditionals(0)
+    test_loops()
+
+if __name__ == "__main__":
+    main()
