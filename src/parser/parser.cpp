@@ -159,7 +159,11 @@ std::unique_ptr<IfStatement> Parser::ifStatement() {
     auto then_block = blockStatement();
     std::unique_ptr<Statement> else_block = nullptr;
     
-    if (match({TokenType::ELSE})) {
+    // Handle elif statements by chaining them as nested if statements
+    if (match({TokenType::ELIF})) {
+        // Create a nested if statement for the elif
+        else_block = ifStatement();
+    } else if (match({TokenType::ELSE})) {
         consume(TokenType::COLON, "Expected ':' after else");
         consume(TokenType::NEWLINE, "Expected newline after ':'");
         else_block = blockStatement();
@@ -395,8 +399,85 @@ std::unique_ptr<Expression> Parser::primary() {
         return expr;
     }
     
+    if (match({TokenType::LBRACKET})) {
+        return listLiteral();
+    }
+    
+    if (match({TokenType::LBRACE})) {
+        return dictLiteral();
+    }
+    
     error("Expected expression");
     return nullptr;
+}
+
+std::unique_ptr<ListExpression> Parser::listLiteral() {
+    std::vector<std::unique_ptr<Expression>> elements;
+    
+    skipNewlines();
+    
+    if (!check(TokenType::RBRACKET)) {
+        do {
+            // Skip any indentation tokens within the list
+            while (match({TokenType::INDENT, TokenType::DEDENT})) {
+                // Skip indentation tokens
+            }
+            skipNewlines();
+            
+            if (check(TokenType::RBRACKET)) break; // Handle trailing comma
+            
+            elements.push_back(expression());
+            skipNewlines();
+            
+            // Skip any indentation tokens after expression
+            while (match({TokenType::INDENT, TokenType::DEDENT})) {
+                // Skip indentation tokens
+            }
+            skipNewlines();
+            
+        } while (match({TokenType::COMMA}));
+    }
+    
+    skipNewlines();
+    consume(TokenType::RBRACKET, "Expected ']' after list elements");
+    return std::make_unique<ListExpression>(std::move(elements));
+}
+
+std::unique_ptr<DictExpression> Parser::dictLiteral() {
+    std::vector<std::pair<std::unique_ptr<Expression>, std::unique_ptr<Expression>>> pairs;
+    
+    skipNewlines();
+    
+    if (!check(TokenType::RBRACE)) {
+        do {
+            // Skip any indentation tokens within the dict
+            while (match({TokenType::INDENT, TokenType::DEDENT})) {
+                // Skip indentation tokens
+            }
+            skipNewlines();
+            
+            if (check(TokenType::RBRACE)) break; // Handle trailing comma
+            
+            auto key = expression();
+            skipNewlines();
+            consume(TokenType::COLON, "Expected ':' after dictionary key");
+            skipNewlines();
+            auto value = expression();
+            pairs.emplace_back(std::move(key), std::move(value));
+            skipNewlines();
+            
+            // Skip any indentation tokens after pair
+            while (match({TokenType::INDENT, TokenType::DEDENT})) {
+                // Skip indentation tokens
+            }
+            skipNewlines();
+            
+        } while (match({TokenType::COMMA}));
+    }
+    
+    skipNewlines();
+    consume(TokenType::RBRACE, "Expected '}' after dictionary pairs");
+    return std::make_unique<DictExpression>(std::move(pairs));
 }
 
 std::unique_ptr<Expression> Parser::finishCall(std::unique_ptr<Expression> callee) {

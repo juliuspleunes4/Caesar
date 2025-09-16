@@ -93,6 +93,38 @@ std::string AssignmentExpression::toString() const {
     return "Assignment(" + target->toString() + " = " + value->toString() + ")";
 }
 
+// ListExpression
+void ListExpression::accept(ASTVisitor& visitor) {
+    visitor.visit(*this);
+}
+
+std::string ListExpression::toString() const {
+    std::ostringstream oss;
+    oss << "List([";
+    for (size_t i = 0; i < elements.size(); ++i) {
+        if (i > 0) oss << ", ";
+        oss << elements[i]->toString();
+    }
+    oss << "])";
+    return oss.str();
+}
+
+// DictExpression
+void DictExpression::accept(ASTVisitor& visitor) {
+    visitor.visit(*this);
+}
+
+std::string DictExpression::toString() const {
+    std::ostringstream oss;
+    oss << "Dict({";
+    for (size_t i = 0; i < pairs.size(); ++i) {
+        if (i > 0) oss << ", ";
+        oss << pairs[i].first->toString() << ": " << pairs[i].second->toString();
+    }
+    oss << "})";
+    return oss.str();
+}
+
 // ExpressionStatement
 void ExpressionStatement::accept(ASTVisitor& visitor) {
     visitor.visit(*this);
