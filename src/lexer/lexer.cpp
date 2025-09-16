@@ -9,6 +9,12 @@
 #include <cctype>
 #include <vector>
 #include <cstddef>
+#include <algorithm>
+#include <iostream>
+
+// Ensure size_t is available
+using std::size_t;
+using std::vector;
 
 namespace caesar {
 
@@ -198,7 +204,7 @@ char Lexer::advance() {
 }
 
 void Lexer::skipWhitespace() {
-    while (!isAtEnd() && isspace(peek()) && peek() != '\n') {
+    while (!isAtEnd() && std::isspace(static_cast<unsigned char>(peek())) && peek() != '\n') {
         advance();
     }
 }

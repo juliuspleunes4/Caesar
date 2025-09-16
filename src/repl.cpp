@@ -11,6 +11,10 @@
 #include <string>
 #include <vector>
 
+// Ensure std types are available
+using std::vector;
+using std::string;
+
 void printWelcome() {
     std::cout << "Caesar Programming Language REPL v" << caesar::Version::STRING << "\n";
     std::cout << "Type 'exit' or 'quit' to exit, 'help' for help\n\n";

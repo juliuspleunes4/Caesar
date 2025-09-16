@@ -10,6 +10,10 @@
 #include <iostream>
 #include <cassert>
 #include <vector>
+#include <cstdlib>
+
+// Ensure std types are available
+using std::vector;
 
 // Simple assert replacement for debugging
 #define my_assert(condition) \
@@ -19,6 +23,11 @@
             std::abort(); \
         } \
     } while(0)
+
+// Also define regular assert for consistency
+#ifndef assert
+#define assert my_assert
+#endif
 
 void test_basic_tokens() {
     std::cout << "Testing basic tokens...\n";
