@@ -1,0 +1,22 @@
+# .gitattributes - Control GitHub language detection
+# This file helps GitHub correctly identify the primary language of the repository
+
+# Exclude generated build files from language statistics
+build/* linguist-generated=true
+*.make linguist-generated=true
+Makefile linguist-generated=true
+
+# Mark documentation files
+*.md linguist-documentation=true
+docs/* linguist-documentation=true
+
+# Mark example files  
+examples/* linguist-documentation=true
+
+# Ensure C++ is detected as primary language
+*.cpp linguist-language=C++
+*.h linguist-language=C++
+*.hpp linguist-language=C++
+
+# Mark test files (but still count them as C++)
+tests/* linguist-language=C++
