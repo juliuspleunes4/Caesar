@@ -54,20 +54,20 @@ std::string readFile(const std::string& filepath) {
 void test_cmake_configuration() {
     std::cout << "Testing CMake configuration...\n";
     
-    // Check if CMakeLists.txt exists in root
-    assert(fileExists("../CMakeLists.txt"));
+    // Check if CMakeLists.txt exists in root (from build/tests, need to go up 2 levels)
+    assert(fileExists("../../CMakeLists.txt"));
     std::cout << "✓ Root CMakeLists.txt exists\n";
     
     // Check if CMakeLists.txt exists in src
-    assert(fileExists("../src/CMakeLists.txt"));
+    assert(fileExists("../../src/CMakeLists.txt"));
     std::cout << "✓ Source CMakeLists.txt exists\n";
     
     // Check if CMakeLists.txt exists in tests
-    assert(fileExists("../tests/CMakeLists.txt"));
+    assert(fileExists("../../tests/CMakeLists.txt"));
     std::cout << "✓ Tests CMakeLists.txt exists\n";
     
     // Read and verify root CMakeLists.txt content
-    std::string rootCMake = readFile("../CMakeLists.txt");
+    std::string rootCMake = readFile("../../CMakeLists.txt");
     assert(!rootCMake.empty());
     assert(contains(rootCMake, "cmake_minimum_required"));
     assert(contains(rootCMake, "project"));
@@ -80,20 +80,20 @@ void test_cmake_configuration() {
 void test_build_targets() {
     std::cout << "Testing build targets...\n";
     
-    // Check if build directory exists
-    assert(fileExists("../build"));
-    std::cout << "✓ Build directory exists\n";
+    // Check if we can access build directory by checking for Makefile
+    assert(fileExists("../Makefile"));
+    std::cout << "✓ Build directory accessible (Makefile found)\n";
     
     // Check if Makefile was generated
-    assert(fileExists("../build/Makefile"));
+    assert(fileExists("../Makefile"));
     std::cout << "✓ Makefile generated\n";
     
     // Check if CMakeCache.txt exists
-    assert(fileExists("../build/CMakeCache.txt"));
+    assert(fileExists("../CMakeCache.txt"));
     std::cout << "✓ CMakeCache.txt exists\n";
     
     // Check for expected build targets
-    std::string cacheContent = readFile("../build/CMakeCache.txt");
+    std::string cacheContent = readFile("../CMakeCache.txt");
     if (!cacheContent.empty()) {
         std::cout << "✓ CMakeCache.txt is readable\n";
     }
@@ -104,9 +104,9 @@ void test_build_targets() {
 void test_executable_generation() {
     std::cout << "Testing executable generation...\n";
     
-    // Check if main executables were built
-    bool caesarExists = fileExists("../build/src/caesar") || fileExists("../build/src/caesar.exe");
-    bool replExists = fileExists("../build/src/caesar_repl") || fileExists("../build/src/caesar_repl.exe");
+    // Check if main executables were built (from build/tests, ../src gets us to build/src)
+    bool caesarExists = fileExists("../src/caesar") || fileExists("../src/caesar.exe");
+    bool replExists = fileExists("../src/caesar_repl") || fileExists("../src/caesar_repl.exe");
     
     if (caesarExists) {
         std::cout << "✓ Caesar main executable exists\n";
@@ -126,9 +126,9 @@ void test_executable_generation() {
 void test_library_generation() {
     std::cout << "Testing library generation...\n";
     
-    // Check if static library was built
-    bool libExists = fileExists("../build/src/libcaesar_lib.a") || 
-                     fileExists("../build/src/caesar_lib.lib");
+    // Check if static library was built (from build/tests, ../src gets us to build/src)
+    bool libExists = fileExists("../src/libcaesar_lib.a") || 
+                     fileExists("../src/caesar_lib.lib");
     
     if (libExists) {
         std::cout << "✓ Caesar static library exists\n";
@@ -142,9 +142,9 @@ void test_library_generation() {
 void test_test_executables() {
     std::cout << "Testing test executable generation...\n";
     
-    // Check if test executables were built
-    bool lexerTestExists = fileExists("../build/tests/test_lexer") || 
-                          fileExists("../build/tests/test_lexer.exe");
+    // Check if test executables were built (from build/tests, we're already in the right place)
+    bool lexerTestExists = fileExists("test_lexer") || 
+                          fileExists("test_lexer.exe");
     
     if (lexerTestExists) {
         std::cout << "✓ Lexer test executable exists\n";
@@ -152,18 +152,18 @@ void test_test_executables() {
         std::cout << "⚠ Lexer test executable not found (may not be built yet)\n";
     }
     
-    // Check for other test executables
+    // Check for other test executables (current directory)
     std::string testDirs[] = {
-        "../build/tests/test_parser_advanced",
-        "../build/tests/test_parser_advanced.exe",
-        "../build/tests/test_lexer_advanced", 
-        "../build/tests/test_lexer_advanced.exe",
-        "../build/tests/test_integration",
-        "../build/tests/test_integration.exe",
-        "../build/tests/test_stress",
-        "../build/tests/test_stress.exe",
-        "../build/tests/test_error_handling",
-        "../build/tests/test_error_handling.exe"
+        "test_parser_advanced",
+        "test_parser_advanced.exe",
+        "test_lexer_advanced", 
+        "test_lexer_advanced.exe",
+        "test_integration",
+        "test_integration.exe",
+        "test_stress",
+        "test_stress.exe",
+        "test_error_handling",
+        "test_error_handling.exe"
     };
     
     int foundTests = 0;
@@ -218,14 +218,14 @@ void test_dependency_resolution() {
         }
     }
     
-    // Check if include directory exists
-    assert(fileExists("../include"));
-    std::cout << "✓ Include directory exists\n";
+    // Check if include directory exists (from build/tests, need to go up 2 levels)
+    assert(fileExists("../../include/caesar/caesar.h"));
+    std::cout << "✓ Include directory accessible\n";
     
     // Check for required header files
-    assert(fileExists("../include/caesar/caesar.h"));
-    assert(fileExists("../include/caesar/lexer.h"));
-    assert(fileExists("../include/caesar/token.h"));
+    assert(fileExists("../../include/caesar/caesar.h"));
+    assert(fileExists("../../include/caesar/lexer.h"));
+    assert(fileExists("../../include/caesar/token.h"));
     std::cout << "✓ Required header files exist\n";
     
     std::cout << "✓ Dependency resolution tests passed\n";

@@ -202,7 +202,7 @@ void test_identifier_edge_cases() {
 void test_mixed_delimiters() {
     std::cout << "Testing mixed delimiters...\n";
     
-    caesar::Lexer lexer("(){[]},:;.");
+    caesar::Lexer lexer("(){}[],:;.");
     auto tokens = lexer.tokenize();
     
     assert(tokens[0].type == caesar::TokenType::LPAREN);
