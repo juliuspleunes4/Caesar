@@ -56,8 +56,8 @@ def add(a, b):
     assert(func_def != nullptr);
     assert(func_def->name == "add");
     assert(func_def->parameters.size() == 2);
-    assert(func_def->parameters[0] == "a");
-    assert(func_def->parameters[1] == "b");
+    assert(func_def->parameters[0].name == "a");
+    assert(func_def->parameters[1].name == "b");
     
     std::cout << "AST: " << program->toString() << "\n";
     std::cout << "✓ Function definition test passed\n";

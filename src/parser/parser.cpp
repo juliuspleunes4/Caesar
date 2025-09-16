@@ -96,6 +96,10 @@ std::unique_ptr<Statement> Parser::statement() {
         return functionDefinition();
     }
     
+    if (match({TokenType::CLASS})) {
+        return classDefinition();
+    }
+    
     if (match({TokenType::IF})) {
         return ifStatement();
     }
@@ -133,11 +137,18 @@ std::unique_ptr<FunctionDefinition> Parser::functionDefinition() {
     
     consume(TokenType::LPAREN, "Expected '(' after function name");
     
-    std::vector<std::string> parameters;
+    std::vector<Parameter> parameters;
     if (!check(TokenType::RPAREN)) {
         do {
             Token param = consume(TokenType::IDENTIFIER, "Expected parameter name");
-            parameters.push_back(param.value);
+            std::unique_ptr<Expression> default_value = nullptr;
+            
+            // Check for default value
+            if (match({TokenType::ASSIGN})) {
+                default_value = expression();
+            }
+            
+            parameters.emplace_back(param.value, std::move(default_value));
         } while (match({TokenType::COMMA}));
     }
     
@@ -149,6 +160,32 @@ std::unique_ptr<FunctionDefinition> Parser::functionDefinition() {
     
     return std::make_unique<FunctionDefinition>(name, std::move(parameters), 
                                                std::move(body), name_token.position);
+}
+
+std::unique_ptr<ClassDefinition> Parser::classDefinition() {
+    Token name_token = consume(TokenType::IDENTIFIER, "Expected class name");
+    std::string name = name_token.value;
+    
+    std::vector<std::string> base_classes;
+    
+    // Check for inheritance (optional)
+    if (match({TokenType::LPAREN})) {
+        if (!check(TokenType::RPAREN)) {
+            do {
+                Token base = consume(TokenType::IDENTIFIER, "Expected base class name");
+                base_classes.push_back(base.value);
+            } while (match({TokenType::COMMA}));
+        }
+        consume(TokenType::RPAREN, "Expected ')' after base classes");
+    }
+    
+    consume(TokenType::COLON, "Expected ':' after class declaration");
+    consume(TokenType::NEWLINE, "Expected newline after ':'");
+    
+    auto body = blockStatement();
+    
+    return std::make_unique<ClassDefinition>(name, std::move(base_classes), 
+                                           std::move(body), name_token.position);
 }
 
 std::unique_ptr<IfStatement> Parser::ifStatement() {
@@ -257,10 +294,12 @@ std::unique_ptr<Expression> Parser::expression() {
 std::unique_ptr<Expression> Parser::assignment() {
     auto expr = logicalOr();
     
-    if (match({TokenType::ASSIGN})) {
+    if (match({TokenType::ASSIGN, TokenType::PLUS_ASSIGN, TokenType::MINUS_ASSIGN, 
+               TokenType::MULT_ASSIGN, TokenType::DIV_ASSIGN})) {
+        TokenType operator_type = previous().type;
         auto value = assignment();
         return std::make_unique<AssignmentExpression>(std::move(expr), std::move(value),
-                                                     previous().position);
+                                                     operator_type, previous().position);
     }
     
     return expr;
@@ -376,6 +415,9 @@ std::unique_ptr<Expression> Parser::call() {
     while (true) {
         if (match({TokenType::LPAREN})) {
             expr = finishCall(std::move(expr));
+        } else if (match({TokenType::DOT})) {
+            Token name = consume(TokenType::IDENTIFIER, "Expected property name after '.'");
+            expr = std::make_unique<MemberExpression>(std::move(expr), name.value, name.position);
         } else {
             break;
         }

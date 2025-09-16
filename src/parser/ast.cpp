@@ -84,13 +84,31 @@ std::string CallExpression::toString() const {
     return oss.str();
 }
 
+// MemberExpression
+void MemberExpression::accept(ASTVisitor& visitor) {
+    visitor.visit(*this);
+}
+
+std::string MemberExpression::toString() const {
+    return "Member(" + object->toString() + "." + member + ")";
+}
+
 // AssignmentExpression
 void AssignmentExpression::accept(ASTVisitor& visitor) {
     visitor.visit(*this);
 }
 
 std::string AssignmentExpression::toString() const {
-    return "Assignment(" + target->toString() + " = " + value->toString() + ")";
+    std::string op_str;
+    switch (operator_type) {
+        case TokenType::ASSIGN: op_str = " = "; break;
+        case TokenType::PLUS_ASSIGN: op_str = " += "; break;
+        case TokenType::MINUS_ASSIGN: op_str = " -= "; break;
+        case TokenType::MULT_ASSIGN: op_str = " *= "; break;
+        case TokenType::DIV_ASSIGN: op_str = " /= "; break;
+        default: op_str = " = "; break;
+    }
+    return "Assignment(" + target->toString() + op_str + value->toString() + ")";
 }
 
 // ListExpression
@@ -191,9 +209,32 @@ std::string FunctionDefinition::toString() const {
     oss << "Function(" << name << "(";
     for (size_t i = 0; i < parameters.size(); ++i) {
         if (i > 0) oss << ", ";
-        oss << parameters[i];
+        oss << parameters[i].name;
+        if (parameters[i].default_value) {
+            oss << "=" << parameters[i].default_value->toString();
+        }
     }
     oss << ") " << body->toString() << ")";
+    return oss.str();
+}
+
+// ClassDefinition
+void ClassDefinition::accept(ASTVisitor& visitor) {
+    visitor.visit(*this);
+}
+
+std::string ClassDefinition::toString() const {
+    std::ostringstream oss;
+    oss << "Class(" << name;
+    if (!base_classes.empty()) {
+        oss << "(";
+        for (size_t i = 0; i < base_classes.size(); ++i) {
+            if (i > 0) oss << ", ";
+            oss << base_classes[i];
+        }
+        oss << ")";
+    }
+    oss << " " << body->toString() << ")";
     return oss.str();
 }
 
