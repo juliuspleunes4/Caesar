@@ -1,0 +1,48 @@
+# Build directories
+build/
+bin/
+lib/
+
+# Compiled object files
+*.o
+*.a
+*.so
+*.dylib
+
+# Executable files
+*.exe
+caesar
+caesar_repl
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+CTestTestfile.cmake
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
+
+# Documentation generated files
+docs/html/
+docs/latex/
+docs/xml/

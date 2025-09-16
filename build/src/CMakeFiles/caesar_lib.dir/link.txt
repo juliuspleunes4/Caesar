@@ -1,0 +1,2 @@
+/usr/bin/ar qc libcaesar_lib.a CMakeFiles/caesar_lib.dir/lexer/token.cpp.o CMakeFiles/caesar_lib.dir/lexer/lexer.cpp.o CMakeFiles/caesar_lib.dir/parser/ast.cpp.o CMakeFiles/caesar_lib.dir/parser/parser.cpp.o
+/usr/bin/ranlib libcaesar_lib.a
