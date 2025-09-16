@@ -7,6 +7,8 @@
 
 #include "caesar/lexer.h"
 #include <cctype>
+#include <vector>
+#include <cstddef>
 
 namespace caesar {
 
@@ -162,8 +164,10 @@ Token Lexer::nextToken() {
         case '.': return makeToken(TokenType::DOT, ".");
     }
     
-    error("Unexpected character: " + std::string(1, c));
-    return makeToken(TokenType::UNKNOWN, std::string(1, c));
+    std::string char_str;
+    char_str += c;
+    error("Unexpected character: " + char_str);
+    return makeToken(TokenType::UNKNOWN, char_str);
 }
 
 bool Lexer::isAtEnd() const {
@@ -194,7 +198,7 @@ char Lexer::advance() {
 }
 
 void Lexer::skipWhitespace() {
-    while (!isAtEnd() && std::isspace(peek()) && peek() != '\n') {
+    while (!isAtEnd() && isspace(peek()) && peek() != '\n') {
         advance();
     }
 }

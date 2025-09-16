@@ -8,8 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/runner/work/Caesar/Caesar/tests/test_lexer.cpp" "tests/CMakeFiles/test_lexer.dir/test_lexer.cpp.o" "gcc" "tests/CMakeFiles/test_lexer.dir/test_lexer.cpp.o.d"
-  "" "tests/test_lexer" "gcc" "tests/CMakeFiles/test_lexer.dir/link.d"
+  "C:/Users/Gebruiker/Desktop/projects/Caesar/tests/test_lexer.cpp" "tests/CMakeFiles/test_lexer.dir/test_lexer.cpp.obj" "gcc" "tests/CMakeFiles/test_lexer.dir/test_lexer.cpp.obj.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

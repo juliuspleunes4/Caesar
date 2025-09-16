@@ -9,6 +9,7 @@
 #include "caesar/lexer.h"
 #include <iostream>
 #include <string>
+#include <vector>
 
 void printWelcome() {
     std::cout << "Caesar Programming Language REPL v" << caesar::Version::STRING << "\n";

@@ -1,6 +1,6 @@
 # CMake generated Testfile for 
-# Source directory: /home/runner/work/Caesar/Caesar
-# Build directory: /home/runner/work/Caesar/Caesar/build
+# Source directory: C:/Users/Gebruiker/Desktop/projects/Caesar
+# Build directory: C:/Users/Gebruiker/Desktop/projects/Caesar/build
 # 
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.

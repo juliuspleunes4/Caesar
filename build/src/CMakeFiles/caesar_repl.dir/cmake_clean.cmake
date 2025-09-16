@@ -1,9 +1,10 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/caesar_repl.dir/link.d"
-  "CMakeFiles/caesar_repl.dir/repl.cpp.o"
-  "CMakeFiles/caesar_repl.dir/repl.cpp.o.d"
-  "caesar_repl"
+  "CMakeFiles/caesar_repl.dir/repl.cpp.obj"
+  "CMakeFiles/caesar_repl.dir/repl.cpp.obj.d"
+  "caesar_repl.exe"
+  "caesar_repl.exe.manifest"
   "caesar_repl.pdb"
+  "libcaesar_repl.dll.a"
 )
 
 # Per-language clean rules from dependency scanning.

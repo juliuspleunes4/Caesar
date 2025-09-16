@@ -5,9 +5,20 @@
  * @version 1.0.0
  */
 
+#undef NDEBUG
 #include "caesar/lexer.h"
 #include <iostream>
 #include <cassert>
+#include <vector>
+
+// Simple assert replacement for debugging
+#define my_assert(condition) \
+    do { \
+        if (!(condition)) { \
+            std::cerr << "Assertion failed: " << #condition << " at line " << __LINE__ << std::endl; \
+            std::abort(); \
+        } \
+    } while(0)
 
 void test_basic_tokens() {
     std::cout << "Testing basic tokens...\n";
@@ -15,17 +26,17 @@ void test_basic_tokens() {
     caesar::Lexer lexer("123 3.14 \"hello\" + - * /");
     auto tokens = lexer.tokenize();
     
-    assert(tokens.size() >= 8); // At least 7 tokens + EOF
-    assert(tokens[0].type == caesar::TokenType::INTEGER);
-    assert(tokens[0].value == "123");
-    assert(tokens[1].type == caesar::TokenType::FLOAT);
-    assert(tokens[1].value == "3.14");
-    assert(tokens[2].type == caesar::TokenType::STRING);
-    assert(tokens[2].value == "hello");
-    assert(tokens[3].type == caesar::TokenType::PLUS);
-    assert(tokens[4].type == caesar::TokenType::MINUS);
-    assert(tokens[5].type == caesar::TokenType::MULTIPLY);
-    assert(tokens[6].type == caesar::TokenType::DIVIDE);
+    my_assert(tokens.size() >= 8); // At least 7 tokens + EOF
+    my_assert(tokens[0].type == caesar::TokenType::INTEGER);
+    my_assert(tokens[0].value == "123");
+    my_assert(tokens[1].type == caesar::TokenType::FLOAT);
+    my_assert(tokens[1].value == "3.14");
+    my_assert(tokens[2].type == caesar::TokenType::STRING);
+    my_assert(tokens[2].value == "hello");
+    my_assert(tokens[3].type == caesar::TokenType::PLUS);
+    my_assert(tokens[4].type == caesar::TokenType::MINUS);
+    my_assert(tokens[5].type == caesar::TokenType::MULTIPLY);
+    my_assert(tokens[6].type == caesar::TokenType::DIVIDE);
     
     std::cout << "✓ Basic tokens test passed\n";
 }
