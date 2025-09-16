@@ -6,7 +6,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 <p align="center">
-    <img src="assets/caesar_logo.png" alt="Caesar Logo" width="150" align="left">
+    <img src="assets/caesar_logo_v2.png" alt="Caesar Logo" width="150" align="left">
 </p>
 
 Caesar is a **Python-like programming language** with **C-speed performance**, featuring a complete implementation from lexical analysis to AST generation. This project demonstrates the full spectrum of **language design and compiler implementation**, showcasing modern C++ techniques for building production-quality programming language tools.
