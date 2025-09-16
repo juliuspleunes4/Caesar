@@ -1,7 +1,7 @@
 /**
  * @file parser.cpp
  * @brief Implementation of the Caesar parser
- * @author Julius Pleunes
+ * @author J.J.G. Pleunes
  * @version 1.0.0
  */
 

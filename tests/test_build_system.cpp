@@ -1,7 +1,7 @@
 /**
  * @file test_build_system.cpp
  * @brief Build system tests for the Caesar project
- * @author Julius Pleunes
+ * @author J.J.G. Pleunes
  * @version 1.0.0
  */
 

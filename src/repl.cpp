@@ -1,7 +1,7 @@
 /**
  * @file repl.cpp
  * @brief Interactive REPL for the Caesar programming language
- * @author Julius Pleunes
+ * @author J.J.G. Pleunes
  * @version 1.0.0
  */
 

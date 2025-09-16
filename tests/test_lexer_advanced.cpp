@@ -1,7 +1,7 @@
 /**
  * @file test_lexer_advanced.cpp
  * @brief Advanced unit tests for the Caesar lexer
- * @author Julius Pleunes
+ * @author J.J.G. Pleunes
  * @version 1.0.0
  */
 

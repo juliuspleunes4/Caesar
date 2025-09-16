@@ -1,7 +1,7 @@
 /**
  * @file lexer.h
  * @brief Lexical analyzer for the Caesar programming language
- * @author Julius Pleunes
+ * @author J.J.G. Pleunes
  * @version 1.0.0
  */
 

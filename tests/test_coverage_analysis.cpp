@@ -1,7 +1,7 @@
 /**
  * @file test_coverage_analysis.cpp
  * @brief Test coverage analysis for the Caesar language implementation
- * @author Julius Pleunes
+ * @author J.J.G. Pleunes
  * @version 1.0.0
  */
 

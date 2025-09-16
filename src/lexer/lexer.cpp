@@ -1,7 +1,7 @@
 /**
  * @file lexer.cpp
  * @brief Implementation of the Caesar lexer
- * @author Julius Pleunes
+ * @author J.J.G. Pleunes
  * @version 1.0.0
  */
 

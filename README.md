@@ -149,4 +149,5 @@ MIT License - see LICENSE file for details.
 
 ## Author
 
-Julius Pleunes - Creator and maintainer of Caesar Programming Language
+J.J.G. Pleunes - Creator and maintainer of Caesar Programming Language
+

@@ -1,7 +1,7 @@
 /**
  * @file test_parser.cpp
  * @brief Unit tests for the Caesar parser
- * @author Julius Pleunes
+ * @author J.J.G. Pleunes
  * @version 1.0.0
  */
 

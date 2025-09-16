@@ -1,7 +1,7 @@
 /**
  * @file test_stress.cpp
  * @brief Stress tests for the Caesar language parser
- * @author Julius Pleunes
+ * @author J.J.G. Pleunes
  * @version 1.0.0
  */
 
