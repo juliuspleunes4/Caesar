@@ -1,4 +1,4 @@
-# Caesar Programming Language
+# Caesar
 
 ![Build Status](https://img.shields.io/badge/build-passing-green)
 ![Tests](https://img.shields.io/badge/tests-9%2F9%20passing-green)
