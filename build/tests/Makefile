@@ -153,6 +153,200 @@ test_parser/fast:
 	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_parser.dir\build.make tests/CMakeFiles/test_parser.dir/build
 .PHONY : test_parser/fast
 
+# Convenience name for target.
+tests/CMakeFiles/test_lexer_advanced.dir/rule:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 tests/CMakeFiles/test_lexer_advanced.dir/rule
+.PHONY : tests/CMakeFiles/test_lexer_advanced.dir/rule
+
+# Convenience name for target.
+test_lexer_advanced: tests/CMakeFiles/test_lexer_advanced.dir/rule
+.PHONY : test_lexer_advanced
+
+# fast build rule for target.
+test_lexer_advanced/fast:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_lexer_advanced.dir\build.make tests/CMakeFiles/test_lexer_advanced.dir/build
+.PHONY : test_lexer_advanced/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_parser_advanced.dir/rule:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 tests/CMakeFiles/test_parser_advanced.dir/rule
+.PHONY : tests/CMakeFiles/test_parser_advanced.dir/rule
+
+# Convenience name for target.
+test_parser_advanced: tests/CMakeFiles/test_parser_advanced.dir/rule
+.PHONY : test_parser_advanced
+
+# fast build rule for target.
+test_parser_advanced/fast:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_parser_advanced.dir\build.make tests/CMakeFiles/test_parser_advanced.dir/build
+.PHONY : test_parser_advanced/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_integration.dir/rule:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 tests/CMakeFiles/test_integration.dir/rule
+.PHONY : tests/CMakeFiles/test_integration.dir/rule
+
+# Convenience name for target.
+test_integration: tests/CMakeFiles/test_integration.dir/rule
+.PHONY : test_integration
+
+# fast build rule for target.
+test_integration/fast:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_integration.dir\build.make tests/CMakeFiles/test_integration.dir/build
+.PHONY : test_integration/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_stress.dir/rule:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 tests/CMakeFiles/test_stress.dir/rule
+.PHONY : tests/CMakeFiles/test_stress.dir/rule
+
+# Convenience name for target.
+test_stress: tests/CMakeFiles/test_stress.dir/rule
+.PHONY : test_stress
+
+# fast build rule for target.
+test_stress/fast:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_stress.dir\build.make tests/CMakeFiles/test_stress.dir/build
+.PHONY : test_stress/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_error_handling.dir/rule:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 tests/CMakeFiles/test_error_handling.dir/rule
+.PHONY : tests/CMakeFiles/test_error_handling.dir/rule
+
+# Convenience name for target.
+test_error_handling: tests/CMakeFiles/test_error_handling.dir/rule
+.PHONY : test_error_handling
+
+# fast build rule for target.
+test_error_handling/fast:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_error_handling.dir\build.make tests/CMakeFiles/test_error_handling.dir/build
+.PHONY : test_error_handling/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_build_system.dir/rule:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 tests/CMakeFiles/test_build_system.dir/rule
+.PHONY : tests/CMakeFiles/test_build_system.dir/rule
+
+# Convenience name for target.
+test_build_system: tests/CMakeFiles/test_build_system.dir/rule
+.PHONY : test_build_system
+
+# fast build rule for target.
+test_build_system/fast:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_build_system.dir\build.make tests/CMakeFiles/test_build_system.dir/build
+.PHONY : test_build_system/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_coverage_analysis.dir/rule:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 tests/CMakeFiles/test_coverage_analysis.dir/rule
+.PHONY : tests/CMakeFiles/test_coverage_analysis.dir/rule
+
+# Convenience name for target.
+test_coverage_analysis: tests/CMakeFiles/test_coverage_analysis.dir/rule
+.PHONY : test_coverage_analysis
+
+# fast build rule for target.
+test_coverage_analysis/fast:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_coverage_analysis.dir\build.make tests/CMakeFiles/test_coverage_analysis.dir/build
+.PHONY : test_coverage_analysis/fast
+
+test_build_system.obj: test_build_system.cpp.obj
+.PHONY : test_build_system.obj
+
+# target to build an object file
+test_build_system.cpp.obj:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_build_system.dir\build.make tests/CMakeFiles/test_build_system.dir/test_build_system.cpp.obj
+.PHONY : test_build_system.cpp.obj
+
+test_build_system.i: test_build_system.cpp.i
+.PHONY : test_build_system.i
+
+# target to preprocess a source file
+test_build_system.cpp.i:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_build_system.dir\build.make tests/CMakeFiles/test_build_system.dir/test_build_system.cpp.i
+.PHONY : test_build_system.cpp.i
+
+test_build_system.s: test_build_system.cpp.s
+.PHONY : test_build_system.s
+
+# target to generate assembly for a file
+test_build_system.cpp.s:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_build_system.dir\build.make tests/CMakeFiles/test_build_system.dir/test_build_system.cpp.s
+.PHONY : test_build_system.cpp.s
+
+test_coverage_analysis.obj: test_coverage_analysis.cpp.obj
+.PHONY : test_coverage_analysis.obj
+
+# target to build an object file
+test_coverage_analysis.cpp.obj:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_coverage_analysis.dir\build.make tests/CMakeFiles/test_coverage_analysis.dir/test_coverage_analysis.cpp.obj
+.PHONY : test_coverage_analysis.cpp.obj
+
+test_coverage_analysis.i: test_coverage_analysis.cpp.i
+.PHONY : test_coverage_analysis.i
+
+# target to preprocess a source file
+test_coverage_analysis.cpp.i:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_coverage_analysis.dir\build.make tests/CMakeFiles/test_coverage_analysis.dir/test_coverage_analysis.cpp.i
+.PHONY : test_coverage_analysis.cpp.i
+
+test_coverage_analysis.s: test_coverage_analysis.cpp.s
+.PHONY : test_coverage_analysis.s
+
+# target to generate assembly for a file
+test_coverage_analysis.cpp.s:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_coverage_analysis.dir\build.make tests/CMakeFiles/test_coverage_analysis.dir/test_coverage_analysis.cpp.s
+.PHONY : test_coverage_analysis.cpp.s
+
+test_error_handling.obj: test_error_handling.cpp.obj
+.PHONY : test_error_handling.obj
+
+# target to build an object file
+test_error_handling.cpp.obj:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_error_handling.dir\build.make tests/CMakeFiles/test_error_handling.dir/test_error_handling.cpp.obj
+.PHONY : test_error_handling.cpp.obj
+
+test_error_handling.i: test_error_handling.cpp.i
+.PHONY : test_error_handling.i
+
+# target to preprocess a source file
+test_error_handling.cpp.i:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_error_handling.dir\build.make tests/CMakeFiles/test_error_handling.dir/test_error_handling.cpp.i
+.PHONY : test_error_handling.cpp.i
+
+test_error_handling.s: test_error_handling.cpp.s
+.PHONY : test_error_handling.s
+
+# target to generate assembly for a file
+test_error_handling.cpp.s:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_error_handling.dir\build.make tests/CMakeFiles/test_error_handling.dir/test_error_handling.cpp.s
+.PHONY : test_error_handling.cpp.s
+
+test_integration.obj: test_integration.cpp.obj
+.PHONY : test_integration.obj
+
+# target to build an object file
+test_integration.cpp.obj:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_integration.dir\build.make tests/CMakeFiles/test_integration.dir/test_integration.cpp.obj
+.PHONY : test_integration.cpp.obj
+
+test_integration.i: test_integration.cpp.i
+.PHONY : test_integration.i
+
+# target to preprocess a source file
+test_integration.cpp.i:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_integration.dir\build.make tests/CMakeFiles/test_integration.dir/test_integration.cpp.i
+.PHONY : test_integration.cpp.i
+
+test_integration.s: test_integration.cpp.s
+.PHONY : test_integration.s
+
+# target to generate assembly for a file
+test_integration.cpp.s:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_integration.dir\build.make tests/CMakeFiles/test_integration.dir/test_integration.cpp.s
+.PHONY : test_integration.cpp.s
+
 test_lexer.obj: test_lexer.cpp.obj
 .PHONY : test_lexer.obj
 
@@ -176,6 +370,30 @@ test_lexer.s: test_lexer.cpp.s
 test_lexer.cpp.s:
 	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_lexer.dir\build.make tests/CMakeFiles/test_lexer.dir/test_lexer.cpp.s
 .PHONY : test_lexer.cpp.s
+
+test_lexer_advanced.obj: test_lexer_advanced.cpp.obj
+.PHONY : test_lexer_advanced.obj
+
+# target to build an object file
+test_lexer_advanced.cpp.obj:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_lexer_advanced.dir\build.make tests/CMakeFiles/test_lexer_advanced.dir/test_lexer_advanced.cpp.obj
+.PHONY : test_lexer_advanced.cpp.obj
+
+test_lexer_advanced.i: test_lexer_advanced.cpp.i
+.PHONY : test_lexer_advanced.i
+
+# target to preprocess a source file
+test_lexer_advanced.cpp.i:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_lexer_advanced.dir\build.make tests/CMakeFiles/test_lexer_advanced.dir/test_lexer_advanced.cpp.i
+.PHONY : test_lexer_advanced.cpp.i
+
+test_lexer_advanced.s: test_lexer_advanced.cpp.s
+.PHONY : test_lexer_advanced.s
+
+# target to generate assembly for a file
+test_lexer_advanced.cpp.s:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_lexer_advanced.dir\build.make tests/CMakeFiles/test_lexer_advanced.dir/test_lexer_advanced.cpp.s
+.PHONY : test_lexer_advanced.cpp.s
 
 test_parser.obj: test_parser.cpp.obj
 .PHONY : test_parser.obj
@@ -201,6 +419,54 @@ test_parser.cpp.s:
 	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_parser.dir\build.make tests/CMakeFiles/test_parser.dir/test_parser.cpp.s
 .PHONY : test_parser.cpp.s
 
+test_parser_advanced.obj: test_parser_advanced.cpp.obj
+.PHONY : test_parser_advanced.obj
+
+# target to build an object file
+test_parser_advanced.cpp.obj:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_parser_advanced.dir\build.make tests/CMakeFiles/test_parser_advanced.dir/test_parser_advanced.cpp.obj
+.PHONY : test_parser_advanced.cpp.obj
+
+test_parser_advanced.i: test_parser_advanced.cpp.i
+.PHONY : test_parser_advanced.i
+
+# target to preprocess a source file
+test_parser_advanced.cpp.i:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_parser_advanced.dir\build.make tests/CMakeFiles/test_parser_advanced.dir/test_parser_advanced.cpp.i
+.PHONY : test_parser_advanced.cpp.i
+
+test_parser_advanced.s: test_parser_advanced.cpp.s
+.PHONY : test_parser_advanced.s
+
+# target to generate assembly for a file
+test_parser_advanced.cpp.s:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_parser_advanced.dir\build.make tests/CMakeFiles/test_parser_advanced.dir/test_parser_advanced.cpp.s
+.PHONY : test_parser_advanced.cpp.s
+
+test_stress.obj: test_stress.cpp.obj
+.PHONY : test_stress.obj
+
+# target to build an object file
+test_stress.cpp.obj:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_stress.dir\build.make tests/CMakeFiles/test_stress.dir/test_stress.cpp.obj
+.PHONY : test_stress.cpp.obj
+
+test_stress.i: test_stress.cpp.i
+.PHONY : test_stress.i
+
+# target to preprocess a source file
+test_stress.cpp.i:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_stress.dir\build.make tests/CMakeFiles/test_stress.dir/test_stress.cpp.i
+.PHONY : test_stress.cpp.i
+
+test_stress.s: test_stress.cpp.s
+.PHONY : test_stress.s
+
+# target to generate assembly for a file
+test_stress.cpp.s:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_stress.dir\build.make tests/CMakeFiles/test_stress.dir/test_stress.cpp.s
+.PHONY : test_stress.cpp.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -210,14 +476,42 @@ help:
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... test
+	@echo ... test_build_system
+	@echo ... test_coverage_analysis
+	@echo ... test_error_handling
+	@echo ... test_integration
 	@echo ... test_lexer
+	@echo ... test_lexer_advanced
 	@echo ... test_parser
+	@echo ... test_parser_advanced
+	@echo ... test_stress
+	@echo ... test_build_system.obj
+	@echo ... test_build_system.i
+	@echo ... test_build_system.s
+	@echo ... test_coverage_analysis.obj
+	@echo ... test_coverage_analysis.i
+	@echo ... test_coverage_analysis.s
+	@echo ... test_error_handling.obj
+	@echo ... test_error_handling.i
+	@echo ... test_error_handling.s
+	@echo ... test_integration.obj
+	@echo ... test_integration.i
+	@echo ... test_integration.s
 	@echo ... test_lexer.obj
 	@echo ... test_lexer.i
 	@echo ... test_lexer.s
+	@echo ... test_lexer_advanced.obj
+	@echo ... test_lexer_advanced.i
+	@echo ... test_lexer_advanced.s
 	@echo ... test_parser.obj
 	@echo ... test_parser.i
 	@echo ... test_parser.s
+	@echo ... test_parser_advanced.obj
+	@echo ... test_parser_advanced.i
+	@echo ... test_parser_advanced.s
+	@echo ... test_stress.obj
+	@echo ... test_stress.i
+	@echo ... test_stress.s
 .PHONY : help
 
 

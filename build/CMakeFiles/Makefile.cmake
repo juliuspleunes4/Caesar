@@ -73,4 +73,11 @@ set(CMAKE_DEPEND_INFO_FILES
   "src/CMakeFiles/caesar_repl.dir/DependInfo.cmake"
   "tests/CMakeFiles/test_lexer.dir/DependInfo.cmake"
   "tests/CMakeFiles/test_parser.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_lexer_advanced.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_parser_advanced.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_integration.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_stress.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_error_handling.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_build_system.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_coverage_analysis.dir/DependInfo.cmake"
   )

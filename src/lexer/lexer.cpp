@@ -273,6 +273,7 @@ Token Lexer::tokenizeString(char quote_char) {
                 case '\\': value += '\\'; break;
                 case '\'': value += '\''; break;
                 case '"': value += '"'; break;
+                case '0': value += '\0'; break;
                 default:
                     value += escaped;
                     break;

@@ -112,6 +112,14 @@ std::unique_ptr<Statement> Parser::statement() {
         return returnStatement();
     }
     
+    if (match({TokenType::BREAK})) {
+        return breakStatement();
+    }
+    
+    if (match({TokenType::CONTINUE})) {
+        return continueStatement();
+    }
+    
     return expressionStatement();
 }
 
@@ -191,6 +199,16 @@ std::unique_ptr<ReturnStatement> Parser::returnStatement() {
     }
     
     return std::make_unique<ReturnStatement>(std::move(value), pos);
+}
+
+std::unique_ptr<BreakStatement> Parser::breakStatement() {
+    Position pos = previous().position;
+    return std::make_unique<BreakStatement>(pos);
+}
+
+std::unique_ptr<ContinueStatement> Parser::continueStatement() {
+    Position pos = previous().position;
+    return std::make_unique<ContinueStatement>(pos);
 }
 
 std::unique_ptr<BlockStatement> Parser::blockStatement() {

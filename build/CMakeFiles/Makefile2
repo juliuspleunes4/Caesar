@@ -113,11 +113,25 @@ src/clean: src/CMakeFiles/caesar_repl.dir/clean
 # Recursive "all" directory target.
 tests/all: tests/CMakeFiles/test_lexer.dir/all
 tests/all: tests/CMakeFiles/test_parser.dir/all
+tests/all: tests/CMakeFiles/test_lexer_advanced.dir/all
+tests/all: tests/CMakeFiles/test_parser_advanced.dir/all
+tests/all: tests/CMakeFiles/test_integration.dir/all
+tests/all: tests/CMakeFiles/test_stress.dir/all
+tests/all: tests/CMakeFiles/test_error_handling.dir/all
+tests/all: tests/CMakeFiles/test_build_system.dir/all
+tests/all: tests/CMakeFiles/test_coverage_analysis.dir/all
 .PHONY : tests/all
 
 # Recursive "codegen" directory target.
 tests/codegen: tests/CMakeFiles/test_lexer.dir/codegen
 tests/codegen: tests/CMakeFiles/test_parser.dir/codegen
+tests/codegen: tests/CMakeFiles/test_lexer_advanced.dir/codegen
+tests/codegen: tests/CMakeFiles/test_parser_advanced.dir/codegen
+tests/codegen: tests/CMakeFiles/test_integration.dir/codegen
+tests/codegen: tests/CMakeFiles/test_stress.dir/codegen
+tests/codegen: tests/CMakeFiles/test_error_handling.dir/codegen
+tests/codegen: tests/CMakeFiles/test_build_system.dir/codegen
+tests/codegen: tests/CMakeFiles/test_coverage_analysis.dir/codegen
 .PHONY : tests/codegen
 
 # Recursive "preinstall" directory target.
@@ -127,6 +141,13 @@ tests/preinstall:
 # Recursive "clean" directory target.
 tests/clean: tests/CMakeFiles/test_lexer.dir/clean
 tests/clean: tests/CMakeFiles/test_parser.dir/clean
+tests/clean: tests/CMakeFiles/test_lexer_advanced.dir/clean
+tests/clean: tests/CMakeFiles/test_parser_advanced.dir/clean
+tests/clean: tests/CMakeFiles/test_integration.dir/clean
+tests/clean: tests/CMakeFiles/test_stress.dir/clean
+tests/clean: tests/CMakeFiles/test_error_handling.dir/clean
+tests/clean: tests/CMakeFiles/test_build_system.dir/clean
+tests/clean: tests/CMakeFiles/test_coverage_analysis.dir/clean
 .PHONY : tests/clean
 
 #=============================================================================
@@ -264,7 +285,7 @@ src/CMakeFiles/caesar_repl.dir/clean:
 tests/CMakeFiles/test_lexer.dir/all: src/CMakeFiles/caesar_lib.dir/all
 	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_lexer.dir\build.make tests/CMakeFiles/test_lexer.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_lexer.dir\build.make tests/CMakeFiles/test_lexer.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=11,12 "Built target test_lexer"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=19,20 "Built target test_lexer"
 .PHONY : tests/CMakeFiles/test_lexer.dir/all
 
 # Build rule for subdir invocation for target.
@@ -281,7 +302,7 @@ test_lexer: tests/CMakeFiles/test_lexer.dir/rule
 # codegen rule for target.
 tests/CMakeFiles/test_lexer.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_lexer.dir\build.make tests/CMakeFiles/test_lexer.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=11,12 "Finished codegen for target test_lexer"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=19,20 "Finished codegen for target test_lexer"
 .PHONY : tests/CMakeFiles/test_lexer.dir/codegen
 
 # clean rule for target.
@@ -296,7 +317,7 @@ tests/CMakeFiles/test_lexer.dir/clean:
 tests/CMakeFiles/test_parser.dir/all: src/CMakeFiles/caesar_lib.dir/all
 	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_parser.dir\build.make tests/CMakeFiles/test_parser.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_parser.dir\build.make tests/CMakeFiles/test_parser.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=13,14 "Built target test_parser"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=23,24 "Built target test_parser"
 .PHONY : tests/CMakeFiles/test_parser.dir/all
 
 # Build rule for subdir invocation for target.
@@ -313,13 +334,237 @@ test_parser: tests/CMakeFiles/test_parser.dir/rule
 # codegen rule for target.
 tests/CMakeFiles/test_parser.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_parser.dir\build.make tests/CMakeFiles/test_parser.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=13,14 "Finished codegen for target test_parser"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=23,24 "Finished codegen for target test_parser"
 .PHONY : tests/CMakeFiles/test_parser.dir/codegen
 
 # clean rule for target.
 tests/CMakeFiles/test_parser.dir/clean:
 	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_parser.dir\build.make tests/CMakeFiles/test_parser.dir/clean
 .PHONY : tests/CMakeFiles/test_parser.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/test_lexer_advanced.dir
+
+# All Build rule for target.
+tests/CMakeFiles/test_lexer_advanced.dir/all: src/CMakeFiles/caesar_lib.dir/all
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_lexer_advanced.dir\build.make tests/CMakeFiles/test_lexer_advanced.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_lexer_advanced.dir\build.make tests/CMakeFiles/test_lexer_advanced.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=21,22 "Built target test_lexer_advanced"
+.PHONY : tests/CMakeFiles/test_lexer_advanced.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/test_lexer_advanced.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles 7
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 tests/CMakeFiles/test_lexer_advanced.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles 0
+.PHONY : tests/CMakeFiles/test_lexer_advanced.dir/rule
+
+# Convenience name for target.
+test_lexer_advanced: tests/CMakeFiles/test_lexer_advanced.dir/rule
+.PHONY : test_lexer_advanced
+
+# codegen rule for target.
+tests/CMakeFiles/test_lexer_advanced.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_lexer_advanced.dir\build.make tests/CMakeFiles/test_lexer_advanced.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=21,22 "Finished codegen for target test_lexer_advanced"
+.PHONY : tests/CMakeFiles/test_lexer_advanced.dir/codegen
+
+# clean rule for target.
+tests/CMakeFiles/test_lexer_advanced.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_lexer_advanced.dir\build.make tests/CMakeFiles/test_lexer_advanced.dir/clean
+.PHONY : tests/CMakeFiles/test_lexer_advanced.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/test_parser_advanced.dir
+
+# All Build rule for target.
+tests/CMakeFiles/test_parser_advanced.dir/all: src/CMakeFiles/caesar_lib.dir/all
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_parser_advanced.dir\build.make tests/CMakeFiles/test_parser_advanced.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_parser_advanced.dir\build.make tests/CMakeFiles/test_parser_advanced.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=25,26 "Built target test_parser_advanced"
+.PHONY : tests/CMakeFiles/test_parser_advanced.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/test_parser_advanced.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles 7
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 tests/CMakeFiles/test_parser_advanced.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles 0
+.PHONY : tests/CMakeFiles/test_parser_advanced.dir/rule
+
+# Convenience name for target.
+test_parser_advanced: tests/CMakeFiles/test_parser_advanced.dir/rule
+.PHONY : test_parser_advanced
+
+# codegen rule for target.
+tests/CMakeFiles/test_parser_advanced.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_parser_advanced.dir\build.make tests/CMakeFiles/test_parser_advanced.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=25,26 "Finished codegen for target test_parser_advanced"
+.PHONY : tests/CMakeFiles/test_parser_advanced.dir/codegen
+
+# clean rule for target.
+tests/CMakeFiles/test_parser_advanced.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_parser_advanced.dir\build.make tests/CMakeFiles/test_parser_advanced.dir/clean
+.PHONY : tests/CMakeFiles/test_parser_advanced.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/test_integration.dir
+
+# All Build rule for target.
+tests/CMakeFiles/test_integration.dir/all: src/CMakeFiles/caesar_lib.dir/all
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_integration.dir\build.make tests/CMakeFiles/test_integration.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_integration.dir\build.make tests/CMakeFiles/test_integration.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=17,18 "Built target test_integration"
+.PHONY : tests/CMakeFiles/test_integration.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/test_integration.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles 7
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 tests/CMakeFiles/test_integration.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles 0
+.PHONY : tests/CMakeFiles/test_integration.dir/rule
+
+# Convenience name for target.
+test_integration: tests/CMakeFiles/test_integration.dir/rule
+.PHONY : test_integration
+
+# codegen rule for target.
+tests/CMakeFiles/test_integration.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_integration.dir\build.make tests/CMakeFiles/test_integration.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=17,18 "Finished codegen for target test_integration"
+.PHONY : tests/CMakeFiles/test_integration.dir/codegen
+
+# clean rule for target.
+tests/CMakeFiles/test_integration.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_integration.dir\build.make tests/CMakeFiles/test_integration.dir/clean
+.PHONY : tests/CMakeFiles/test_integration.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/test_stress.dir
+
+# All Build rule for target.
+tests/CMakeFiles/test_stress.dir/all: src/CMakeFiles/caesar_lib.dir/all
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_stress.dir\build.make tests/CMakeFiles/test_stress.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_stress.dir\build.make tests/CMakeFiles/test_stress.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=27,28 "Built target test_stress"
+.PHONY : tests/CMakeFiles/test_stress.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/test_stress.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles 7
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 tests/CMakeFiles/test_stress.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles 0
+.PHONY : tests/CMakeFiles/test_stress.dir/rule
+
+# Convenience name for target.
+test_stress: tests/CMakeFiles/test_stress.dir/rule
+.PHONY : test_stress
+
+# codegen rule for target.
+tests/CMakeFiles/test_stress.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_stress.dir\build.make tests/CMakeFiles/test_stress.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=27,28 "Finished codegen for target test_stress"
+.PHONY : tests/CMakeFiles/test_stress.dir/codegen
+
+# clean rule for target.
+tests/CMakeFiles/test_stress.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_stress.dir\build.make tests/CMakeFiles/test_stress.dir/clean
+.PHONY : tests/CMakeFiles/test_stress.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/test_error_handling.dir
+
+# All Build rule for target.
+tests/CMakeFiles/test_error_handling.dir/all: src/CMakeFiles/caesar_lib.dir/all
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_error_handling.dir\build.make tests/CMakeFiles/test_error_handling.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_error_handling.dir\build.make tests/CMakeFiles/test_error_handling.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=15,16 "Built target test_error_handling"
+.PHONY : tests/CMakeFiles/test_error_handling.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/test_error_handling.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles 7
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 tests/CMakeFiles/test_error_handling.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles 0
+.PHONY : tests/CMakeFiles/test_error_handling.dir/rule
+
+# Convenience name for target.
+test_error_handling: tests/CMakeFiles/test_error_handling.dir/rule
+.PHONY : test_error_handling
+
+# codegen rule for target.
+tests/CMakeFiles/test_error_handling.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_error_handling.dir\build.make tests/CMakeFiles/test_error_handling.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=15,16 "Finished codegen for target test_error_handling"
+.PHONY : tests/CMakeFiles/test_error_handling.dir/codegen
+
+# clean rule for target.
+tests/CMakeFiles/test_error_handling.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_error_handling.dir\build.make tests/CMakeFiles/test_error_handling.dir/clean
+.PHONY : tests/CMakeFiles/test_error_handling.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/test_build_system.dir
+
+# All Build rule for target.
+tests/CMakeFiles/test_build_system.dir/all: src/CMakeFiles/caesar_lib.dir/all
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_build_system.dir\build.make tests/CMakeFiles/test_build_system.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_build_system.dir\build.make tests/CMakeFiles/test_build_system.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=11,12 "Built target test_build_system"
+.PHONY : tests/CMakeFiles/test_build_system.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/test_build_system.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles 7
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 tests/CMakeFiles/test_build_system.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles 0
+.PHONY : tests/CMakeFiles/test_build_system.dir/rule
+
+# Convenience name for target.
+test_build_system: tests/CMakeFiles/test_build_system.dir/rule
+.PHONY : test_build_system
+
+# codegen rule for target.
+tests/CMakeFiles/test_build_system.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_build_system.dir\build.make tests/CMakeFiles/test_build_system.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=11,12 "Finished codegen for target test_build_system"
+.PHONY : tests/CMakeFiles/test_build_system.dir/codegen
+
+# clean rule for target.
+tests/CMakeFiles/test_build_system.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_build_system.dir\build.make tests/CMakeFiles/test_build_system.dir/clean
+.PHONY : tests/CMakeFiles/test_build_system.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/test_coverage_analysis.dir
+
+# All Build rule for target.
+tests/CMakeFiles/test_coverage_analysis.dir/all: src/CMakeFiles/caesar_lib.dir/all
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_coverage_analysis.dir\build.make tests/CMakeFiles/test_coverage_analysis.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_coverage_analysis.dir\build.make tests/CMakeFiles/test_coverage_analysis.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=13,14 "Built target test_coverage_analysis"
+.PHONY : tests/CMakeFiles/test_coverage_analysis.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/test_coverage_analysis.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles 7
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 tests/CMakeFiles/test_coverage_analysis.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles 0
+.PHONY : tests/CMakeFiles/test_coverage_analysis.dir/rule
+
+# Convenience name for target.
+test_coverage_analysis: tests/CMakeFiles/test_coverage_analysis.dir/rule
+.PHONY : test_coverage_analysis
+
+# codegen rule for target.
+tests/CMakeFiles/test_coverage_analysis.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_coverage_analysis.dir\build.make tests/CMakeFiles/test_coverage_analysis.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=13,14 "Finished codegen for target test_coverage_analysis"
+.PHONY : tests/CMakeFiles/test_coverage_analysis.dir/codegen
+
+# clean rule for target.
+tests/CMakeFiles/test_coverage_analysis.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_coverage_analysis.dir\build.make tests/CMakeFiles/test_coverage_analysis.dir/clean
+.PHONY : tests/CMakeFiles/test_coverage_analysis.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

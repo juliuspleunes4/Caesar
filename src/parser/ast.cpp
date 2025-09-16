@@ -178,6 +178,24 @@ std::string ReturnStatement::toString() const {
     }
 }
 
+// BreakStatement
+void BreakStatement::accept(ASTVisitor& visitor) {
+    visitor.visit(*this);
+}
+
+std::string BreakStatement::toString() const {
+    return "Break()";
+}
+
+// ContinueStatement
+void ContinueStatement::accept(ASTVisitor& visitor) {
+    visitor.visit(*this);
+}
+
+std::string ContinueStatement::toString() const {
+    return "Continue()";
+}
+
 // Program
 void Program::accept(ASTVisitor& visitor) {
     visitor.visit(*this);

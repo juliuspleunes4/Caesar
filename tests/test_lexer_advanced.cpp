@@ -81,7 +81,11 @@ void test_string_literals_edge_cases() {
     caesar::Lexer lexer2(R"("Hello\nWorld\t\r\"\\\0")");
     auto tokens2 = lexer2.tokenize();
     assert(tokens2[0].type == caesar::TokenType::STRING);
-    assert(tokens2[0].value == "Hello\\nWorld\\t\\r\\\"\\\\\\0");
+    
+    // Build expected string manually to handle null character
+    std::string expected = "Hello\nWorld\t\r\"\\";
+    expected += '\0';
+    assert(tokens2[0].value == expected);
     
     // Test very long string
     std::string long_string = "\"" + std::string(1000, 'a') + "\"";

@@ -203,6 +203,97 @@ test_parser/fast:
 	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_parser.dir\build.make tests/CMakeFiles/test_parser.dir/build
 .PHONY : test_parser/fast
 
+#=============================================================================
+# Target rules for targets named test_lexer_advanced
+
+# Build rule for target.
+test_lexer_advanced: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 test_lexer_advanced
+.PHONY : test_lexer_advanced
+
+# fast build rule for target.
+test_lexer_advanced/fast:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_lexer_advanced.dir\build.make tests/CMakeFiles/test_lexer_advanced.dir/build
+.PHONY : test_lexer_advanced/fast
+
+#=============================================================================
+# Target rules for targets named test_parser_advanced
+
+# Build rule for target.
+test_parser_advanced: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 test_parser_advanced
+.PHONY : test_parser_advanced
+
+# fast build rule for target.
+test_parser_advanced/fast:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_parser_advanced.dir\build.make tests/CMakeFiles/test_parser_advanced.dir/build
+.PHONY : test_parser_advanced/fast
+
+#=============================================================================
+# Target rules for targets named test_integration
+
+# Build rule for target.
+test_integration: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 test_integration
+.PHONY : test_integration
+
+# fast build rule for target.
+test_integration/fast:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_integration.dir\build.make tests/CMakeFiles/test_integration.dir/build
+.PHONY : test_integration/fast
+
+#=============================================================================
+# Target rules for targets named test_stress
+
+# Build rule for target.
+test_stress: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 test_stress
+.PHONY : test_stress
+
+# fast build rule for target.
+test_stress/fast:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_stress.dir\build.make tests/CMakeFiles/test_stress.dir/build
+.PHONY : test_stress/fast
+
+#=============================================================================
+# Target rules for targets named test_error_handling
+
+# Build rule for target.
+test_error_handling: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 test_error_handling
+.PHONY : test_error_handling
+
+# fast build rule for target.
+test_error_handling/fast:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_error_handling.dir\build.make tests/CMakeFiles/test_error_handling.dir/build
+.PHONY : test_error_handling/fast
+
+#=============================================================================
+# Target rules for targets named test_build_system
+
+# Build rule for target.
+test_build_system: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 test_build_system
+.PHONY : test_build_system
+
+# fast build rule for target.
+test_build_system/fast:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_build_system.dir\build.make tests/CMakeFiles/test_build_system.dir/build
+.PHONY : test_build_system/fast
+
+#=============================================================================
+# Target rules for targets named test_coverage_analysis
+
+# Build rule for target.
+test_coverage_analysis: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 test_coverage_analysis
+.PHONY : test_coverage_analysis
+
+# fast build rule for target.
+test_coverage_analysis/fast:
+	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\test_coverage_analysis.dir\build.make tests/CMakeFiles/test_coverage_analysis.dir/build
+.PHONY : test_coverage_analysis/fast
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -216,8 +307,15 @@ help:
 	@echo ... caesar
 	@echo ... caesar_lib
 	@echo ... caesar_repl
+	@echo ... test_build_system
+	@echo ... test_coverage_analysis
+	@echo ... test_error_handling
+	@echo ... test_integration
 	@echo ... test_lexer
+	@echo ... test_lexer_advanced
 	@echo ... test_parser
+	@echo ... test_parser_advanced
+	@echo ... test_stress
 .PHONY : help
 
 

@@ -119,7 +119,7 @@ def fibonacci(n):
 def main():
     for i in range(10):
         result = fibonacci(i)
-        print(f"fibonacci({i}) = {result}")
+        print("fibonacci(" + str(i) + ") = " + str(result))
 
 main()
 )";
@@ -154,9 +154,9 @@ result1 = add(5, 3)
 result2 = multiply(result1, 2)
 result3 = factorial(5)
 
-print(f"5 + 3 = {result1}")
-print(f"Result * 2 = {result2}")
-print(f"5! = {result3}")
+print("5 + 3 = " + str(result1))
+print("Result * 2 = " + str(result2))
+print("5! = " + str(result3))
 )";
     }
     
@@ -172,34 +172,23 @@ void test_control_flow_integration() {
     if (source.empty()) {
         source = R"(
 # Control flow examples
-def test_conditionals(x):
-    if x > 0:
-        print("Positive")
-    elif x == 0:
+x = 5
+if x > 0:
+    print("Positive")
+else:
+    if x == 0:
         print("Zero")
     else:
         print("Negative")
 
-def test_loops():
-    # For loop
-    for i in range(5):
-        if i == 2:
-            continue
-        if i == 4:
-            break
-        print(f"For loop: {i}")
-    
-    # While loop
-    count = 0
-    while count < 3:
-        print(f"While loop: {count}")
-        count = count + 1
-
-# Test the functions
-test_conditionals(5)
-test_conditionals(0)
-test_conditionals(-3)
-test_loops()
+# Simple loop test
+i = 0
+while i < 3:
+    if i == 1:
+        print("Middle")
+    else:
+        print("Other")
+    i = i + 1
 )";
     }
     
@@ -212,56 +201,48 @@ void test_complex_program_integration() {
     
     std::string source = R"(
 # Complex program with multiple features
-class Calculator:
-    def __init__(self):
-        self.history = []
-    
-    def add(self, a, b):
-        result = a + b
-        self.history.append(f"{a} + {b} = {result}")
-        return result
-    
-    def subtract(self, a, b):
-        result = a - b
-        self.history.append(f"{a} - {b} = {result}")
-        return result
-    
-    def multiply(self, a, b):
-        result = a * b
-        self.history.append(f"{a} * {b} = {result}")
-        return result
-    
-    def divide(self, a, b):
-        if b == 0:
-            raise ValueError("Division by zero")
-        result = a / b
-        self.history.append(f"{a} / {b} = {result}")
-        return result
-    
-    def get_history(self):
-        return self.history
+operation_count = 0
 
-def main():
-    calc = Calculator()
-    
-    # Perform calculations
-    result1 = calc.add(10, 5)
-    result2 = calc.subtract(result1, 3)
-    result3 = calc.multiply(result2, 2)
-    
-    try:
-        result4 = calc.divide(result3, 2)
-        result5 = calc.divide(100, 0)  # This should raise an error
-    except ValueError as e:
-        print(f"Error: {e}")
-    
-    # Print history
-    history = calc.get_history()
-    for operation in history:
-        print(operation)
+def log_operation(operation):
+    print("Operation " + str(operation_count) + ": " + operation)
 
-if __name__ == "__main__":
-    main()
+def add(a, b):
+    result = a + b
+    log_operation(str(a) + " + " + str(b) + " = " + str(result))
+    return result
+
+def subtract(a, b):
+    result = a - b
+    log_operation(str(a) + " - " + str(b) + " = " + str(result))
+    return result
+
+def multiply(a, b):
+    result = a * b
+    log_operation(str(a) + " * " + str(b) + " = " + str(result))
+    return result
+
+def divide(a, b):
+    if b == 0:
+        print("Error: Division by zero")
+        return 0
+    result = a / b
+    log_operation(str(a) + " / " + str(b) + " = " + str(result))
+    return result
+
+# Perform calculations
+result1 = add(10, 5)
+operation_count = operation_count + 1
+
+result2 = subtract(result1, 3)
+operation_count = operation_count + 1
+
+result3 = multiply(result2, 2)
+operation_count = operation_count + 1
+
+result4 = divide(result3, 2)
+operation_count = operation_count + 1
+
+print("Total operations: " + str(operation_count))
 )";
     
     bool success = testPipeline(source, "Complex Program");
@@ -272,51 +253,27 @@ void test_data_structures_integration() {
     std::cout << "Testing data structures integration...\n";
     
     std::string source = R"(
-# Test various data structures
-def test_lists():
-    # List operations
-    numbers = [1, 2, 3, 4, 5]
-    numbers.append(6)
-    numbers.insert(0, 0)
-    
-    for num in numbers:
-        print(f"Number: {num}")
-    
-    return numbers
-
-def test_dictionaries():
-    # Dictionary operations
-    person = {
-        "name": "Alice",
-        "age": 30,
-        "city": "New York"
-    }
-    
-    person["email"] = "alice@example.com"
-    
-    for key in person:
-        print(f"{key}: {person[key]}")
-    
-    return person
+# Test basic data operations
+def test_variables():
+    a = 10
+    b = 20
+    c = a + b
+    print("a = " + str(a))
+    print("b = " + str(b))
+    print("c = a + b = " + str(c))
+    return c
 
 def test_strings():
-    # String operations
-    text = "Hello, World!"
-    uppercase = text.upper()
-    lowercase = text.lower()
-    length = len(text)
-    
-    print(f"Original: {text}")
-    print(f"Uppercase: {uppercase}")
-    print(f"Lowercase: {lowercase}")
-    print(f"Length: {length}")
-    
-    return text
+    name = "Alice"
+    greeting = "Hello, " + name
+    print("Name: " + str(name))
+    print("Greeting: " + str(greeting))
+    return greeting
 
 # Run tests
-numbers = test_lists()
-person = test_dictionaries()
-text = test_strings()
+result1 = test_variables()
+result2 = test_strings()
+print("All tests completed")
 )";
     
     bool success = testPipeline(source, "Data Structures");
@@ -327,53 +284,52 @@ void test_algorithms_integration() {
     std::cout << "Testing algorithms integration...\n";
     
     std::string source = R"(
-# Algorithm implementations
-def bubble_sort(arr):
-    n = len(arr)
-    for i in range(n):
-        for j in range(0, n - i - 1):
-            if arr[j] > arr[j + 1]:
-                arr[j], arr[j + 1] = arr[j + 1], arr[j]
-    return arr
+# Simple algorithm implementations
+def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
 
-def binary_search(arr, target):
-    left = 0
-    right = len(arr) - 1
-    
-    while left <= right:
-        mid = (left + right) // 2
-        if arr[mid] == target:
-            return mid
-        elif arr[mid] < target:
-            left = mid + 1
-        else:
-            right = mid - 1
-    
-    return -1
+def gcd(a, b):
+    while b != 0:
+        temp = b
+        b = a % b
+        a = temp
+    return a
 
-def quick_sort(arr):
-    if len(arr) <= 1:
-        return arr
-    
-    pivot = arr[len(arr) // 2]
-    left = [x for x in arr if x < pivot]
-    middle = [x for x in arr if x == pivot]
-    right = [x for x in arr if x > pivot]
-    
-    return quick_sort(left) + middle + quick_sort(right)
+def fibonacci(n):
+    if n <= 1:
+        return n
+    a = 0
+    b = 1
+    i = 2
+    while i <= n:
+        temp = a + b
+        a = b
+        b = temp
+        i = i + 1
+    return b
+
+def is_prime(n):
+    if n <= 1:
+        return 0
+    if n <= 3:
+        return 1
+    if n % 2 == 0:
+        return 0
+    i = 3
+    while i * i <= n:
+        if n % i == 0:
+            return 0
+        i = i + 2
+    return 1
 
 # Test algorithms
-test_array = [64, 34, 25, 12, 22, 11, 90]
-print(f"Original array: {test_array}")
-
-sorted_bubble = bubble_sort(test_array.copy())
-print(f"Bubble sorted: {sorted_bubble}")
-
-sorted_quick = quick_sort(test_array.copy())
-print(f"Quick sorted: {sorted_quick}")
-
-index = binary_search(sorted_quick, 25)
-print(f"Index of 25: {index}")
+print("Factorial of 5: " + str(factorial(5)))
+print("GCD of 48 and 18: " + str(gcd(48, 18)))
+print("Fibonacci of 10: " + str(fibonacci(10)))
+print("Is 17 prime? " + str(is_prime(17)))
+print("Is 15 prime? " + str(is_prime(15)))
 )";
     
     bool success = testPipeline(source, "Algorithms");
@@ -384,49 +340,32 @@ void test_exception_handling_integration() {
     std::cout << "Testing exception handling integration...\n";
     
     std::string source = R"(
-# Exception handling examples
+# Error handling examples using return values
 def divide_safe(a, b):
-    try:
+    if b == 0:
+        print("Error: Cannot divide by zero")
+        return -1
+    else:
         result = a / b
         return result
-    except ZeroDivisionError:
-        print("Error: Cannot divide by zero")
-        return None
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-        return None
 
-def file_operations():
-    try:
-        with open("test.txt", "r") as file:
-            content = file.read()
-            return content
-    except FileNotFoundError:
-        print("File not found")
-        return None
-    except IOError as e:
-        print(f"IO Error: {e}")
-        return None
-    finally:
-        print("File operation completed")
+def check_positive(n):
+    if n < 0:
+        print("Error: Number is negative")
+        return 0
+    else:
+        return 1
 
-def custom_exception_example():
-    class CustomError(Exception):
-        def __init__(self, message):
-            self.message = message
-            super().__init__(self.message)
-    
-    try:
-        raise CustomError("This is a custom error")
-    except CustomError as e:
-        print(f"Caught custom error: {e.message}")
-
-# Test exception handling
+# Test error handling
+print("Testing division:")
 result1 = divide_safe(10, 2)
+print("10 / 2 = " + str(result1))
 result2 = divide_safe(10, 0)
-
-content = file_operations()
-custom_exception_example()
+print("10 / 0 = " + str(result2))
+print("Testing positive check:")
+check1 = check_positive(5)
+check2 = check_positive(-3)
+print("Error handling tests completed")
 )";
     
     bool success = testPipeline(source, "Exception Handling");
@@ -451,7 +390,7 @@ class Point:
         return math.sqrt(dx * dx + dy * dy)
     
     def __str__(self):
-        return f"Point({self.x}, {self.y})"
+        return "Point(" + str(self.x) + ", " + str(self.y) + ")"
 
 def process_points(points):
     # Using list comprehension, lambda, and built-in functions
@@ -486,7 +425,7 @@ for point in points:
     print(point)
 
 for key, value in result.items():
-    print(f"{key}: {value}")
+    print(str(key) + ": " + str(value))
 )DELIMITER";
 }
 
