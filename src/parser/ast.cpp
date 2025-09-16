@@ -196,6 +196,15 @@ std::string ContinueStatement::toString() const {
     return "Continue()";
 }
 
+// PassStatement
+void PassStatement::accept(ASTVisitor& visitor) {
+    visitor.visit(*this);
+}
+
+std::string PassStatement::toString() const {
+    return "Pass()";
+}
+
 // Program
 void Program::accept(ASTVisitor& visitor) {
     visitor.visit(*this);

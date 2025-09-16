@@ -14,6 +14,7 @@
 #include <vector>
 #include <unordered_map>
 #include <stack>
+#include <queue>
 
 namespace caesar {
 
@@ -34,6 +35,7 @@ private:
     Position position_;               ///< Current line and column
     std::stack<size_t> indent_stack_; ///< Stack to track indentation levels
     bool at_line_start_;              ///< Whether we're at the start of a line
+    std::queue<Token> pending_tokens_; ///< Queue for tokens that need to be returned later
     
     /// Keywords mapping
     static const std::unordered_map<std::string, TokenType> keywords_;

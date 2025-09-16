@@ -120,6 +120,10 @@ std::unique_ptr<Statement> Parser::statement() {
         return continueStatement();
     }
     
+    if (match({TokenType::PASS})) {
+        return passStatement();
+    }
+    
     return expressionStatement();
 }
 
@@ -209,6 +213,11 @@ std::unique_ptr<BreakStatement> Parser::breakStatement() {
 std::unique_ptr<ContinueStatement> Parser::continueStatement() {
     Position pos = previous().position;
     return std::make_unique<ContinueStatement>(pos);
+}
+
+std::unique_ptr<PassStatement> Parser::passStatement() {
+    Position pos = previous().position;
+    return std::make_unique<PassStatement>(pos);
 }
 
 std::unique_ptr<BlockStatement> Parser::blockStatement() {
@@ -372,7 +381,7 @@ std::unique_ptr<Expression> Parser::call() {
 }
 
 std::unique_ptr<Expression> Parser::primary() {
-    if (match({TokenType::BOOLEAN, TokenType::INTEGER, TokenType::FLOAT, TokenType::STRING})) {
+    if (match({TokenType::BOOLEAN, TokenType::INTEGER, TokenType::FLOAT, TokenType::STRING, TokenType::NONE})) {
         return std::make_unique<LiteralExpression>(previous());
     }
     
