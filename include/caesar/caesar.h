@@ -1,7 +1,7 @@
 /**
  * @file caesar.h
  * @brief Main header file for the Caesar programming language
- * @author Julius Pleunes
+ * @author J.J.G. Pleunes
  * @version 1.0.0
  * 
  * Caesar is a Python-like programming language with C-speed performance,

@@ -1,7 +1,7 @@
 /**
  * @file parser.cpp
  * @brief Implementation of the Caesar parser
- * @author Julius Pleunes
+ * @author J.J.G. Pleunes
  * @version 1.0.0
  */
 
@@ -96,6 +96,10 @@ std::unique_ptr<Statement> Parser::statement() {
         return functionDefinition();
     }
     
+    if (match({TokenType::CLASS})) {
+        return classDefinition();
+    }
+    
     if (match({TokenType::IF})) {
         return ifStatement();
     }
@@ -112,6 +116,18 @@ std::unique_ptr<Statement> Parser::statement() {
         return returnStatement();
     }
     
+    if (match({TokenType::BREAK})) {
+        return breakStatement();
+    }
+    
+    if (match({TokenType::CONTINUE})) {
+        return continueStatement();
+    }
+    
+    if (match({TokenType::PASS})) {
+        return passStatement();
+    }
+    
     return expressionStatement();
 }
 
@@ -121,11 +137,18 @@ std::unique_ptr<FunctionDefinition> Parser::functionDefinition() {
     
     consume(TokenType::LPAREN, "Expected '(' after function name");
     
-    std::vector<std::string> parameters;
+    std::vector<Parameter> parameters;
     if (!check(TokenType::RPAREN)) {
         do {
             Token param = consume(TokenType::IDENTIFIER, "Expected parameter name");
-            parameters.push_back(param.value);
+            std::unique_ptr<Expression> default_value = nullptr;
+            
+            // Check for default value
+            if (match({TokenType::ASSIGN})) {
+                default_value = expression();
+            }
+            
+            parameters.emplace_back(param.value, std::move(default_value));
         } while (match({TokenType::COMMA}));
     }
     
@@ -139,6 +162,32 @@ std::unique_ptr<FunctionDefinition> Parser::functionDefinition() {
                                                std::move(body), name_token.position);
 }
 
+std::unique_ptr<ClassDefinition> Parser::classDefinition() {
+    Token name_token = consume(TokenType::IDENTIFIER, "Expected class name");
+    std::string name = name_token.value;
+    
+    std::vector<std::string> base_classes;
+    
+    // Check for inheritance (optional)
+    if (match({TokenType::LPAREN})) {
+        if (!check(TokenType::RPAREN)) {
+            do {
+                Token base = consume(TokenType::IDENTIFIER, "Expected base class name");
+                base_classes.push_back(base.value);
+            } while (match({TokenType::COMMA}));
+        }
+        consume(TokenType::RPAREN, "Expected ')' after base classes");
+    }
+    
+    consume(TokenType::COLON, "Expected ':' after class declaration");
+    consume(TokenType::NEWLINE, "Expected newline after ':'");
+    
+    auto body = blockStatement();
+    
+    return std::make_unique<ClassDefinition>(name, std::move(base_classes), 
+                                           std::move(body), name_token.position);
+}
+
 std::unique_ptr<IfStatement> Parser::ifStatement() {
     auto condition = expression();
     consume(TokenType::COLON, "Expected ':' after if condition");
@@ -147,7 +196,11 @@ std::unique_ptr<IfStatement> Parser::ifStatement() {
     auto then_block = blockStatement();
     std::unique_ptr<Statement> else_block = nullptr;
     
-    if (match({TokenType::ELSE})) {
+    // Handle elif statements by chaining them as nested if statements
+    if (match({TokenType::ELIF})) {
+        // Create a nested if statement for the elif
+        else_block = ifStatement();
+    } else if (match({TokenType::ELSE})) {
         consume(TokenType::COLON, "Expected ':' after else");
         consume(TokenType::NEWLINE, "Expected newline after ':'");
         else_block = blockStatement();
@@ -193,6 +246,21 @@ std::unique_ptr<ReturnStatement> Parser::returnStatement() {
     return std::make_unique<ReturnStatement>(std::move(value), pos);
 }
 
+std::unique_ptr<BreakStatement> Parser::breakStatement() {
+    Position pos = previous().position;
+    return std::make_unique<BreakStatement>(pos);
+}
+
+std::unique_ptr<ContinueStatement> Parser::continueStatement() {
+    Position pos = previous().position;
+    return std::make_unique<ContinueStatement>(pos);
+}
+
+std::unique_ptr<PassStatement> Parser::passStatement() {
+    Position pos = previous().position;
+    return std::make_unique<PassStatement>(pos);
+}
+
 std::unique_ptr<BlockStatement> Parser::blockStatement() {
     consume(TokenType::INDENT, "Expected indented block");
     
@@ -226,10 +294,12 @@ std::unique_ptr<Expression> Parser::expression() {
 std::unique_ptr<Expression> Parser::assignment() {
     auto expr = logicalOr();
     
-    if (match({TokenType::ASSIGN})) {
+    if (match({TokenType::ASSIGN, TokenType::PLUS_ASSIGN, TokenType::MINUS_ASSIGN, 
+               TokenType::MULT_ASSIGN, TokenType::DIV_ASSIGN})) {
+        TokenType operator_type = previous().type;
         auto value = assignment();
         return std::make_unique<AssignmentExpression>(std::move(expr), std::move(value),
-                                                     previous().position);
+                                                     operator_type, previous().position);
     }
     
     return expr;
@@ -345,6 +415,9 @@ std::unique_ptr<Expression> Parser::call() {
     while (true) {
         if (match({TokenType::LPAREN})) {
             expr = finishCall(std::move(expr));
+        } else if (match({TokenType::DOT})) {
+            Token name = consume(TokenType::IDENTIFIER, "Expected property name after '.'");
+            expr = std::make_unique<MemberExpression>(std::move(expr), name.value, name.position);
         } else {
             break;
         }
@@ -354,7 +427,7 @@ std::unique_ptr<Expression> Parser::call() {
 }
 
 std::unique_ptr<Expression> Parser::primary() {
-    if (match({TokenType::BOOLEAN, TokenType::INTEGER, TokenType::FLOAT, TokenType::STRING})) {
+    if (match({TokenType::BOOLEAN, TokenType::INTEGER, TokenType::FLOAT, TokenType::STRING, TokenType::NONE})) {
         return std::make_unique<LiteralExpression>(previous());
     }
     
@@ -368,8 +441,85 @@ std::unique_ptr<Expression> Parser::primary() {
         return expr;
     }
     
+    if (match({TokenType::LBRACKET})) {
+        return listLiteral();
+    }
+    
+    if (match({TokenType::LBRACE})) {
+        return dictLiteral();
+    }
+    
     error("Expected expression");
     return nullptr;
+}
+
+std::unique_ptr<ListExpression> Parser::listLiteral() {
+    std::vector<std::unique_ptr<Expression>> elements;
+    
+    skipNewlines();
+    
+    if (!check(TokenType::RBRACKET)) {
+        do {
+            // Skip any indentation tokens within the list
+            while (match({TokenType::INDENT, TokenType::DEDENT})) {
+                // Skip indentation tokens
+            }
+            skipNewlines();
+            
+            if (check(TokenType::RBRACKET)) break; // Handle trailing comma
+            
+            elements.push_back(expression());
+            skipNewlines();
+            
+            // Skip any indentation tokens after expression
+            while (match({TokenType::INDENT, TokenType::DEDENT})) {
+                // Skip indentation tokens
+            }
+            skipNewlines();
+            
+        } while (match({TokenType::COMMA}));
+    }
+    
+    skipNewlines();
+    consume(TokenType::RBRACKET, "Expected ']' after list elements");
+    return std::make_unique<ListExpression>(std::move(elements));
+}
+
+std::unique_ptr<DictExpression> Parser::dictLiteral() {
+    std::vector<std::pair<std::unique_ptr<Expression>, std::unique_ptr<Expression>>> pairs;
+    
+    skipNewlines();
+    
+    if (!check(TokenType::RBRACE)) {
+        do {
+            // Skip any indentation tokens within the dict
+            while (match({TokenType::INDENT, TokenType::DEDENT})) {
+                // Skip indentation tokens
+            }
+            skipNewlines();
+            
+            if (check(TokenType::RBRACE)) break; // Handle trailing comma
+            
+            auto key = expression();
+            skipNewlines();
+            consume(TokenType::COLON, "Expected ':' after dictionary key");
+            skipNewlines();
+            auto value = expression();
+            pairs.emplace_back(std::move(key), std::move(value));
+            skipNewlines();
+            
+            // Skip any indentation tokens after pair
+            while (match({TokenType::INDENT, TokenType::DEDENT})) {
+                // Skip indentation tokens
+            }
+            skipNewlines();
+            
+        } while (match({TokenType::COMMA}));
+    }
+    
+    skipNewlines();
+    consume(TokenType::RBRACE, "Expected '}' after dictionary pairs");
+    return std::make_unique<DictExpression>(std::move(pairs));
 }
 
 std::unique_ptr<Expression> Parser::finishCall(std::unique_ptr<Expression> callee) {

@@ -16,19 +16,24 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-# Find LLVM
-find_package(LLVM 14 REQUIRED CONFIG)
+# Find LLVM (optional for now)
+find_package(LLVM 14 CONFIG)
 
-message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
-message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
-
-# Set up LLVM
-include_directories(${LLVM_INCLUDE_DIRS})
-separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
-add_definitions(${LLVM_DEFINITIONS_LIST})
-
-# Find the LLVM libraries that correspond to the LLVM components
-llvm_map_components_to_libnames(llvm_libs support core irreader executionengine interpreter mc orcjit native)
+if(LLVM_FOUND)
+    message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+    message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
+    
+    # Set up LLVM
+    include_directories(${LLVM_INCLUDE_DIRS})
+    separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
+    add_definitions(${LLVM_DEFINITIONS_LIST})
+    
+    # Find the LLVM libraries that correspond to the LLVM components
+    llvm_map_components_to_libnames(llvm_libs support core irreader executionengine interpreter mc orcjit native)
+else()
+    message(STATUS "LLVM not found, building without LLVM support")
+    set(llvm_libs "")
+endif()
 
 # Include directories
 include_directories(include)

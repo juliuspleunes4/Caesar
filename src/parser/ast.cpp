@@ -1,7 +1,7 @@
 /**
  * @file ast.cpp
  * @brief Implementation of AST nodes
- * @author Julius Pleunes
+ * @author J.J.G. Pleunes
  * @version 1.0.0
  */
 
@@ -84,13 +84,63 @@ std::string CallExpression::toString() const {
     return oss.str();
 }
 
+// MemberExpression
+void MemberExpression::accept(ASTVisitor& visitor) {
+    visitor.visit(*this);
+}
+
+std::string MemberExpression::toString() const {
+    return "Member(" + object->toString() + "." + member + ")";
+}
+
 // AssignmentExpression
 void AssignmentExpression::accept(ASTVisitor& visitor) {
     visitor.visit(*this);
 }
 
 std::string AssignmentExpression::toString() const {
-    return "Assignment(" + target->toString() + " = " + value->toString() + ")";
+    std::string op_str;
+    switch (operator_type) {
+        case TokenType::ASSIGN: op_str = " = "; break;
+        case TokenType::PLUS_ASSIGN: op_str = " += "; break;
+        case TokenType::MINUS_ASSIGN: op_str = " -= "; break;
+        case TokenType::MULT_ASSIGN: op_str = " *= "; break;
+        case TokenType::DIV_ASSIGN: op_str = " /= "; break;
+        default: op_str = " = "; break;
+    }
+    return "Assignment(" + target->toString() + op_str + value->toString() + ")";
+}
+
+// ListExpression
+void ListExpression::accept(ASTVisitor& visitor) {
+    visitor.visit(*this);
+}
+
+std::string ListExpression::toString() const {
+    std::ostringstream oss;
+    oss << "List([";
+    for (size_t i = 0; i < elements.size(); ++i) {
+        if (i > 0) oss << ", ";
+        oss << elements[i]->toString();
+    }
+    oss << "])";
+    return oss.str();
+}
+
+// DictExpression
+void DictExpression::accept(ASTVisitor& visitor) {
+    visitor.visit(*this);
+}
+
+std::string DictExpression::toString() const {
+    std::ostringstream oss;
+    oss << "Dict({";
+    for (size_t i = 0; i < pairs.size(); ++i) {
+        if (i > 0) oss << ", ";
+        oss << pairs[i].first->toString() << ": " << pairs[i].second->toString();
+    }
+    oss << "})";
+    return oss.str();
 }
 
 // ExpressionStatement
@@ -159,9 +209,32 @@ std::string FunctionDefinition::toString() const {
     oss << "Function(" << name << "(";
     for (size_t i = 0; i < parameters.size(); ++i) {
         if (i > 0) oss << ", ";
-        oss << parameters[i];
+        oss << parameters[i].name;
+        if (parameters[i].default_value) {
+            oss << "=" << parameters[i].default_value->toString();
+        }
     }
     oss << ") " << body->toString() << ")";
+    return oss.str();
+}
+
+// ClassDefinition
+void ClassDefinition::accept(ASTVisitor& visitor) {
+    visitor.visit(*this);
+}
+
+std::string ClassDefinition::toString() const {
+    std::ostringstream oss;
+    oss << "Class(" << name;
+    if (!base_classes.empty()) {
+        oss << "(";
+        for (size_t i = 0; i < base_classes.size(); ++i) {
+            if (i > 0) oss << ", ";
+            oss << base_classes[i];
+        }
+        oss << ")";
+    }
+    oss << " " << body->toString() << ")";
     return oss.str();
 }
 
@@ -176,6 +249,33 @@ std::string ReturnStatement::toString() const {
     } else {
         return "Return()";
     }
+}
+
+// BreakStatement
+void BreakStatement::accept(ASTVisitor& visitor) {
+    visitor.visit(*this);
+}
+
+std::string BreakStatement::toString() const {
+    return "Break()";
+}
+
+// ContinueStatement
+void ContinueStatement::accept(ASTVisitor& visitor) {
+    visitor.visit(*this);
+}
+
+std::string ContinueStatement::toString() const {
+    return "Continue()";
+}
+
+// PassStatement
+void PassStatement::accept(ASTVisitor& visitor) {
+    visitor.visit(*this);
+}
+
+std::string PassStatement::toString() const {
+    return "Pass()";
 }
 
 // Program

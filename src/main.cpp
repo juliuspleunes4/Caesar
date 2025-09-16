@@ -1,7 +1,7 @@
 /**
  * @file main.cpp
  * @brief Main entry point for the Caesar compiler
- * @author Julius Pleunes
+ * @author J.J.G. Pleunes
  * @version 1.0.0
  */
 

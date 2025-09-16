@@ -1,0 +1,26 @@
+# Debug folder .gitignore
+# Exclude compiled debug executables while preserving source files
+
+# Compiled executables
+bin/*.exe
+bin/*.out
+bin/*.app
+
+# Temporary files
+*.tmp
+*.temp
+
+# Object files (if any intermediate compilation)
+*.o
+*.obj
+
+# Debug information files
+*.pdb
+*.dSYM/
+
+# IDE specific files
+.vscode/
+.vs/
+
+# Keep the bin directory structure but ignore contents
+!bin/.gitkeep

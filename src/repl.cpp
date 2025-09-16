@@ -1,7 +1,7 @@
 /**
  * @file repl.cpp
  * @brief Interactive REPL for the Caesar programming language
- * @author Julius Pleunes
+ * @author J.J.G. Pleunes
  * @version 1.0.0
  */
 
@@ -9,6 +9,11 @@
 #include "caesar/lexer.h"
 #include <iostream>
 #include <string>
+#include <vector>
+
+// Ensure std types are available
+using std::vector;
+using std::string;
 
 void printWelcome() {
     std::cout << "Caesar Programming Language REPL v" << caesar::Version::STRING << "\n";

@@ -1,12 +1,20 @@
 /**
  * @file lexer.cpp
  * @brief Implementation of the Caesar lexer
- * @author Julius Pleunes
+ * @author J.J.G. Pleunes
  * @version 1.0.0
  */
 
 #include "caesar/lexer.h"
 #include <cctype>
+#include <vector>
+#include <cstddef>
+#include <algorithm>
+#include <iostream>
+
+// Ensure size_t is available
+using std::size_t;
+using std::vector;
 
 namespace caesar {
 
@@ -65,6 +73,13 @@ std::vector<Token> Lexer::tokenize() {
 }
 
 Token Lexer::nextToken() {
+    // Return pending tokens first
+    if (!pending_tokens_.empty()) {
+        Token token = pending_tokens_.front();
+        pending_tokens_.pop();
+        return token;
+    }
+    
     if (isAtEnd()) {
         return makeToken(TokenType::EOF_TOKEN, "");
     }
@@ -74,7 +89,10 @@ Token Lexer::nextToken() {
         at_line_start_ = false;
         auto indent_tokens = handleIndentation();
         if (!indent_tokens.empty()) {
-            // Return first indentation token, store others for later
+            // Return first token, queue the rest
+            for (size_t i = 1; i < indent_tokens.size(); i++) {
+                pending_tokens_.push(indent_tokens[i]);
+            }
             return indent_tokens[0];
         }
     }
@@ -162,8 +180,10 @@ Token Lexer::nextToken() {
         case '.': return makeToken(TokenType::DOT, ".");
     }
     
-    error("Unexpected character: " + std::string(1, c));
-    return makeToken(TokenType::UNKNOWN, std::string(1, c));
+    std::string char_str;
+    char_str += c;
+    error("Unexpected character: " + char_str);
+    return makeToken(TokenType::UNKNOWN, char_str);
 }
 
 bool Lexer::isAtEnd() const {
@@ -194,7 +214,7 @@ char Lexer::advance() {
 }
 
 void Lexer::skipWhitespace() {
-    while (!isAtEnd() && std::isspace(peek()) && peek() != '\n') {
+    while (!isAtEnd() && std::isspace(static_cast<unsigned char>(peek())) && peek() != '\n') {
         advance();
     }
 }
@@ -263,6 +283,7 @@ Token Lexer::tokenizeString(char quote_char) {
                 case '\\': value += '\\'; break;
                 case '\'': value += '\''; break;
                 case '"': value += '"'; break;
+                case '0': value += '\0'; break;
                 default:
                     value += escaped;
                     break;

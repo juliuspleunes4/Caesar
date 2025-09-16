@@ -1,6 +1,5 @@
 # Build directories
 build/
-bin/
 lib/
 
 # Compiled object files
@@ -11,8 +10,11 @@ lib/
 
 # Executable files
 *.exe
-caesar
-caesar_repl
+/caesar
+/caesar_repl
+
+# Debug executables (but allow .gitkeep)
+debug/bin/*.exe
 
 # CMake generated files
 CMakeCache.txt

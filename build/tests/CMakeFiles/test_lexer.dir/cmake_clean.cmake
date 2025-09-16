@@ -1,8 +1,9 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/test_lexer.dir/link.d"
-  "CMakeFiles/test_lexer.dir/test_lexer.cpp.o"
-  "CMakeFiles/test_lexer.dir/test_lexer.cpp.o.d"
-  "test_lexer"
+  "CMakeFiles/test_lexer.dir/test_lexer.cpp.obj"
+  "CMakeFiles/test_lexer.dir/test_lexer.cpp.obj.d"
+  "libtest_lexer.dll.a"
+  "test_lexer.exe"
+  "test_lexer.exe.manifest"
   "test_lexer.pdb"
 )
 
