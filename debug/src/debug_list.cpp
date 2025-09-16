@@ -1,19 +1,14 @@
-#include "caesar/caesar.h"
-#include "caesar/lexer.h"
-#include "caesar/parser.h"
+#include "include/caesar/caesar.h"
+#include "include/caesar/lexer.h"
+#include "include/caesar/parser.h"
 #include <iostream>
 
 int main() {
-    // Simplest case - single level if/else
-    std::string source = R"(
-if condition:
-    return "then"
-else:
-    return "else"
-)";
+    // Test simple list parsing
+    std::string source = R"(test_list = [1, 2, 3])";
     
-    std::cout << "=== SIMPLE IF/ELSE TEST ===\n";
-    std::cout << "Source:\n" << source << "\n\n";
+    std::cout << "=== SIMPLE LIST TEST ===\n";
+    std::cout << "Source: " << source << "\n\n";
     
     try {
         caesar::Lexer lexer(source);
@@ -30,7 +25,8 @@ else:
         std::cout << "\n=== Parsing ===\n";
         caesar::Parser parser(std::move(tokens));
         auto program = parser.parse();
-        std::cout << "SUCCESS: Single level if/else parsed successfully!\n";
+        std::cout << "SUCCESS: Simple list parsed successfully!\n";
+        std::cout << "AST: " << program->toString() << "\n";
         
     } catch (const std::exception& e) {
         std::cout << "Exception: " << e.what() << std::endl;

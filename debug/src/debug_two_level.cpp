@@ -1,54 +1,33 @@
-#include "caesar/caesar.h"
-#include "caesar/lexer.h"
+#include "include/caesar/caesar.h"
+#include "include/caesar/lexer.h"
+#include "include/caesar/parser.h"
 #include <iostream>
 
 int main() {
-    // Test the exact indentation pattern from the failing case
+    // Two level nesting - minimal case
     std::string source = R"(
 if outer:
     if inner:
         return "nested"
     else:
         return "inner_else"
-else:
-    return "outer_else"
 )";
     
-    std::cout << "=== DETAILED INDENTATION ANALYSIS ===\n";
-    std::cout << "Source with visible indentation:\n";
-    
-    // Print source with indentation markers
-    std::istringstream iss(source);
-    std::string line;
-    int lineNum = 1;
-    while (std::getline(iss, line)) {
-        std::cout << "Line " << lineNum << ": ";
-        for (size_t i = 0; i < line.length(); i++) {
-            if (line[i] == ' ') {
-                std::cout << "·";  // dot for space
-            } else if (line[i] == '\t') {
-                std::cout << "→";  // arrow for tab
-            } else {
-                std::cout << line[i];
-            }
-        }
-        std::cout << " [" << line.length() << " chars]\n";
-        lineNum++;
-    }
-    
-    std::cout << "\n=== TOKENIZATION ===\n";
+    std::cout << "=== TWO LEVEL NESTING TEST ===\n";
+    std::cout << "Source:\n" << source << "\n\n";
     
     try {
         caesar::Lexer lexer(source);
         auto tokens = lexer.tokenize();
         
+        std::cout << "Tokens:\n";
         for (size_t i = 0; i < tokens.size(); i++) {
             std::cout << "[" << i << "] type=" << (int)tokens[i].type 
                       << " value='" << tokens[i].value 
                       << "' line=" << tokens[i].position.line 
                       << " col=" << tokens[i].position.column;
             
-            // Add token type names
+            // Add token type names for clarity
             switch(tokens[i].type) {
                 case (caesar::TokenType)50: std::cout << " (NEWLINE)"; break;
                 case (caesar::TokenType)51: std::cout << " (INDENT)"; break;
@@ -63,6 +42,11 @@ else:
             }
             std::cout << "\n";
         }
+        
+        std::cout << "\n=== Parsing ===\n";
+        caesar::Parser parser(std::move(tokens));
+        auto program = parser.parse();
+        std::cout << "SUCCESS: Two level nesting parsed successfully!\n";
         
     } catch (const std::exception& e) {
         std::cout << "Exception: " << e.what() << std::endl;

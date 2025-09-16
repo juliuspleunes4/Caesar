@@ -1,6 +1,6 @@
-#include "caesar/caesar.h"
-#include "caesar/lexer.h"
-#include "caesar/parser.h"
+#include "include/caesar/caesar.h"
+#include "include/caesar/lexer.h"
+#include "include/caesar/parser.h"
 #include <iostream>
 
 int main() {

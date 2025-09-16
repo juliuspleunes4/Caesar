@@ -13,7 +13,8 @@ int main() {
 
     try {
         caesar::Lexer lexer(source);
-        caesar::Parser parser(lexer);
+        auto tokens = lexer.tokenize();
+        caesar::Parser parser(tokens);
         auto ast = parser.parse();
         
         std::cout << "Successfully parsed class definition!" << std::endl;

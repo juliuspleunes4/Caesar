@@ -299,6 +299,90 @@ make clean                   # Clean build files
 make doc                     # Generate documentation (requires Doxygen)
 ```
 
+## 🔧 Debug Tools
+
+The project includes a comprehensive set of debug tools for development and testing:
+
+### Debug Directory Structure
+
+```
+debug/
+├── src/                     # Debug source files
+│   ├── debug_basic_lexer.cpp       # Basic lexical analysis testing
+│   ├── debug_comprehensive.cpp     # Complete feature testing
+│   ├── debug_expressions.cpp       # Expression parsing testing
+│   ├── debug_functions.cpp         # Function definition testing
+│   ├── debug_if_statements.cpp     # Conditional logic testing
+│   ├── debug_lexer.cpp             # Advanced lexer testing
+│   ├── debug_parser.cpp            # Parser component testing
+│   └── debug_while_loops.cpp       # Loop structure testing
+├── bin/                     # Compiled debug executables (auto-generated)
+├── build.ps1               # PowerShell build script
+├── build.bat               # Batch build script (cross-platform)
+├── README.md               # Debug tools documentation
+└── .gitignore              # Version control configuration
+```
+
+### Building Debug Tools
+
+#### Automated Build (Recommended)
+
+**PowerShell (Windows):**
+```powershell
+cd debug
+.\build.ps1
+```
+
+**Command Prompt (Windows) or Cross-platform:**
+```bash
+cd debug
+build.bat
+```
+
+#### Manual Build
+
+```bash
+# Navigate to debug directory
+cd debug
+
+# Compile individual debug tools
+g++ -std=c++17 -I../include -I../src src/debug_lexer.cpp ../build/src/libcaesar_lib.a -o bin/debug_lexer
+
+# Or compile all at once (Linux/macOS)
+for file in src/*.cpp; do
+    name=$(basename "$file" .cpp)
+    g++ -std=c++17 -I../include -I../src "$file" ../build/src/libcaesar_lib.a -o "bin/$name"
+done
+```
+
+### Debug Tool Descriptions
+
+| Tool | Purpose | Features |
+|------|---------|----------|
+| `debug_basic_lexer` | Token stream validation | Basic tokenization testing |
+| `debug_comprehensive` | Full language testing | Classes, functions, expressions |
+| `debug_expressions` | Expression analysis | Arithmetic, logical, comparison |
+| `debug_functions` | Function parsing | Parameters, defaults, calls |
+| `debug_if_statements` | Conditional logic | If/else structures, nesting |
+| `debug_lexer` | Advanced tokenization | Complex token patterns |
+| `debug_parser` | Parser validation | AST generation, syntax trees |
+| `debug_while_loops` | Loop structures | While loops, nested patterns |
+
+### Using Debug Tools
+
+Each debug tool provides detailed output for development and troubleshooting:
+
+```bash
+# Run a specific debug tool
+./bin/debug_lexer
+
+# Example output includes:
+# - Token stream analysis
+# - AST structure visualization  
+# - Parsing step-by-step breakdown
+# - Error detection and reporting
+```
+
 ## 🚀 Usage
 
 ### Compiler Usage
