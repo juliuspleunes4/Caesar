@@ -585,7 +585,7 @@ copies or substantial portions of the Software.
 
 ## 👨‍💻 Author & Acknowledgments
 
-Built with ❤️ by **[J.J.G. Pleunes](https://github.com/juliuspleunes4)** - Creator and maintainer of Caesar Programming Language
+Built with ❤️ by **[Julius Pleunes](https://github.com/juliuspleunes4)** - Creator and maintainer of Caesar Programming Language
 
 ### Project Inspiration
 - **Python**: Syntax design and language philosophy
