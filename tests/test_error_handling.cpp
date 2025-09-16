@@ -67,7 +67,7 @@ bool testLexingFailure(const std::string& source, const std::string& testName) {
         // Check if we got any error tokens or empty result
         bool hasError = false;
         for (const auto& token : tokens) {
-            if (token.type == caesar::TokenType::ERROR || token.type == caesar::TokenType::UNKNOWN) {
+            if (token.type == caesar::TokenType::UNKNOWN) {
                 hasError = true;
                 break;
             }
