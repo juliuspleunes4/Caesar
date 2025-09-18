@@ -1,0 +1,18 @@
+# Custom language definitions for Caesar Programming Language
+# This file provides metadata for the Caesar language (.csr files)
+
+Caesar:
+  type: programming
+  color: "#38257d"
+  extensions:
+    - ".csr"
+  tm_scope: source.caesar
+  ace_mode: python
+  language_id: 366
+  aliases:
+    - caesar
+  interpreters:
+    - caesar
+  group: Caesar
+  searchable: true
+  search_term: caesar
