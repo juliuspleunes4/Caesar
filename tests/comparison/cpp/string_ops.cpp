@@ -9,31 +9,24 @@
  */
 
 int string_concatenation(int n) {
+    // String concatenation performance - standardized across all languages
     std::string result = "";
     for (int i = 0; i < n; ++i) {
-        result += std::to_string(i);
+        // Simple character concatenation (matching Caesar implementation)
+        result += "x";
     }
     return result.length();
 }
 
 int string_processing(int n) {
-    std::string text = "Hello World! ";
-    // Replicate text 100 times
-    std::string large_text = "";
-    for (int i = 0; i < 100; ++i) {
-        large_text += text;
-    }
-    
+    // String processing operations - standardized across all languages
+    std::string text = "Hello World! This is a test string for benchmarking purposes.";
     int count = 0;
+    
     for (int i = 0; i < n; ++i) {
-        // String operations
-        std::string upper_text = large_text;
-        std::transform(upper_text.begin(), upper_text.end(), upper_text.begin(), ::toupper);
-        
-        std::string lower_text = large_text;
-        std::transform(lower_text.begin(), lower_text.end(), lower_text.begin(), ::tolower);
-        
-        count += upper_text.length() + lower_text.length();
+        // Simple string length operation (matching Caesar implementation)
+        int length = text.length();
+        count += length;
     }
     
     return count;

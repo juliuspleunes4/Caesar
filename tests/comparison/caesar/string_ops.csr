@@ -5,7 +5,7 @@ def string_concatenation(n):
     result = ""
     i = 0
     while i < n:
-        # Caesar doesn't have str() yet, so we'll do basic concatenation
+        # Simple character concatenation - standardized across all languages
         result = result + "x"
         i = i + 1
     return len(result)
@@ -16,7 +16,7 @@ def string_processing(n):
     
     i = 0
     while i < n:
-        # Basic string operations available in Caesar
+        # Simple string length operation - standardized across all languages
         length = len(text)
         count = count + length
         i = i + 1

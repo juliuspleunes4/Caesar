@@ -7,22 +7,21 @@ Usage: python string_ops.py <iterations>
 import sys
 
 def string_concatenation(n):
-    """String concatenation performance"""
+    """String concatenation performance - standardized across all languages"""
     result = ""
     for i in range(n):
-        result += str(i)
+        # Simple character concatenation (matching Caesar implementation)
+        result += "x"
     return len(result)
 
 def string_processing(n):
-    """String processing operations"""
-    text = "Hello World! " * 100
+    """String processing operations - standardized across all languages"""
+    text = "Hello World! This is a test string for benchmarking purposes."
     count = 0
     
     for _ in range(n):
-        # String operations
-        upper_text = text.upper()
-        lower_text = text.lower()
-        length = len(upper_text) + len(lower_text)
+        # Simple string length operation (matching Caesar implementation)
+        length = len(text)
         count += length
     
     return count

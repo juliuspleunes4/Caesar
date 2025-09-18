@@ -23,11 +23,13 @@ def is_prime(n):
     return True
 
 def count_primes(limit):
-    """Count prime numbers up to limit"""
+    """Count prime numbers up to limit - standardized across all languages"""
     count = 0
-    for i in range(2, limit + 1):
+    i = 2
+    while i <= limit:
         if is_prime(i):
             count += 1
+        i += 1
     return count
 
 def main():

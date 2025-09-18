@@ -13,10 +13,12 @@ def factorial_recursive(n):
     return n * factorial_recursive(n - 1)
 
 def factorial_iterative(n):
-    """Iterative factorial implementation"""
+    """Iterative factorial implementation - standardized across all languages"""
     result = 1
-    for i in range(2, n + 1):
+    i = 2
+    while i <= n:
         result *= i
+        i += 1
     return result
 
 def main():
@@ -34,8 +36,8 @@ def main():
         print("Error: n must be non-negative")
         sys.exit(1)
     
-    # Use recursive for reasonable stack depth
-    if n <= 1000:
+    # Use recursive for reasonable stack depth - standardized across all languages
+    if n <= 20:
         result = factorial_recursive(n)
     else:
         result = factorial_iterative(n)

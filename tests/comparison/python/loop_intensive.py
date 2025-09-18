@@ -7,18 +7,24 @@ Usage: python loop_intensive.py <iterations>
 import sys
 
 def nested_loops(n):
-    """Nested loop computation"""
+    """Nested loop computation - standardized across all languages"""
     total = 0
-    for i in range(n):
-        for j in range(100):
+    i = 0
+    while i < n:
+        j = 0
+        while j < 100:
             total += i * j
+            j += 1
+        i += 1
     return total
 
 def simple_loop(n):
-    """Simple loop with arithmetic"""
+    """Simple loop with arithmetic - standardized across all languages"""
     total = 0
-    for i in range(n):
+    i = 0
+    while i < n:
         total += i * i
+        i += 1
     return total
 
 def main():

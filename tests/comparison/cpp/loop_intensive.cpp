@@ -7,19 +7,27 @@
  */
 
 long long nested_loops(int n) {
+    // Nested loop computation - standardized across all languages
     long long total = 0;
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < 100; ++j) {
+    int i = 0;
+    while (i < n) {
+        int j = 0;
+        while (j < 100) {
             total += i * j;
+            j++;
         }
+        i++;
     }
     return total;
 }
 
 long long simple_loop(int n) {
+    // Simple loop with arithmetic - standardized across all languages
     long long total = 0;
-    for (int i = 0; i < n; ++i) {
+    int i = 0;
+    while (i < n) {
         total += i * i;
+        i++;
     }
     return total;
 }

@@ -15,15 +15,18 @@ long long fibonacci_recursive(int n) {
 }
 
 long long fibonacci_iterative(int n) {
+    // Iterative fibonacci implementation - standardized across all languages
     if (n <= 1) {
         return n;
     }
     
     long long a = 0, b = 1;
-    for (int i = 2; i <= n; ++i) {
+    int i = 2;
+    while (i <= n) {
         long long temp = a + b;
         a = b;
         b = temp;
+        i++;
     }
     return b;
 }

@@ -14,13 +14,18 @@ def fibonacci_recursive(n):
     return fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2)
 
 def fibonacci_iterative(n):
-    """Iterative fibonacci implementation"""
+    """Iterative fibonacci implementation - standardized across all languages"""
     if n <= 1:
         return n
     
-    a, b = 0, 1
-    for _ in range(2, n + 1):
-        a, b = b, a + b
+    a = 0
+    b = 1
+    i = 2
+    while i <= n:
+        temp = a + b
+        a = b
+        b = temp
+        i += 1
     return b
 
 def main():

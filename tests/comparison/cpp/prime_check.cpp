@@ -7,6 +7,7 @@
  */
 
 bool is_prime(int n) {
+    // Check if a number is prime - standardized across all languages
     if (n < 2) {
         return false;
     }
@@ -17,20 +18,25 @@ bool is_prime(int n) {
         return false;
     }
     
-    for (int i = 3; i * i <= n; i += 2) {
+    int i = 3;
+    while (i * i <= n) {
         if (n % i == 0) {
             return false;
         }
+        i += 2;
     }
     return true;
 }
 
 int count_primes(int limit) {
+    // Count prime numbers up to limit - standardized across all languages
     int count = 0;
-    for (int i = 2; i <= limit; ++i) {
+    int i = 2;
+    while (i <= limit) {
         if (is_prime(i)) {
             count++;
         }
+        i++;
     }
     return count;
 }
