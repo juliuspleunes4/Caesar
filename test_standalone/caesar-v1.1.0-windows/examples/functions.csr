@@ -1,0 +1,40 @@
+# Function Examples in Caesar
+
+def add(a, b):
+    return a + b
+
+def multiply(x, y):
+    return x * y
+
+def factorial(n):
+    if n <= 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+def power(base, exponent):
+    result = 1
+    i = 0
+    while i < exponent:
+        result = result * base
+        i = i + 1
+    return result
+
+def main():
+    # Basic arithmetic
+    sum_result = add(10, 20)
+    product = multiply(6, 7)
+    
+    # Recursive function
+    fact_5 = factorial(5)
+    
+    # Iterative function
+    two_to_eighth = power(2, 8)
+    
+    print("10 + 20 =", sum_result)
+    print("6 * 7 =", product)
+    print("5! =", fact_5)
+    print("2^8 =", two_to_eighth)
+
+if __name__ == "__main__":
+    main()
