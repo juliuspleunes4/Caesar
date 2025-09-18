@@ -11,6 +11,14 @@ CMakeCache.txt linguist-generated=true
 CMakeFiles/* linguist-generated=true
 
 # =============================================================================
+# Scripts - Exclude utility scripts from language statistics
+# =============================================================================
+*.bat linguist-generated=true
+*.ps1 linguist-generated=true
+create_release.ps1 linguist-generated=true
+debug/build.bat linguist-generated=true
+
+# =============================================================================
 # Documentation Files - Don't count toward language statistics
 # =============================================================================
 *.md linguist-documentation=true
