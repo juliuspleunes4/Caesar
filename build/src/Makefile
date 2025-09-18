@@ -167,6 +167,30 @@ caesar_repl/fast:
 	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\caesar_repl.dir\build.make src/CMakeFiles/caesar_repl.dir/build
 .PHONY : caesar_repl/fast
 
+interpreter/interpreter.obj: interpreter/interpreter.cpp.obj
+.PHONY : interpreter/interpreter.obj
+
+# target to build an object file
+interpreter/interpreter.cpp.obj:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\caesar_lib.dir\build.make src/CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.obj
+.PHONY : interpreter/interpreter.cpp.obj
+
+interpreter/interpreter.i: interpreter/interpreter.cpp.i
+.PHONY : interpreter/interpreter.i
+
+# target to preprocess a source file
+interpreter/interpreter.cpp.i:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\caesar_lib.dir\build.make src/CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.i
+.PHONY : interpreter/interpreter.cpp.i
+
+interpreter/interpreter.s: interpreter/interpreter.cpp.s
+.PHONY : interpreter/interpreter.s
+
+# target to generate assembly for a file
+interpreter/interpreter.cpp.s:
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\caesar_lib.dir\build.make src/CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.s
+.PHONY : interpreter/interpreter.cpp.s
+
 lexer/lexer.obj: lexer/lexer.cpp.obj
 .PHONY : lexer/lexer.obj
 
@@ -323,6 +347,9 @@ help:
 	@echo ... caesar
 	@echo ... caesar_lib
 	@echo ... caesar_repl
+	@echo ... interpreter/interpreter.obj
+	@echo ... interpreter/interpreter.i
+	@echo ... interpreter/interpreter.s
 	@echo ... lexer/lexer.obj
 	@echo ... lexer/lexer.i
 	@echo ... lexer/lexer.s

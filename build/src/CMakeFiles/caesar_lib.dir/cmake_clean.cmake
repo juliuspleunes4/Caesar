@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.obj"
+  "CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.obj.d"
   "CMakeFiles/caesar_lib.dir/lexer/lexer.cpp.obj"
   "CMakeFiles/caesar_lib.dir/lexer/lexer.cpp.obj.d"
   "CMakeFiles/caesar_lib.dir/lexer/token.cpp.obj"

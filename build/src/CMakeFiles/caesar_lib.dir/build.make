@@ -131,12 +131,28 @@ src/CMakeFiles/caesar_lib.dir/parser/parser.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/caesar_lib.dir/parser/parser.cpp.s"
 	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build\src && C:\Users\Gebruiker\AppData\Local\Microsoft\WinGet\Packages\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Gebruiker\Desktop\projects\Caesar\src\parser\parser.cpp -o CMakeFiles\caesar_lib.dir\parser\parser.cpp.s
 
+src/CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.obj: src/CMakeFiles/caesar_lib.dir/flags.make
+src/CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.obj: src/CMakeFiles/caesar_lib.dir/includes_CXX.rsp
+src/CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.obj: C:/Users/Gebruiker/Desktop/projects/Caesar/src/interpreter/interpreter.cpp
+src/CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.obj: src/CMakeFiles/caesar_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object src/CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.obj"
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build\src && C:\Users\Gebruiker\AppData\Local\Microsoft\WinGet\Packages\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.obj -MF CMakeFiles\caesar_lib.dir\interpreter\interpreter.cpp.obj.d -o CMakeFiles\caesar_lib.dir\interpreter\interpreter.cpp.obj -c C:\Users\Gebruiker\Desktop\projects\Caesar\src\interpreter\interpreter.cpp
+
+src/CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.i"
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build\src && C:\Users\Gebruiker\AppData\Local\Microsoft\WinGet\Packages\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Gebruiker\Desktop\projects\Caesar\src\interpreter\interpreter.cpp > CMakeFiles\caesar_lib.dir\interpreter\interpreter.cpp.i
+
+src/CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.s"
+	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build\src && C:\Users\Gebruiker\AppData\Local\Microsoft\WinGet\Packages\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Gebruiker\Desktop\projects\Caesar\src\interpreter\interpreter.cpp -o CMakeFiles\caesar_lib.dir\interpreter\interpreter.cpp.s
+
 # Object files for target caesar_lib
 caesar_lib_OBJECTS = \
 "CMakeFiles/caesar_lib.dir/lexer/token.cpp.obj" \
 "CMakeFiles/caesar_lib.dir/lexer/lexer.cpp.obj" \
 "CMakeFiles/caesar_lib.dir/parser/ast.cpp.obj" \
-"CMakeFiles/caesar_lib.dir/parser/parser.cpp.obj"
+"CMakeFiles/caesar_lib.dir/parser/parser.cpp.obj" \
+"CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.obj"
 
 # External object files for target caesar_lib
 caesar_lib_EXTERNAL_OBJECTS =
@@ -145,9 +161,10 @@ src/libcaesar_lib.a: src/CMakeFiles/caesar_lib.dir/lexer/token.cpp.obj
 src/libcaesar_lib.a: src/CMakeFiles/caesar_lib.dir/lexer/lexer.cpp.obj
 src/libcaesar_lib.a: src/CMakeFiles/caesar_lib.dir/parser/ast.cpp.obj
 src/libcaesar_lib.a: src/CMakeFiles/caesar_lib.dir/parser/parser.cpp.obj
+src/libcaesar_lib.a: src/CMakeFiles/caesar_lib.dir/interpreter/interpreter.cpp.obj
 src/libcaesar_lib.a: src/CMakeFiles/caesar_lib.dir/build.make
 src/libcaesar_lib.a: src/CMakeFiles/caesar_lib.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX static library libcaesar_lib.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:\Users\Gebruiker\Desktop\projects\Caesar\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX static library libcaesar_lib.a"
 	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build\src && $(CMAKE_COMMAND) -P CMakeFiles\caesar_lib.dir\cmake_clean_target.cmake
 	cd /d C:\Users\Gebruiker\Desktop\projects\Caesar\build\src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\caesar_lib.dir\link.txt --verbose=$(VERBOSE)
 

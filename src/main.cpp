@@ -8,6 +8,7 @@
 #include "caesar/caesar.h"
 #include "caesar/lexer.h"
 #include "caesar/parser.h"
+#include "caesar/interpreter.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -18,6 +19,8 @@ void printUsage(const char* program_name) {
     std::cout << "  -h, --help     Show this help message\n";
     std::cout << "  -v, --version  Show version information\n";
     std::cout << "  -t, --tokens   Show tokenization output\n";
+    std::cout << "  -p, --parse    Show parsing output (AST)\n";
+    std::cout << "  -i, --interpret Execute the program using the interpreter\n";
     std::cout << "  -o <output>    Specify output file\n";
 }
 
@@ -33,6 +36,8 @@ int main(int argc, char* argv[]) {
     }
     
     bool show_tokens = false;
+    bool show_parse = false;
+    bool interpret = false;
     std::string input_file;
     std::string output_file;
     
@@ -48,6 +53,10 @@ int main(int argc, char* argv[]) {
             return 0;
         } else if (arg == "-t" || arg == "--tokens") {
             show_tokens = true;
+        } else if (arg == "-p" || arg == "--parse") {
+            show_parse = true;
+        } else if (arg == "-i" || arg == "--interpret") {
+            interpret = true;
         } else if (arg == "-o" && i + 1 < argc) {
             output_file = argv[++i];
         } else if (arg[0] != '-') {
@@ -94,12 +103,23 @@ int main(int argc, char* argv[]) {
         caesar::Parser parser(tokens);
         auto program = parser.parse();
         
-        std::cout << "Successfully parsed " << tokens.size() << " tokens from '" 
-                  << input_file << "'\n";
-        std::cout << "AST:\n" << program->toString() << "\n";
+        if (show_parse) {
+            std::cout << "AST:\n" << program->toString() << "\n";
+            return 0;
+        }
         
-        // TODO: Add IR generation and compilation stages
-        std::cout << "Note: IR generation and compilation not yet implemented.\n";
+        if (interpret) {
+            // Interpret the program
+            caesar::Interpreter interpreter;
+            interpreter.interpret(program.get());
+        } else {
+            std::cout << "Successfully parsed " << tokens.size() << " tokens from '" 
+                      << input_file << "'\n";
+            
+            // TODO: Add IR generation and compilation stages
+            std::cout << "Note: IR generation and compilation not yet implemented.\n";
+            std::cout << "Use -i/--interpret to execute the program.\n";
+        }
         
     } catch (const caesar::CaesarException& e) {
         std::cerr << "Error: " << e.what() << "\n";
