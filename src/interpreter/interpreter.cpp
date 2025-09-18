@@ -476,6 +476,140 @@ void Interpreter::initializeBuiltins() {
         // Return a special string that ForStatement can recognize
         return std::string("__range_" + std::to_string(start) + "_" + std::to_string(end) + "_" + std::to_string(step));
     };
+
+    builtins["len"] = [](const std::vector<Value>& args) -> Value {
+        if (args.size() != 1) {
+            throw RuntimeError("len() takes exactly one argument");
+        }
+        
+        if (std::holds_alternative<std::string>(args[0])) {
+            return static_cast<int64_t>(std::get<std::string>(args[0]).length());
+        }
+        
+        throw RuntimeError("object has no len()");
+    };
+
+    builtins["str"] = [](const std::vector<Value>& args) -> Value {
+        if (args.size() != 1) {
+            throw RuntimeError("str() takes exactly one argument");
+        }
+        
+        return std::visit([](const auto& v) -> std::string {
+            using T = std::decay_t<decltype(v)>;
+            if constexpr (std::is_same_v<T, std::nullptr_t>) {
+                return "None";
+            } else if constexpr (std::is_same_v<T, bool>) {
+                return v ? "True" : "False";
+            } else if constexpr (std::is_same_v<T, std::string>) {
+                return v;
+            } else if constexpr (std::is_same_v<T, int64_t>) {
+                return std::to_string(v);
+            } else if constexpr (std::is_same_v<T, double>) {
+                return std::to_string(v);
+            } else if constexpr (std::is_same_v<T, std::shared_ptr<CallableFunction>>) {
+                return "<function " + v->getDeclaration()->name + ">";
+            } else {
+                return "[object]";
+            }
+        }, args[0]);
+    };
+
+    builtins["int"] = [](const std::vector<Value>& args) -> Value {
+        if (args.size() != 1) {
+            throw RuntimeError("int() takes exactly one argument");
+        }
+        
+        if (std::holds_alternative<int64_t>(args[0])) {
+            return std::get<int64_t>(args[0]);
+        } else if (std::holds_alternative<double>(args[0])) {
+            return static_cast<int64_t>(std::get<double>(args[0]));
+        } else if (std::holds_alternative<std::string>(args[0])) {
+            std::string str_val = std::get<std::string>(args[0]);
+            
+            // Handle boolean string literals
+            if (str_val == "True") return static_cast<int64_t>(1);
+            if (str_val == "False") return static_cast<int64_t>(0);
+            
+            try {
+                return static_cast<int64_t>(std::stoll(str_val));
+            } catch (...) {
+                throw RuntimeError("invalid literal for int(): '" + str_val + "'");
+            }
+        } else if (std::holds_alternative<bool>(args[0])) {
+            return static_cast<int64_t>(std::get<bool>(args[0]) ? 1 : 0);
+        }
+        
+        throw RuntimeError("int() argument must be a string, a bytes-like object or a number");
+    };
+
+    builtins["float"] = [](const std::vector<Value>& args) -> Value {
+        if (args.size() != 1) {
+            throw RuntimeError("float() takes exactly one argument");
+        }
+        
+        if (std::holds_alternative<double>(args[0])) {
+            return std::get<double>(args[0]);
+        } else if (std::holds_alternative<int64_t>(args[0])) {
+            return static_cast<double>(std::get<int64_t>(args[0]));
+        } else if (std::holds_alternative<std::string>(args[0])) {
+            std::string str_val = std::get<std::string>(args[0]);
+            
+            // Handle boolean string literals
+            if (str_val == "True") return 1.0;
+            if (str_val == "False") return 0.0;
+            
+            try {
+                return std::stod(str_val);
+            } catch (...) {
+                throw RuntimeError("could not convert string to float: '" + str_val + "'");
+            }
+        } else if (std::holds_alternative<bool>(args[0])) {
+            return static_cast<double>(std::get<bool>(args[0]) ? 1.0 : 0.0);
+        }
+        
+        throw RuntimeError("float() argument must be a string or a number");
+    };
+
+    builtins["type"] = [](const std::vector<Value>& args) -> Value {
+        if (args.size() != 1) {
+            throw RuntimeError("type() takes exactly one argument");
+        }
+        
+        return std::visit([](const auto& v) -> std::string {
+            using T = std::decay_t<decltype(v)>;
+            if constexpr (std::is_same_v<T, std::nullptr_t>) {
+                return "<class 'NoneType'>";
+            } else if constexpr (std::is_same_v<T, bool>) {
+                return "<class 'bool'>";
+            } else if constexpr (std::is_same_v<T, std::string>) {
+                return "<class 'str'>";
+            } else if constexpr (std::is_same_v<T, int64_t>) {
+                return "<class 'int'>";
+            } else if constexpr (std::is_same_v<T, double>) {
+                return "<class 'float'>";
+            } else if constexpr (std::is_same_v<T, std::shared_ptr<CallableFunction>>) {
+                return "<class 'function'>";
+            } else {
+                return "<class 'object'>";
+            }
+        }, args[0]);
+    };
+
+    builtins["abs"] = [](const std::vector<Value>& args) -> Value {
+        if (args.size() != 1) {
+            throw RuntimeError("abs() takes exactly one argument");
+        }
+        
+        if (std::holds_alternative<int64_t>(args[0])) {
+            int64_t val = std::get<int64_t>(args[0]);
+            return val < 0 ? -val : val;
+        } else if (std::holds_alternative<double>(args[0])) {
+            double val = std::get<double>(args[0]);
+            return val < 0.0 ? -val : val;
+        }
+        
+        throw RuntimeError("bad operand type for abs()");
+    };
 }
 
 std::string Interpreter::valueToString(const Value& value) {
