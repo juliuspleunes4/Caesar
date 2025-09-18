@@ -1,0 +1,39 @@
+# String operations benchmark for Caesar
+# Usage: caesar string_ops.csr <iterations>
+
+def string_concatenation(n):
+    result = ""
+    i = 0
+    while i < n:
+        # Caesar doesn't have str() yet, so we'll do basic concatenation
+        result = result + "x"
+        i = i + 1
+    return len(result)
+
+def string_processing(n):
+    text = "Hello World! This is a test string for benchmarking purposes."
+    count = 0
+    
+    i = 0
+    while i < n:
+        # Basic string operations available in Caesar
+        length = len(text)
+        count = count + length
+        i = i + 1
+    
+    return count
+
+def main():
+    # For this benchmark, we'll use a fixed value
+    n = 1000  # Can be modified for different test scales
+    
+    # Choose test based on scale
+    if n <= 10000:
+        result = string_concatenation(n)
+    else:
+        result = string_processing(n / 100)
+    
+    # Don't print result to avoid affecting timing
+
+# Run main function directly
+main()

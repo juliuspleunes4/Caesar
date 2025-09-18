@@ -1,0 +1,30 @@
+# Factorial benchmark for Caesar
+# Usage: caesar factorial.csr <n>
+
+def factorial_recursive(n):
+    if n <= 1:
+        return 1
+    return n * factorial_recursive(n - 1)
+
+def factorial_iterative(n):
+    result = 1
+    i = 2
+    while i <= n:
+        result = result * i
+        i = i + 1
+    return result
+
+def main():
+    # For this benchmark, we'll use a fixed value
+    n = 15  # Can be modified for different test scales
+    
+    # Use recursive for reasonable stack depth
+    if n <= 20:
+        result = factorial_recursive(n)
+    else:
+        result = factorial_iterative(n)
+    
+    # Don't print result to avoid affecting timing
+
+# Run main function directly
+main()
