@@ -14,19 +14,33 @@
 #include <sstream>
 
 void printUsage(const char* program_name) {
-    std::cout << "Usage: " << program_name << " [options] <input_file>\n";
+    std::cout << "Caesar Programming Language v" << caesar::Version::STRING << "\n";
+    std::cout << "Usage: " << program_name << " [options] <input_file>\n\n";
     std::cout << "Options:\n";
-    std::cout << "  -h, --help     Show this help message\n";
-    std::cout << "  -v, --version  Show version information\n";
-    std::cout << "  -t, --tokens   Show tokenization output\n";
-    std::cout << "  -p, --parse    Show parsing output (AST)\n";
-    std::cout << "  -i, --interpret Execute the program using the interpreter\n";
-    std::cout << "  -o <output>    Specify output file\n";
+    std::cout << "  -h, --help       Show this help message\n";
+    std::cout << "  -v, --version    Show version information\n";
+    std::cout << "  -t, --tokens     Show tokenization output\n";
+    std::cout << "  -p, --parse      Show parsing output (AST)\n";
+    std::cout << "  -i, --interpret  Execute the program using the interpreter\n";
+    std::cout << "  -o <output>      Specify output file (for future use)\n\n";
+    std::cout << "Examples:\n";
+    std::cout << "  " << program_name << " --interpret program.csr    # Run program\n";
+    std::cout << "  " << program_name << " --parse program.csr        # Show AST\n";
+    std::cout << "  " << program_name << " --tokens program.csr       # Show tokens\n\n";
+    std::cout << "For interactive mode, use: caesar_repl\n";
 }
 
 void printVersion() {
     std::cout << "Caesar Programming Language v" << caesar::Version::STRING << "\n";
-    std::cout << "Built with LLVM backend for high-performance compilation\n";
+    std::cout << "A Python-like language with C-speed performance\n";
+    std::cout << "\nFeatures:\n";
+    std::cout << "  ✓ Functions with default parameters\n";
+    std::cout << "  ✓ Control flow (if/elif/else, while, for)\n";
+    std::cout << "  ✓ Loop control (break, continue)\n";
+    std::cout << "  ✓ Built-in functions (print, range, len, str, int, float, type, abs)\n";
+    std::cout << "  ✓ Recursive functions and complex expressions\n";
+    std::cout << "  ✓ Python-style indentation and syntax\n";
+    std::cout << "\nBuilt with modern C++17 for optimal performance\n";
 }
 
 int main(int argc, char* argv[]) {

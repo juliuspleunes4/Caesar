@@ -202,11 +202,20 @@ void Interpreter::visit(BinaryExpression& node) {
         }
     }
     
-    // Handle string concatenation
+    // Handle string concatenation and comparison
     if (std::holds_alternative<std::string>(left) && std::holds_alternative<std::string>(right)) {
-        if (node.operator_type == TokenType::PLUS) {
-            last_value = std::get<std::string>(left) + std::get<std::string>(right);
-            return;
+        std::string l = std::get<std::string>(left);
+        std::string r = std::get<std::string>(right);
+        
+        switch (node.operator_type) {
+            case TokenType::PLUS: last_value = l + r; return;
+            case TokenType::EQUAL: last_value = l == r; return;
+            case TokenType::NOT_EQUAL: last_value = l != r; return;
+            case TokenType::LESS: last_value = l < r; return;
+            case TokenType::LESS_EQUAL: last_value = l <= r; return;
+            case TokenType::GREATER: last_value = l > r; return;
+            case TokenType::GREATER_EQUAL: last_value = l >= r; return;
+            default: break;
         }
     }
     
@@ -610,6 +619,9 @@ void Interpreter::initializeBuiltins() {
         
         throw RuntimeError("bad operand type for abs()");
     };
+    
+    // Initialize special variables
+    environment->define("__name__", std::string("__main__"));
 }
 
 std::string Interpreter::valueToString(const Value& value) {
