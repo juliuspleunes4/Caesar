@@ -1,0 +1,163 @@
+# Caesar Programming Language - Comprehensive Example
+# Demonstrating all currently implemented features
+
+print("=== Caesar Programming Language Demo ===")
+print()
+
+# 1. Variables and basic arithmetic
+print("1. Variables and Arithmetic:")
+x = 10
+y = 20
+print("x =", x)
+print("y =", y)
+print("x + y =", x + y)
+print("x * y =", x * y)
+print("x / y =", float(x) / float(y))
+print()
+
+# 2. String operations
+print("2. String Operations:")
+name = "Caesar"
+greeting = "Hello, " + name + "!"
+print("greeting:", greeting)
+print("Length of greeting:", len(greeting))
+print()
+
+# 3. Functions with parameters and default values
+print("3. Function Definitions:")
+
+def factorial(n):
+    if n <= 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+def power(base, exponent=2):
+    result = 1
+    i = 0
+    while i < exponent:
+        result = result * base
+        i = i + 1
+    return result
+
+def greet(name, greeting="Hello"):
+    message = greeting + ", " + name + "!"
+    print(message)
+    return len(message)
+
+print("factorial(5):", factorial(5))
+print("power(2, 3):", power(2, 3))
+print("power(5) [default exponent]:", power(5))
+length = greet("World")
+print("Message length:", length)
+print()
+
+# 4. Control flow - conditionals
+print("4. Control Flow - Conditionals:")
+
+def classify_number(num):
+    if num > 0:
+        print(str(num) + " is positive")
+    elif num < 0:
+        print(str(num) + " is negative")
+    else:
+        print(str(num) + " is zero")
+
+classify_number(5)
+classify_number(-3)
+classify_number(0)
+print()
+
+# 5. Loops - while and for
+print("5. Loops:")
+
+print("Countdown using while:")
+count = 5
+while count > 0:
+    print("Count:", count)
+    count = count - 1
+print("Liftoff!")
+print()
+
+print("Numbers using for loop:")
+for i in range(1, 6):
+    print("Number:", i)
+print()
+
+print("Even numbers (step by 2):")
+for i in range(0, 10, 2):
+    print("Even:", i)
+print()
+
+# 6. Loop control (break/continue)
+print("6. Loop Control:")
+print("Finding first number divisible by 3:")
+for i in range(1, 10):
+    if i % 3 == 0:
+        print("Found:", i)
+        break
+    print("Checking:", i)
+print()
+
+print("Skip multiples of 3:")
+for i in range(1, 8):
+    if i % 3 == 0:
+        continue
+    print("Not divisible by 3:", i)
+print()
+
+# 7. Built-in functions
+print("7. Built-in Functions:")
+
+def test_builtin(num):
+    print("Number:", num)
+    print("  Type:", type(num))
+    print("  String:", str(num))
+    print("  Absolute value:", abs(num))
+    print("  As integer:", int(num))
+    print("  As float:", float(num))
+    print()
+
+test_builtin(42)
+test_builtin(-5)
+test_builtin(0)
+
+# 8. Advanced function example - Fibonacci with memoization (simple version)
+print("8. Advanced Example - Fibonacci:")
+
+def fibonacci(n):
+    if n <= 1:
+        return n
+    else:
+        return fibonacci(n-1) + fibonacci(n-2)
+
+print("Fibonacci sequence:")
+for i in range(10):
+    print("fib(" + str(i) + ") =", fibonacci(i))
+print()
+
+# 9. Nested function calls and complex expressions
+print("9. Complex Expressions:")
+
+def calculate_expression():
+    a = power(2, 3)  # 8
+    b = factorial(4)  # 24
+    c = abs(-10)     # 10
+    return a + b * c
+
+result = calculate_expression()
+print("Complex calculation result:", result)
+print("Expected: 8 + 24 * 10 = 248")
+print()
+
+print("=== Demo Complete ===")
+print("Caesar supports:")
+print("✓ Variables and arithmetic")
+print("✓ String operations")
+print("✓ Function definitions with default parameters")
+print("✓ Recursive functions")
+print("✓ Control flow (if/elif/else)")
+print("✓ Loops (while, for with range)")
+print("✓ Loop control (break, continue)")
+print("✓ Built-in functions (print, range, len, str, int, float, type, abs)")
+print("✓ Complex expressions and nested function calls")
