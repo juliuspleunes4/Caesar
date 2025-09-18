@@ -1,0 +1,19 @@
+x = 10
+print("Global x:", x)
+
+def test_scope():
+    x = 20
+    print("Function x:", x)
+    
+    if True:
+        x = 30
+        y = 40
+        print("If block x:", x)
+        print("If block y:", y)
+    
+    print("After if x:", x)
+    # y should still be accessible since Python doesn't have block scoping for if statements
+    print("After if y:", y)
+
+test_scope()
+print("Global x after function:", x)

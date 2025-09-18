@@ -299,7 +299,48 @@ make clean                   # Clean build files
 make doc                     # Generate documentation (requires Doxygen)
 ```
 
-## 🔧 Debug Tools
+## � Creating Release Packages
+
+Caesar includes an automated release packaging system that creates distributable ZIP files for end users.
+
+### Quick Release Process
+
+After making changes to the source code:
+
+```bash
+# 1. Build the updated version
+cmake --build build --parallel
+
+# 2. Generate release package
+powershell -ExecutionPolicy Bypass -File create_release.ps1
+```
+
+This creates a complete standalone distribution in `release/caesar-v1.1.0-windows.zip` that includes:
+- ✅ Pre-compiled executables (`caesar.exe`, `caesar_repl.exe`)
+- ✅ Example programs and documentation
+- ✅ Standalone installers (no Git/CMake required for users)
+- ✅ Complete user guide and quick start instructions
+
+### Release Options
+
+```bash
+# Create release with specific version
+powershell -ExecutionPolicy Bypass -File create_release.ps1 -Version "1.2.0"
+
+# Create release in custom directory
+powershell -ExecutionPolicy Bypass -File create_release.ps1 -OutputDir "dist"
+```
+
+### Distribution
+
+The generated ZIP file can be:
+- Uploaded to GitHub releases
+- Distributed to end users
+- Installed by users without any development tools
+
+**User installation is simple**: Download → Extract → Run `install.bat` → Start coding!
+
+## �🔧 Debug Tools
 
 The project includes a comprehensive set of debug tools for development and testing:
 

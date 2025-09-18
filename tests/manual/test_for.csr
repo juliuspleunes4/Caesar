@@ -1,0 +1,12 @@
+# Test for loop with range
+print("Counting to 5:")
+for i in range(5):
+    print("Number:", i)
+
+print("\nCounting from 2 to 8:")
+for j in range(2, 8):
+    print("Value:", j)
+
+print("\nCounting by 2s:")
+for k in range(0, 10, 2):
+    print("Even:", k)

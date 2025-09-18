@@ -1,0 +1,8 @@
+# Test for loop with break and continue  
+print("Testing break and continue in for loop:")
+for i in range(10):
+    if i == 3:
+        continue
+    if i == 7:
+        break
+    print("Loop value:", i)

@@ -1,0 +1,111 @@
+# Caesar Programming Language - Feature Demonstration
+# This program showcases all the major features of Caesar
+
+def fibonacci(n):
+    """Calculate the nth Fibonacci number"""
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+def factorial(n):
+    """Calculate n! (factorial)"""
+    if n <= 1:
+        return 1
+    return n * factorial(n-1)
+
+def test_math_operations():
+    """Test various mathematical operations"""
+    print("=== Math Operations ===")
+    a = 10
+    b = 3
+    
+    print("Addition:", a + b)
+    print("Subtraction:", a - b)
+    print("Multiplication:", a * b)
+    print("Division:", a / b)
+    print("Modulo:", a % b)
+    print("Absolute value:", abs(-42))
+    print()
+
+def test_string_operations():
+    """Test string operations and built-ins"""
+    print("=== String Operations ===")
+    name = "Caesar"
+    version = "1.1.0"
+    
+    print("Concatenation:", name + " v" + version)
+    print("String length:", len(name))
+    print("String conversion:", str(123))
+    print("Type checking:", type(name))
+    print()
+
+def test_conditionals():
+    """Test if/elif/else statements"""
+    print("=== Conditional Logic ===")
+    for num in range(3):
+        if num == 0:
+            print("Zero")
+        elif num == 1:
+            print("One")
+        else:
+            print("Many")
+    print()
+
+def test_loops():
+    """Test loop constructs"""
+    print("=== Loop Constructs ===")
+    
+    # While loop
+    print("While loop:")
+    i = 0
+    while i < 3:
+        print("  Count:", i)
+        i = i + 1
+    
+    # For loop with range
+    print("For loop:")
+    for j in range(3):
+        print("  Iteration:", j)
+    print()
+
+def test_recursion():
+    """Test recursive functions"""
+    print("=== Recursive Functions ===")
+    print("Fibonacci(8):", fibonacci(8))
+    print("Factorial(5):", factorial(5))
+    print()
+
+def test_built_ins():
+    """Test built-in functions"""
+    print("=== Built-in Functions ===")
+    numbers = range(5)
+    print("Range created successfully")
+    print("Length of 'hello':", len("hello"))
+    
+    # Type conversions
+    print("int('42'):", int('42'))
+    print("float('3.14'):", float('3.14'))
+    print("str(100):", str(100))
+    print()
+
+def main():
+    """Main program entry point"""
+    print("╔══════════════════════════════════════╗")
+    print("║     Caesar Programming Language      ║")
+    print("║         Feature Demonstration        ║")
+    print("║              v1.1.0                  ║")
+    print("╚══════════════════════════════════════╝")
+    print()
+    
+    test_math_operations()
+    test_string_operations()
+    test_conditionals()
+    test_loops()
+    test_recursion()
+    test_built_ins()
+    
+    print("🎉 All features working perfectly!")
+    print("Caesar is ready for production use!")
+
+if __name__ == "__main__":
+    main()

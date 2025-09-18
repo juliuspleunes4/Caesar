@@ -1,0 +1,33 @@
+print("Testing built-in functions:")
+
+# Test str()
+print("str(42):", str(42))
+print("str(3.14):", str(3.14))
+print("str(True):", str(True))
+
+# Test int()
+print("int('123'):", int('123'))
+print("int(3.9):", int(3.9))
+print("int(True):", int(True))
+print("int(False):", int(False))
+
+# Test float()
+print("float('3.14'):", float('3.14'))
+print("float(42):", float(42))
+print("float(True):", float(True))
+print("float(False):", float(False))
+
+# Test len()
+print("len('hello'):", len('hello'))
+print("len('Caesar'):", len('Caesar'))
+
+# Test type()
+print("type(42):", type(42))
+print("type(3.14):", type(3.14))
+print("type('hello'):", type('hello'))
+print("type(True):", type(True))
+
+# Test abs()
+print("abs(-5):", abs(-5))
+print("abs(3.14):", abs(3.14))
+print("abs(-2.7):", abs(-2.7))

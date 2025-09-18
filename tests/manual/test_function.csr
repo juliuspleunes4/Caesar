@@ -1,0 +1,12 @@
+def add(x, y):
+    return x + y
+
+def greet(name):
+    print("Hello,", name)
+    return "greeting complete"
+
+result = add(5, 3)
+print("5 + 3 =", result)
+
+msg = greet("Caesar")
+print("Message:", msg)

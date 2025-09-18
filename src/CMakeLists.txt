@@ -8,6 +8,9 @@ set(CAESAR_SOURCES
     parser/ast.cpp
     parser/parser.cpp
     
+    # Interpreter
+    interpreter/interpreter.cpp
+    
     # IR Generation (to be added)
     # ir/ir_generator.cpp
     
