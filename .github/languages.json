@@ -1,0 +1,14 @@
+{
+  "Caesar": {
+    "type": "programming",
+    "color": "#38257d",
+    "extensions": [".csr"],
+    "tm_scope": "source.caesar",
+    "ace_mode": "python",
+    "language_id": 366,
+    "aliases": ["caesar"],
+    "interpreters": ["caesar"],
+    "filenames": [],
+    "group": "Caesar"
+  }
+}

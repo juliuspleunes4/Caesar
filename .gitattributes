@@ -1,22 +1,58 @@
 # .gitattributes - Control GitHub language detection
-# This file helps GitHub correctly identify the primary language of the repository
+# This file helps GitHub correctly identify the languages in the repository
 
-# Exclude generated build files from language statistics
+# =============================================================================
+# Build and Generated Files - Exclude from language statistics
+# =============================================================================
 build/* linguist-generated=true
 *.make linguist-generated=true
 Makefile linguist-generated=true
+CMakeCache.txt linguist-generated=true
+CMakeFiles/* linguist-generated=true
 
-# Mark documentation files
+# =============================================================================
+# Documentation Files - Don't count toward language statistics
+# =============================================================================
 *.md linguist-documentation=true
 docs/* linguist-documentation=true
+README.md linguist-documentation=true
+LICENSE linguist-documentation=true
 
-# Mark example files  
+# =============================================================================
+# Example Files - Count as documentation to avoid skewing language statistics
+# =============================================================================
 examples/* linguist-documentation=true
 
-# Ensure C++ is detected as primary language
+# =============================================================================
+# Language Definitions - Ensure proper language detection
+# =============================================================================
+
+# C++ Files (Primary language - compiler implementation)
 *.cpp linguist-language=C++
+*.cc linguist-language=C++
+*.cxx linguist-language=C++
 *.h linguist-language=C++
 *.hpp linguist-language=C++
+*.hxx linguist-language=C++
 
-# Mark test files (but still count them as C++)
-tests/* linguist-language=C++
+# Python Files (Performance comparison benchmarks)
+*.py linguist-language=Python
+
+# Caesar Language Files (Language examples and test cases)
+*.csr linguist-language=Caesar linguist-detectable=true
+
+# =============================================================================
+# Test Files - Count toward language statistics with specific detection
+# =============================================================================
+tests/comparison/python/*.py linguist-language=Python
+tests/comparison/cpp/*.cpp linguist-language=C++
+tests/comparison/caesar/*.csr linguist-language=Caesar
+tests/manual/*.csr linguist-language=Caesar
+tests/*.cpp linguist-language=C++
+
+# =============================================================================
+# Special Files
+# =============================================================================
+CMakeLists.txt linguist-language=CMake
+*.cmake linguist-language=CMake
+Doxyfile.in linguist-documentation=true
