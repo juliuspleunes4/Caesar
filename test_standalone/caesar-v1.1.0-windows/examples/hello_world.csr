@@ -1,7 +1,0 @@
-# Hello, World! in Caesar
-def main():
-    print("Hello, World!")
-    print("Welcome to Caesar programming language!")
-
-if __name__ == "__main__":
-    main()

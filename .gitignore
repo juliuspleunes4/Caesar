@@ -1,6 +1,7 @@
 # Build directories
 build/
 lib/
+release/
 
 # Compiled object files
 *.o
@@ -43,6 +44,11 @@ Thumbs.db
 *.tmp
 *.temp
 /tmp/
+temp_*/
+
+# Test files in root (keep organized test files in tests/ and examples/)
+/test_*.csr
+/caesar_demo*.csr
 
 # Documentation generated files
 docs/html/
