@@ -10,6 +10,9 @@ param(
 
 # Configuration
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+if (-not $ScriptDir) {
+    $ScriptDir = Get-Location
+}
 $ProjectRoot = Split-Path -Parent (Split-Path -Parent $ScriptDir)
 $CaesarExe = "$ProjectRoot\build\src\caesar.exe"
 $PythonExe = "python"
@@ -99,9 +102,9 @@ function Invoke-Benchmark {
             $executable = $CaesarExe
             $scriptArgs = "--interpret $Script $Arguments"
         }
-        "cpp" { 
+        { $_ -eq "cpp" -or $_ -eq "c++" } { 
             $executable = $Script  # Pre-compiled executable
-            $scriptArgs = $Arguments
+            $scriptArgs = [string]$Arguments
         }
     }
     
@@ -109,20 +112,19 @@ function Invoke-Benchmark {
     
     for ($i = 1; $i -le $Iterations; $i++) {
         try {
-            $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
-            
-            if ($Language -eq "cpp") {
-                if ($Arguments) {
-                    & $executable $Arguments.Split(' ') 2>&1 | Out-Null
-                } else {
-                    & $executable 2>&1 | Out-Null
-                }
+            if ($Language.ToLower() -eq "cpp" -or $Language.ToLower() -eq "c++") {
+                # Simple execution for C++ with stopwatch timing
+                $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+                & $executable $Arguments 2>&1 | Out-Null
+                $stopwatch.Stop()
+                $times += $stopwatch.Elapsed.TotalMilliseconds
             } else {
+                # Use stopwatch for Python and Caesar
+                $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
                 & $executable $scriptArgs.Split(' ') 2>&1 | Out-Null
+                $stopwatch.Stop()
+                $times += $stopwatch.Elapsed.TotalMilliseconds
             }
-            
-            $stopwatch.Stop()
-            $times += $stopwatch.Elapsed.TotalMilliseconds
             
             if ($Verbose -and ($i % 100 -eq 0)) {
                 Write-Host "." -NoNewline
