@@ -407,7 +407,6 @@ debug/
 │   ├── debug_parser.cpp            # Parser component testing
 │   └── debug_while_loops.cpp       # Loop structure testing
 ├── bin/                     # Compiled debug executables (auto-generated)
-├── build.ps1               # PowerShell build script
 ├── build.bat               # Batch build script (cross-platform)
 ├── README.md               # Debug tools documentation
 └── .gitignore              # Version control configuration
@@ -415,15 +414,9 @@ debug/
 
 ### Building Debug Tools
 
-#### Automated Build (Recommended)
+#### Automated Build
 
-**PowerShell (Windows):**
-```powershell
-cd debug
-.\build.ps1
-```
-
-**Command Prompt (Windows) or Cross-platform:**
+**Windows Command Prompt or Cross-platform:**
 ```bash
 cd debug
 build.bat
