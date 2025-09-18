@@ -24,6 +24,21 @@ Caesar is not just a language specification—it's a **complete compiler impleme
 - **Distribution System**: Automated release packaging with standalone executables
 - **Professional Documentation**: Complete user and developer documentation suite
 
+## 📥 Download Caesar
+
+### Get Caesar Now
+**Latest Release**: Download the latest version of Caesar from our [GitHub Releases](https://github.com/juliuspleunes4/Caesar/releases) page for immediate access to pre-compiled executables and complete documentation.
+
+**Official Website**: Visit our official website *(coming soon)* for additional resources, tutorials, and community support.
+
+**What's Included**:
+- Pre-compiled Windows executables (caesar.exe, caesar_repl.exe)
+- Complete documentation and examples
+- Performance benchmark suite
+- Installation and setup guides
+
+**Quick Start**: Download → Extract → Run `caesar examples/hello_world.csr` → Start coding!
+
 ## ✨ Language Features
 
 ### Core Language Constructs
