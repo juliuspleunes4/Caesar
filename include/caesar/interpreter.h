@@ -32,7 +32,8 @@ using Value = std::variant<
     bool,                        // Boolean
     int64_t,                     // Integer
     double,                      // Float
-    std::string                  // String (and other objects as strings for now)
+    std::string,                 // String
+    std::shared_ptr<class CallableFunction>  // User-defined functions
 >;
 
 /**
@@ -89,7 +90,7 @@ public:
 };
 
 /**
- * @brief Callable function class (stub for now)
+ * @brief Callable function class
  */
 class CallableFunction {
 private:
@@ -101,6 +102,9 @@ public:
         : declaration(decl), closure(env) {}
 
     Value call(Interpreter& interpreter, const std::vector<Value>& arguments);
+    
+    std::shared_ptr<FunctionDefinition> getDeclaration() const { return declaration; }
+    std::shared_ptr<Environment> getClosure() const { return closure; }
 };
 
 /**
@@ -112,6 +116,8 @@ using BuiltinFunction = std::function<Value(const std::vector<Value>&)>;
  * @brief Main interpreter class
  */
 class Interpreter : public ASTVisitor {
+    friend class CallableFunction;  // Allow access to environment
+    
 private:
     std::shared_ptr<Environment> environment;
     std::unordered_map<std::string, BuiltinFunction> builtins;

@@ -50,11 +50,55 @@ bool Environment::exists(const std::string& name) {
            (parent && parent->exists(name));
 }
 
-// CallableFunction implementation (stub)
+// CallableFunction implementation
 Value CallableFunction::call(Interpreter& interpreter, const std::vector<Value>& arguments) {
-    // TODO: Implement function calls
-    (void)interpreter; (void)arguments;
-    return nullptr;
+    // Create new environment for function execution
+    auto function_env = std::make_shared<Environment>(closure);
+    
+    // Bind parameters to arguments
+    auto& params = declaration->parameters;
+    for (size_t i = 0; i < params.size(); i++) {
+        Value arg_value = nullptr;
+        
+        if (i < arguments.size()) {
+            // Use provided argument
+            arg_value = arguments[i];
+        } else if (params[i].default_value) {
+            // Use default value
+            auto previous_env = interpreter.getCurrentEnvironment();
+            // Set environment temporarily to evaluate default value in closure context
+            interpreter.environment = closure;
+            arg_value = interpreter.evaluate(params[i].default_value.get());
+            interpreter.environment = previous_env;
+        } else {
+            throw RuntimeError("Missing argument for parameter '" + params[i].name + "'");
+        }
+        
+        function_env->define(params[i].name, arg_value);
+    }
+    
+    // Check for too many arguments
+    if (arguments.size() > params.size()) {
+        throw RuntimeError("Too many arguments: expected " + std::to_string(params.size()) + 
+                          ", got " + std::to_string(arguments.size()));
+    }
+    
+    // Execute function body in new environment
+    auto previous_env = interpreter.getCurrentEnvironment();
+    interpreter.environment = function_env;
+    
+    try {
+        declaration->body->accept(interpreter);
+        // Function completed without explicit return
+        interpreter.environment = previous_env;
+        return nullptr;
+    } catch (const ReturnException& ret) {
+        interpreter.environment = previous_env;
+        return ret.value;
+    } catch (...) {
+        interpreter.environment = previous_env;
+        throw;
+    }
 }
 
 // Interpreter implementation
@@ -106,12 +150,77 @@ void Interpreter::visit(BinaryExpression& node) {
     Value left = evaluate(node.left.get());
     Value right = evaluate(node.right.get());
     
-    // Simple addition for now
+    // Handle arithmetic operations
     if (std::holds_alternative<int64_t>(left) && std::holds_alternative<int64_t>(right)) {
-        last_value = std::get<int64_t>(left) + std::get<int64_t>(right);
-    } else {
-        last_value = std::string("binary_result");
+        int64_t l = std::get<int64_t>(left);
+        int64_t r = std::get<int64_t>(right);
+        
+        switch (node.operator_type) {
+            case TokenType::PLUS: last_value = l + r; return;
+            case TokenType::MINUS: last_value = l - r; return;
+            case TokenType::MULTIPLY: last_value = l * r; return;
+            case TokenType::DIVIDE: 
+                if (r == 0) throw RuntimeError("Division by zero");
+                last_value = static_cast<double>(l) / static_cast<double>(r); 
+                return;
+            case TokenType::MODULO: 
+                if (r == 0) throw RuntimeError("Modulo by zero");
+                last_value = l % r; 
+                return;
+            case TokenType::EQUAL: last_value = l == r; return;
+            case TokenType::NOT_EQUAL: last_value = l != r; return;
+            case TokenType::LESS: last_value = l < r; return;
+            case TokenType::LESS_EQUAL: last_value = l <= r; return;
+            case TokenType::GREATER: last_value = l > r; return;
+            case TokenType::GREATER_EQUAL: last_value = l >= r; return;
+            default: break;
+        }
     }
+    
+    // Handle floating-point operations
+    if ((std::holds_alternative<double>(left) || std::holds_alternative<int64_t>(left)) &&
+        (std::holds_alternative<double>(right) || std::holds_alternative<int64_t>(right))) {
+        
+        double l = std::holds_alternative<double>(left) ? std::get<double>(left) : static_cast<double>(std::get<int64_t>(left));
+        double r = std::holds_alternative<double>(right) ? std::get<double>(right) : static_cast<double>(std::get<int64_t>(right));
+        
+        switch (node.operator_type) {
+            case TokenType::PLUS: last_value = l + r; return;
+            case TokenType::MINUS: last_value = l - r; return;
+            case TokenType::MULTIPLY: last_value = l * r; return;
+            case TokenType::DIVIDE: 
+                if (r == 0.0) throw RuntimeError("Division by zero");
+                last_value = l / r; 
+                return;
+            case TokenType::EQUAL: last_value = l == r; return;
+            case TokenType::NOT_EQUAL: last_value = l != r; return;
+            case TokenType::LESS: last_value = l < r; return;
+            case TokenType::LESS_EQUAL: last_value = l <= r; return;
+            case TokenType::GREATER: last_value = l > r; return;
+            case TokenType::GREATER_EQUAL: last_value = l >= r; return;
+            default: break;
+        }
+    }
+    
+    // Handle string concatenation
+    if (std::holds_alternative<std::string>(left) && std::holds_alternative<std::string>(right)) {
+        if (node.operator_type == TokenType::PLUS) {
+            last_value = std::get<std::string>(left) + std::get<std::string>(right);
+            return;
+        }
+    }
+    
+    // Handle logical operations
+    if (node.operator_type == TokenType::AND) {
+        last_value = isTruthy(left) && isTruthy(right);
+        return;
+    }
+    if (node.operator_type == TokenType::OR) {
+        last_value = isTruthy(left) || isTruthy(right);
+        return;
+    }
+    
+    throw RuntimeError("Unsupported binary operation");
 }
 
 void Interpreter::visit(UnaryExpression& node) {
@@ -132,6 +241,13 @@ void Interpreter::visit(CallExpression& node) {
         arguments.push_back(evaluate(arg.get()));
     }
     
+    // Check if it's a user-defined function
+    if (std::holds_alternative<std::shared_ptr<CallableFunction>>(callee)) {
+        auto function = std::get<std::shared_ptr<CallableFunction>>(callee);
+        last_value = function->call(*this, arguments);
+        return;
+    }
+    
     // Check if it's a builtin function
     if (std::holds_alternative<std::string>(callee)) {
         std::string builtin_name = std::get<std::string>(callee);
@@ -145,7 +261,7 @@ void Interpreter::visit(CallExpression& node) {
         }
     }
     
-    last_value = nullptr;
+    throw RuntimeError("Object is not callable");
 }
 
 void Interpreter::visit(MemberExpression& node) {
@@ -253,7 +369,14 @@ void Interpreter::visit(ForStatement& node) {
 }
 
 void Interpreter::visit(FunctionDefinition& node) {
-    environment->define(node.name, std::string("__function_" + node.name));
+    // Create a callable function object with current environment as closure
+    auto function = std::make_shared<CallableFunction>(
+        std::shared_ptr<FunctionDefinition>(&node, [](FunctionDefinition*){}), // Non-owning shared_ptr
+        environment
+    );
+    
+    // Define the function in current environment
+    environment->define(node.name, function);
 }
 
 void Interpreter::visit(ClassDefinition& node) {
@@ -308,6 +431,8 @@ void Interpreter::initializeBuiltins() {
                     return std::to_string(v);
                 } else if constexpr (std::is_same_v<T, double>) {
                     return std::to_string(v);
+                } else if constexpr (std::is_same_v<T, std::shared_ptr<CallableFunction>>) {
+                    return "<function " + v->getDeclaration()->name + ">";
                 } else {
                     return "[object]";
                 }
@@ -366,6 +491,8 @@ std::string Interpreter::valueToString(const Value& value) {
             return std::to_string(v);
         } else if constexpr (std::is_same_v<T, double>) {
             return std::to_string(v);
+        } else if constexpr (std::is_same_v<T, std::shared_ptr<CallableFunction>>) {
+            return "<function " + v->getDeclaration()->name + ">";
         } else {
             return "[object]";
         }
@@ -385,6 +512,8 @@ bool Interpreter::isTruthy(const Value& value) {
             return v != 0.0;
         } else if constexpr (std::is_same_v<T, std::string>) {
             return !v.empty();
+        } else if constexpr (std::is_same_v<T, std::shared_ptr<CallableFunction>>) {
+            return true; // Functions are always truthy
         } else {
             return true;
         }
