@@ -47,7 +47,9 @@ examples/* linguist-documentation=true
 *.py linguist-language=Python
 
 # Caesar Language Files (Language examples and test cases)
-*.csr linguist-language=Caesar linguist-detectable=true
+# Old: *.csr linguist-language=Caesar linguist-detectable=true
+# New: Implementation that allows detection without forcing language. Probably'd show as "Other" if not detected.
+*.csr linguist-detectable=true
 
 # =============================================================================
 # Test Files - Count toward language statistics with specific detection
