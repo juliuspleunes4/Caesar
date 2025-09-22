@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { spawn } = require('child_process');
 
 console.log('Installing Caesar Language...');
 
@@ -72,8 +73,68 @@ function copyExamples() {
     }
 }
 
+// Set up Windows file association automatically
+function setupFileAssociation() {
+    if (platform !== 'win32') {
+        console.log('⚠️  File association only available on Windows');
+        return Promise.resolve(true);
+    }
+    
+    return new Promise((resolve) => {
+        console.log('🔧 Setting up Windows file association...');
+        
+        const setupScript = path.join(packageDir, 'scripts', 'setup-file-association.ps1');
+        const binDir = path.join(packageDir, 'bin');
+        
+        if (!fs.existsSync(setupScript)) {
+            console.warn('⚠️  File association script not found, skipping');
+            resolve(true);
+            return;
+        }
+        
+        // Run PowerShell script to set up file association
+        const powershell = spawn('powershell.exe', [
+            '-ExecutionPolicy', 'Bypass',
+            '-File', setupScript,
+            '-CaesarPath', binDir
+        ], {
+            stdio: 'pipe'
+        });
+        
+        let output = '';
+        let errorOutput = '';
+        
+        powershell.stdout.on('data', (data) => {
+            output += data.toString();
+        });
+        
+        powershell.stderr.on('data', (data) => {
+            errorOutput += data.toString();
+        });
+        
+        powershell.on('close', (code) => {
+            if (code === 0) {
+                console.log('✅ File association configured successfully');
+                console.log('   .csr files will now show Caesar icon and context menu');
+            } else {
+                console.warn('⚠️  File association setup failed (this is optional)');
+                console.warn('   You can run it manually later with:');
+                console.warn(`   powershell -File "${setupScript}" -CaesarPath "${binDir}"`);
+            }
+            resolve(true); // Always resolve true since file association is optional
+        });
+        
+        powershell.on('error', (error) => {
+            console.warn('⚠️  Could not run file association setup:', error.message);
+            console.warn('   You can run it manually later with:');
+            console.warn(`   powershell -File "${setupScript}" -CaesarPath "${binDir}"`);
+            resolve(true); // Always resolve true since file association is optional
+        });
+    });
+}
+
 // Main installation
-function install() {
+async function install() {
     console.log(`Platform: ${platform} ${os.arch()}`);
     console.log(`Package directory: ${packageDir}`);
     
@@ -81,8 +142,20 @@ function install() {
     const examplesCopied = copyExamples();
     
     if (executableCopied) {
+        // Set up file association automatically
+        await setupFileAssociation();
+        
         console.log('');
         console.log('🎉 Caesar Language installed successfully!');
+        console.log('');
+        console.log('Features enabled:');
+        console.log('  ✅ Global caesar command');
+        console.log('  ✅ Example Caesar programs');
+        if (platform === 'win32') {
+            console.log('  ✅ Windows file association (.csr files)');
+            console.log('  ✅ Custom Caesar icon in File Explorer');
+            console.log('  ✅ Right-click context menu');
+        }
         console.log('');
         console.log('Usage:');
         console.log('  caesar --help              Show help');
@@ -92,6 +165,10 @@ function install() {
         console.log('');
         console.log('Try it out:');
         console.log('  caesar --interpret examples/hello_world.csr');
+        if (platform === 'win32') {
+            console.log('  echo \'print "Hello!"\' > test.csr');
+            console.log('  # Then double-click test.csr in File Explorer!');
+        }
     } else {
         console.log('');
         console.log('⚠️  Installation completed with warnings.');

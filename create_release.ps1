@@ -2,8 +2,8 @@
 # Creates a distributable ZIP package for end users
 
 param(
-    [Parameter(HelpMessage="Version number (e.g., 1.3.0)")]
-    [string]$Version = "1.3.0",
+    [Parameter(HelpMessage="Version number (e.g., 1.3.2)")]
+    [string]$Version = "1.3.2",
     
     [Parameter(HelpMessage="Output directory for the release package")]
     [string]$OutputDir = "release"
@@ -96,6 +96,33 @@ if (Test-Path "caesar-language-server\lib") {
     Write-Host "  LSP features: autocomplete, error checking, go-to-definition" -ForegroundColor Cyan
 } else {
     Write-Host "WARNING: Language server not compiled. Run 'npm run compile' in caesar-language-server/" -ForegroundColor Yellow
+}
+
+# Copy File Association Scripts
+Write-Host "Including file association scripts..." -ForegroundColor Yellow
+$ScriptsDir = Join-Path $ReleaseDir "scripts"
+if (Test-Path "scripts") {
+    New-Item -ItemType Directory -Path $ScriptsDir -Force | Out-Null
+    Copy-Item -Path "scripts\setup-file-association.ps1" -Destination $ScriptsDir -Force -ErrorAction SilentlyContinue
+    Copy-Item -Path "scripts\install.js" -Destination $ScriptsDir -Force -ErrorAction SilentlyContinue
+    Copy-Item -Path "scripts\test.js" -Destination $ScriptsDir -Force -ErrorAction SilentlyContinue
+    Write-Host "Added file association and utility scripts" -ForegroundColor Green
+    Write-Host "  Features: Windows file association, registry integration" -ForegroundColor Cyan
+} else {
+    Write-Host "WARNING: Scripts directory not found" -ForegroundColor Yellow
+}
+
+# Copy Assets (Icons)
+Write-Host "Including Caesar assets..." -ForegroundColor Yellow
+$AssetsDir = Join-Path $ReleaseDir "assets"
+if (Test-Path "assets") {
+    New-Item -ItemType Directory -Path $AssetsDir -Force | Out-Null
+    Copy-Item -Path "assets\caesar-icon.ico" -Destination $AssetsDir -Force -ErrorAction SilentlyContinue
+    Copy-Item -Path "assets\*.png" -Destination $AssetsDir -Force -ErrorAction SilentlyContinue
+    Write-Host "Added Caesar icons and assets" -ForegroundColor Green
+    Write-Host "  Features: Custom .csr file icons in Windows Explorer" -ForegroundColor Cyan
+} else {
+    Write-Host "WARNING: Assets directory not found" -ForegroundColor Yellow
 }
 
 # Copy documentation
