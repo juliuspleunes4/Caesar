@@ -1,0 +1,30 @@
+# Caesar Language Server Test File
+
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+# Test error detection
+if x = 5:  # Should detect assignment instead of equality
+    print("This should show a warning"
+
+# Test unclosed string
+message = "Hello Caesar World
+
+# Test undefined variable
+undefined_var++  # Should warn about undefined variable
+
+# Test autocomplete
+print(  # When typing here, should show autocomplete
+len(
+range(
+str(
+int(
+
+# Test built-in functions
+result = fibonacci(10)
+length = len("test string")
+numbers = range(1, 10)
+text = str(42)
+value = int("123")
