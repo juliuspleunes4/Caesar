@@ -3,10 +3,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.activate = activate;
 exports.deactivate = deactivate;
 const path = require("path");
+const vscode = require("vscode");
 const vscode_1 = require("vscode");
 const node_1 = require("vscode-languageclient/node");
 let client;
 function activate(context) {
+    // Register the run command
+    const runCommand = vscode.commands.registerCommand('caesar.runFile', () => {
+        const activeEditor = vscode.window.activeTextEditor;
+        if (activeEditor && activeEditor.document.languageId === 'caesar') {
+            const filePath = activeEditor.document.uri.fsPath;
+            // Save the file first if it has unsaved changes
+            if (activeEditor.document.isDirty) {
+                activeEditor.document.save();
+            }
+            // Create a terminal and run Caesar
+            const terminal = vscode.window.createTerminal('Caesar');
+            terminal.show();
+            terminal.sendText(`caesar "${filePath}"`);
+        }
+        else {
+            vscode.window.showErrorMessage('No Caesar file is currently active');
+        }
+    });
+    context.subscriptions.push(runCommand);
     // Path to the language server
     const serverModule = context.asAbsolutePath(path.join('..', 'caesar-language-server', 'lib', 'server.js'));
     // Debug options for the server

@@ -4,6 +4,39 @@ All notable changes to the Caesar Programming Language project will be documente
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.4] - 2025-09-22
+
+### 🚀 Enhanced User Experience: Python-like Ease of Use
+
+This release achieves **Python-like ease of use** for Caesar, making it as simple to run Caesar files as Python files, with enhanced VS Code integration.
+
+### ✨ Added
+
+#### **Python-like CLI Experience**
+- **Auto-Interpret Functionality**: `caesar file.csr` now automatically runs without needing `-i` flag
+- **Intelligent File Detection**: CLI wrapper automatically detects `.csr` files and adds interpretation flag
+- **Seamless Execution**: Caesar files now run as easily as Python files (`caesar hello.csr` ≈ `python hello.py`)
+- **Backward Compatibility**: All existing flags and options remain fully functional
+
+#### **Enhanced VS Code Integration**
+- **Run Commands**: Added "Run Caesar File" command accessible via Command Palette
+- **Play Button Integration**: Click the ▶️ play button in editor to run current Caesar file
+- **F5 Key Binding**: Press F5 to instantly run the current Caesar file
+- **Context Menu**: Right-click in editor for "Run Caesar File" option
+- **Professional IDE Experience**: Seamless execution directly from VS Code interface
+
+#### **Improved Developer Experience**
+- **VS Code Extension v0.0.3**: Enhanced with complete run functionality
+- **User-Friendly Execution**: No need to remember flags or open terminals
+- **Instant Feedback**: Running indicator with 🚀 emoji for clear execution status
+- **Cross-Platform Consistency**: Identical experience across Windows, macOS, and Linux
+
+### 📊 **Impact**
+- **✅ Python-like Simplicity**: `caesar file.csr` works exactly like `python file.py`
+- **✅ Professional IDE Integration**: Complete VS Code run functionality with F5 and play button
+- **✅ Zero Learning Curve**: New users can immediately run Caesar files without documentation
+- **✅ Enhanced Productivity**: Developers can focus on coding rather than remembering commands
+
 ## [1.3.3] - 2025-09-22
 
 ### 🔧 Critical Fix: Working Executables for NPM Package
@@ -53,7 +86,7 @@ This release transforms Caesar from a high-performance interpreter into a **comp
 
 #### **NPM Package Distribution**
 - **Global Installation System**
-  - Published as `caesar-lang@1.3.3` on NPM registry
+  - Published as `caesar-lang@1.3.4` on NPM registry
   - Cross-platform CLI wrapper with Node.js integration
   - Global `caesar` and `caesar-repl` commands
   - Automatic PATH configuration and environment setup
@@ -142,7 +175,7 @@ This release transforms Caesar from a high-performance interpreter into a **comp
 ### 📊 Professional Achievements
 
 #### **Marketplace Presence**
-- **📦 NPM Package**: `caesar-lang@1.3.3` published with 8.7MB distribution
+- **📦 NPM Package**: `caesar-lang@1.3.4` published with 8.7MB distribution
 - **🎨 VS Code Extension**: Official marketplace extension with LSP integration
 - **🌍 Universal Editor Support**: LSP server enables Caesar support in all major editors
 - **💼 Enterprise Ready**: Professional installation and distribution systems

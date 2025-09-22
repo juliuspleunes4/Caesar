@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as vscode from 'vscode';
 import { workspace, ExtensionContext } from 'vscode';
 import {
     LanguageClient,
@@ -10,6 +11,28 @@ import {
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
+    // Register the run command
+    const runCommand = vscode.commands.registerCommand('caesar.runFile', () => {
+        const activeEditor = vscode.window.activeTextEditor;
+        if (activeEditor && activeEditor.document.languageId === 'caesar') {
+            const filePath = activeEditor.document.uri.fsPath;
+            
+            // Save the file first if it has unsaved changes
+            if (activeEditor.document.isDirty) {
+                activeEditor.document.save();
+            }
+            
+            // Create a terminal and run Caesar
+            const terminal = vscode.window.createTerminal('Caesar');
+            terminal.show();
+            terminal.sendText(`caesar "${filePath}"`);
+        } else {
+            vscode.window.showErrorMessage('No Caesar file is currently active');
+        }
+    });
+    
+    context.subscriptions.push(runCommand);
+    
     // Path to the language server
     const serverModule = context.asAbsolutePath(
         path.join('..', 'caesar-language-server', 'lib', 'server.js')

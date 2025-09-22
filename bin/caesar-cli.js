@@ -39,11 +39,24 @@ function getCaesarExecutable() {
 function main() {
     try {
         const caesarPath = getCaesarExecutable();
-        const args = process.argv.slice(2);
+        let args = process.argv.slice(2);
         
         // Special handling for common commands
         if (args.length === 0) {
             args.push('--help');
+        }
+        
+        // Auto-interpret .csr files (make it like Python!)
+        // If user provides a .csr file without flags, automatically interpret it
+        if (args.length === 1 && args[0].endsWith('.csr') && !args[0].startsWith('-')) {
+            console.log(`🚀 Running Caesar file: ${args[0]}`);
+            args = ['-i', args[0]];
+        } else if (args.length > 1 && args.some(arg => arg.endsWith('.csr')) && !args.some(arg => arg.startsWith('-'))) {
+            // Multiple files without flags - add interpret flag
+            const fileIndex = args.findIndex(arg => arg.endsWith('.csr'));
+            const fileName = args[fileIndex];
+            console.log(`🚀 Running Caesar file: ${fileName}`);
+            args = ['-i', fileName];
         }
         
         // Spawn Caesar process
