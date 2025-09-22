@@ -5,6 +5,7 @@
 ![Coverage](https://img.shields.io/badge/coverage-100%25-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Version](https://img.shields.io/badge/version-1.2.1-%2338257d?style=flat&labelColor=38257d&color=38257d)
+[![VS Code Extension](https://img.shields.io/visual-studio-marketplace/v/juliuspleunes4.caesar-language-support?label=VS%20Code%20Extension&logo=visual-studio-code&logoColor=white&color=007ACC)](https://marketplace.visualstudio.com/items?itemName=juliuspleunes4.caesar-language-support)
 
 <p align="center">
     <img src="assets/caesar_logo_v2.png" alt="Caesar Logo" width="125" align="left">
@@ -23,6 +24,7 @@ Caesar is not just a language specification—it's a **complete compiler impleme
 - **Testing Framework**: Comprehensive test suite with 100% pass rate
 - **Performance Benchmarks**: Comprehensive comparison suite demonstrating superiority over Python and competitiveness with C++
 - **Distribution System**: Automated release packaging with standalone executables
+- **VS Code Integration**: [Official extension](https://marketplace.visualstudio.com/items?itemName=juliuspleunes4.caesar-language-support) with syntax highlighting and development tools
 - **Professional Documentation**: Complete user and developer documentation suite
 
 ## 📥 Download Caesar
@@ -34,11 +36,33 @@ Caesar is not just a language specification—it's a **complete compiler impleme
 
 **What's Included**:
 - Pre-compiled Windows executables (caesar.exe, caesar_repl.exe)
+- **Automatic VS Code extension installation** (if VS Code is detected)
 - Complete documentation and examples
 - Performance benchmark suite
 - Installation and setup guides
 
 **Quick Start**: Download → Extract → Run `caesar examples/hello_world.csr` → Start coding!
+
+## 🎨 VS Code Integration
+
+**Professional Editor Support**: Caesar has official VS Code extension support available on the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=juliuspleunes4.caesar-language-support)!
+
+### Install VS Code Extension
+```bash
+# Install directly from VS Code marketplace
+code --install-extension juliuspleunes4.caesar-language-support
+
+# Or search "Caesar" in VS Code Extensions (Ctrl+Shift+X)
+```
+
+### ✨ **Extension Features** (Some are still in progress)
+- **🎨 Syntax Highlighting**: Beautiful syntax highlighting for `.csr` files
+- **📝 Code Snippets**: Smart autocomplete for Caesar language constructs  
+- **🌙 Caesar Dark Theme**: Optimized dark theme designed for Caesar development
+- **🏷️ Language Recognition**: Full integration with VS Code's language ecosystem
+- **📁 File Icons**: Custom icons for Caesar source files
+
+**Transform your development experience** - Caesar files now look and feel like first-class citizens in VS Code!
 
 ## ✨ Language Features
 
@@ -826,4 +850,5 @@ Built with ❤️ by **[Julius Pleunes](https://github.com/juliuspleunes4)** - C
 ---
 
 **Caesar Programming Language** - Building the future of performant, readable code. 🏛️
+
 
