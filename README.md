@@ -993,7 +993,7 @@ copies or substantial portions of the Software.
 
 ## 👨‍💻 Author & Acknowledgments
 
-Built with ❤️ by **[Julius Pleunes](https://github.com/juliuspleunes4)** - Creator and maintainer of Caesar Programming Language
+Built with ❤️ by **[Julius Pleunes](https://github.com/juliuspleunes4)** - Creator and maintainer of Caesar
 
 ### Project Inspiration
 - **Python**: Syntax design and language philosophy
@@ -1003,13 +1003,12 @@ Built with ❤️ by **[Julius Pleunes](https://github.com/juliuspleunes4)** - C
 
 ### Technical Acknowledgments
 - **CMake Community**: Build system and cross-platform support
-- **Google Test**: Testing framework inspiration
 - **Doxygen**: Documentation generation tools
 - **Open Source Community**: Continuous learning and collaboration
 
 ---
 
-**Caesar Programming Language** - Building the future of performant, readable code. 🏛️
+<p align="center"><strong>Caesar Programming Language</strong> - Building the future of performant, readable code. 🏛️</p>
 
 <p align="center">
     <img src="assets/caesar_banner.png" alt="Caesar Banner" width="250">
