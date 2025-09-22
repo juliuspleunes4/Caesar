@@ -193,6 +193,64 @@ function setupFileAssociation() {
     });
 }
 
+// Ensure NPM global bin directory is in PATH (critical for Caesar command)
+function ensureNpmInPath() {
+    if (platform !== 'win32') {
+        console.log('ℹ️  PATH configuration is platform-specific, skipping on non-Windows');
+        return Promise.resolve(true);
+    }
+    
+    return new Promise((resolve) => {
+        console.log('🛤️  Configuring PATH for global caesar command...');
+        
+        try {
+            // Try to get NPM prefix using PowerShell (more reliable)
+            const npmPrefixCommand = 'powershell -Command "npm config get prefix 2>$null"';
+            const npmPrefix = require('child_process').execSync(npmPrefixCommand, { 
+                encoding: 'utf8',
+                timeout: 10000
+            }).trim();
+            
+            if (!npmPrefix || npmPrefix.includes('Error')) {
+                throw new Error('Could not get NPM prefix');
+            }
+            
+            const npmBinPath = npmPrefix;
+            
+            // Check current user PATH
+            const systemUserPath = require('child_process').execSync(
+                'powershell -Command "[Environment]::GetEnvironmentVariable(\'PATH\', \'User\')"',
+                { encoding: 'utf8' }
+            ).trim();
+            
+            if (systemUserPath.includes(npmBinPath)) {
+                console.log('✅ NPM global bin directory already in PATH');
+                console.log(`   caesar command should be available globally`);
+            } else {
+                // Add to user PATH
+                const newPath = systemUserPath ? `${systemUserPath};${npmBinPath}` : npmBinPath;
+                require('child_process').execSync(
+                    `powershell -Command "[Environment]::SetEnvironmentVariable('PATH', '${newPath}', 'User')"`,
+                    { encoding: 'utf8' }
+                );
+                
+                console.log('✅ Added NPM global bin directory to User PATH');
+                console.log(`   NPM bin path: ${npmBinPath}`);
+                console.log('   🔄 Restart your terminal to use "caesar" command globally');
+            }
+            
+            resolve(true);
+        } catch (error) {
+            console.warn('⚠️  Could not configure PATH automatically:', error.message);
+            console.log('   If "caesar" command not found after installation:');
+            console.log('   1. Run: npm config get prefix');
+            console.log('   2. Add that path to your system PATH environment variable');
+            console.log('   3. Restart your terminal');
+            resolve(true);
+        }
+    });
+}
+
 // Main installation
 async function install() {
     console.log(`Platform: ${platform} ${os.arch()}`);
@@ -202,8 +260,9 @@ async function install() {
     const examplesCopied = copyExamples();
     
     if (executableCopied) {
-        // Set up file association automatically
+        // Set up file association and PATH configuration
         await setupFileAssociation();
+        await ensureNpmInPath();
         
         console.log('');
         console.log('🎉 Caesar Language installed successfully!');
@@ -212,6 +271,7 @@ async function install() {
         console.log('  ✅ Global caesar command');
         console.log('  ✅ Example Caesar programs');
         console.log('  ✅ Standalone execution (MinGW DLLs included)');
+        console.log('  ✅ Automatic PATH configuration');
         if (platform === 'win32') {
             console.log('  ✅ Windows file association (.csr files)');
             console.log('  ✅ Custom Caesar icon in File Explorer');
@@ -230,6 +290,8 @@ async function install() {
             console.log('  echo \'print "Hello!"\' > test.csr');
             console.log('  # Then double-click test.csr in File Explorer!');
         }
+        console.log('');
+        console.log('💡 If "caesar" command not found, restart your terminal');
     } else {
         console.log('');
         console.log('⚠️  Installation completed with warnings.');

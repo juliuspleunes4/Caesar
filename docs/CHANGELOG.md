@@ -4,6 +4,46 @@ All notable changes to the Caesar Programming Language project will be documente
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.6] - 2025-09-22
+
+### 🛤️ Enhancement: Automatic PATH Configuration
+
+This patch release resolves the final barrier to Python-like Caesar usage by automatically configuring Windows PATH during NPM installation.
+
+### 🚀 Added
+
+#### **Automatic PATH Setup**
+- **Smart PATH Detection**: Installation script automatically detects NPM global bin directory
+- **User PATH Configuration**: Safely modifies User environment PATH (not System) for immediate accessibility
+- **Robust NPM Integration**: Uses PowerShell for reliable NPM prefix detection across different Windows configurations
+- **Graceful Fallback**: Provides clear manual instructions if automatic setup fails
+
+#### **Enhanced Installation Experience**
+- **Python-like Usage**: `caesar file.csr` works immediately after `npm install -g caesar-lang` (with terminal restart)
+- **Zero Manual Setup**: Eliminates need for users to manually configure Windows PATH
+- **Professional Distribution**: Complete out-of-the-box experience for all skill levels
+- **Cross-platform Awareness**: PATH configuration only runs on Windows where needed
+
+### 🛠️ Improved
+
+#### **Installation Script Enhancements**
+- **Enhanced Error Handling**: Better error messages and recovery options for PATH configuration
+- **User Guidance**: Clear instructions for both automatic and manual setup scenarios
+- **Installation Verification**: Enhanced feedback showing successful PATH configuration
+
+### 📊 **Impact**
+- **✅ Eliminates "caesar command not found" Issues**: No more manual PATH configuration required
+- **✅ Python-like Developer Experience**: `caesar file.csr` works like `python file.py`
+- **✅ Wider Accessibility**: Makes Caesar usable by developers unfamiliar with Windows PATH setup
+- **✅ Professional Ready**: Complete automated setup suitable for enterprise and educational environments
+- **✅ Maintains Backward Compatibility**: Existing installations continue to work without changes
+
+### 🔧 Technical Details
+- Enhanced `scripts/install.js` with `ensureNpmInPath()` function
+- PowerShell-based NPM prefix detection for cross-environment reliability
+- User PATH modification for safe, non-administrative setup
+- Automatic detection of existing PATH configuration to prevent duplicates
+
 ## [1.3.5] - 2025-09-22
 
 ### 🔧 Critical Fix: Standalone Executable Distribution
