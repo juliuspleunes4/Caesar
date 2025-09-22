@@ -80,6 +80,24 @@ if ($VSCodeExtensionFiles.Count -gt 0) {
     $ExtensionFileName = "caesar-language-support-0.0.1.vsix"  # Fallback for installer generation
 }
 
+# Copy Language Server
+Write-Host "Including Caesar Language Server..." -ForegroundColor Yellow
+$LSPDir = Join-Path $ReleaseDir "caesar-language-server"
+if (Test-Path "caesar-language-server\lib") {
+    # Create language server directory in release
+    New-Item -ItemType Directory -Path $LSPDir -Force | Out-Null
+    
+    # Copy compiled language server
+    Copy-Item -Path "caesar-language-server\lib" -Destination $LSPDir -Recurse -Force
+    Copy-Item -Path "caesar-language-server\package.json" -Destination $LSPDir -Force
+    Copy-Item -Path "caesar-language-server\node_modules" -Destination $LSPDir -Recurse -Force -ErrorAction SilentlyContinue
+    
+    Write-Host "Added Caesar Language Server with LSP capabilities" -ForegroundColor Green
+    Write-Host "  LSP features: autocomplete, error checking, go-to-definition" -ForegroundColor Cyan
+} else {
+    Write-Host "WARNING: Language server not compiled. Run 'npm run compile' in caesar-language-server/" -ForegroundColor Yellow
+}
+
 # Copy documentation
 Write-Host "Copying documentation..." -ForegroundColor Yellow
 Copy-Item -Path "USER_GUIDE.md" -Destination $ReleaseDir -ErrorAction SilentlyContinue
