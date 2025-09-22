@@ -54,3 +54,5 @@ temp_*/
 docs/html/
 docs/latex/
 docs/xml/
+
+node_modules/

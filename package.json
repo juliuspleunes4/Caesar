@@ -1,0 +1,57 @@
+{
+  "name": "caesar-lang",
+  "version": "1.1.0",
+  "description": "Caesar Programming Language - High-performance interpreted language with modern syntax",
+  "main": "lib/index.js",
+  "bin": {
+    "caesar": "./bin/caesar-cli.js"
+  },
+  "scripts": {
+    "install": "node scripts/install.js",
+    "uninstall": "node scripts/uninstall.js",
+    "test": "node scripts/test.js",
+    "build": "node scripts/build.js"
+  },
+  "keywords": [
+    "caesar",
+    "programming-language",
+    "interpreter",
+    "high-performance",
+    "language",
+    "compiler",
+    "scripting"
+  ],
+  "author": {
+    "name": "Julius Pleunes",
+    "email": "jjgpleunes@gmail.com",
+    "url": "https://github.com/juliuspleunes4"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juliuspleunes4/Caesar.git"
+  },
+  "homepage": "https://github.com/juliuspleunes4/Caesar",
+  "bugs": {
+    "url": "https://github.com/juliuspleunes4/Caesar/issues"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "os": ["win32", "darwin", "linux"],
+  "files": [
+    "bin/",
+    "lib/",
+    "scripts/",
+    "examples/",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "cross-spawn": "^7.0.3",
+    "which": "^4.0.0"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  }
+}
