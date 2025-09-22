@@ -4,6 +4,71 @@ All notable changes to the Caesar Programming Language project will be documente
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.6] - 2025-09-22
+
+### 🛤️ Enhancement: Automatic PATH Configuration
+
+This patch release resolves the final barrier to Python-like Caesar usage by automatically configuring Windows PATH during NPM installation.
+
+### 🚀 Added
+
+#### **Automatic PATH Setup**
+- **Smart PATH Detection**: Installation script automatically detects NPM global bin directory
+- **User PATH Configuration**: Safely modifies User environment PATH (not System) for immediate accessibility
+- **Robust NPM Integration**: Uses PowerShell for reliable NPM prefix detection across different Windows configurations
+- **Graceful Fallback**: Provides clear manual instructions if automatic setup fails
+
+#### **Enhanced Installation Experience**
+- **Python-like Usage**: `caesar file.csr` works immediately after `npm install -g caesar-lang` (with terminal restart)
+- **Zero Manual Setup**: Eliminates need for users to manually configure Windows PATH
+- **Professional Distribution**: Complete out-of-the-box experience for all skill levels
+- **Cross-platform Awareness**: PATH configuration only runs on Windows where needed
+
+### 🛠️ Improved
+
+#### **Installation Script Enhancements**
+- **Enhanced Error Handling**: Better error messages and recovery options for PATH configuration
+- **User Guidance**: Clear instructions for both automatic and manual setup scenarios
+- **Installation Verification**: Enhanced feedback showing successful PATH configuration
+
+### 📊 **Impact**
+- **✅ Eliminates "caesar command not found" Issues**: No more manual PATH configuration required
+- **✅ Python-like Developer Experience**: `caesar file.csr` works like `python file.py`
+- **✅ Wider Accessibility**: Makes Caesar usable by developers unfamiliar with Windows PATH setup
+- **✅ Professional Ready**: Complete automated setup suitable for enterprise and educational environments
+- **✅ Maintains Backward Compatibility**: Existing installations continue to work without changes
+
+### 🔧 Technical Details
+- Enhanced `scripts/install.js` with `ensureNpmInPath()` function
+- PowerShell-based NPM prefix detection for cross-environment reliability
+- User PATH modification for safe, non-administrative setup
+- Automatic detection of existing PATH configuration to prevent duplicates
+
+## [1.3.5] - 2025-09-22
+
+### 🔧 Critical Fix: Standalone Executable Distribution
+
+This patch release resolves a critical dependency issue that prevented Caesar executables from running on systems without MinGW in PATH.
+
+### 🛠️ Fixed
+
+#### **Standalone Execution Issues**
+- **Bundled MinGW DLLs**: Automatically includes required runtime dependencies (`libgcc_s_seh-1.dll`, `libstdc++-6.dll`, `libwinpthread-1.dll`)
+- **NPM Installation Fix**: NPM package now works out-of-the-box without requiring users to install MinGW separately
+- **ZIP Release Fix**: Release packages now include all dependencies for standalone execution
+- **Cross-Environment Compatibility**: Caesar executables work on any Windows system regardless of development environment
+
+#### **Installation Improvements**
+- **Smart DLL Detection**: Installation scripts automatically locate and copy MinGW DLLs from common locations
+- **Enhanced User Experience**: No more silent failures or "exit code 1" issues
+- **Standalone Distribution**: Caesar now truly works as a standalone application
+
+### 📊 **Impact**
+- **✅ NPM Installation Now Truly Standalone**: `npm install -g caesar-lang` provides fully working Caesar without additional setup
+- **✅ ZIP Releases Work Everywhere**: Downloaded releases work on any Windows system
+- **✅ Developer-Friendly**: No need for users to install development tools or configure PATH
+- **✅ Consistent Experience**: Same behavior across all installation methods
+
 ## [1.3.4] - 2025-09-22
 
 ### 🚀 Enhanced User Experience: Python-like Ease of Use

@@ -27,8 +27,8 @@ function activate(context) {
         }
     });
     context.subscriptions.push(runCommand);
-    // Path to the language server
-    const serverModule = context.asAbsolutePath(path.join('..', 'caesar-language-server', 'lib', 'server.js'));
+    // Path to the language server (now included in extension)
+    const serverModule = context.asAbsolutePath(path.join('server', 'server.js'));
     // Debug options for the server
     const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
     // Server options for development and production

@@ -14,6 +14,10 @@ release/
 /caesar
 /caesar_repl
 
+# MinGW runtime DLLs (copied during build/install)
+bin/*.dll
+bin/lib*.dll
+
 # Debug executables (but allow .gitkeep)
 debug/bin/*.exe
 

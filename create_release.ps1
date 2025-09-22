@@ -2,8 +2,8 @@
 # Creates a distributable ZIP package for end users
 
 param(
-    [Parameter(HelpMessage="Version number (e.g., 1.3.4)")]
-    [string]$Version = "1.3.4",
+    [Parameter(HelpMessage="Version number (e.g., 1.3.6)")]
+    [string]$Version = "1.3.6",
     
     [Parameter(HelpMessage="Output directory for the release package")]
     [string]$OutputDir = "release"
@@ -42,6 +42,38 @@ New-Item -ItemType Directory -Path $ExamplesDir -Force | Out-Null
 Write-Host "Copying executables..." -ForegroundColor Yellow
 Copy-Item -Path "build\src\caesar.exe" -Destination $BinDir
 Copy-Item -Path "build\src\caesar_repl.exe" -Destination $BinDir
+
+# Copy MinGW DLLs for standalone execution
+Write-Host "Copying MinGW runtime dependencies..." -ForegroundColor Yellow
+$MinGWDlls = @("libgcc_s_seh-1.dll", "libstdc++-6.dll", "libwinpthread-1.dll")
+$MinGWPaths = @("C:\msys64\mingw64\bin", "C:\mingw64\bin", "C:\MinGW\bin")
+
+$CopiedDlls = 0
+foreach ($dll in $MinGWDlls) {
+    $DllCopied = $false
+    foreach ($mingwPath in $MinGWPaths) {
+        $DllSource = Join-Path $mingwPath $dll
+        if (Test-Path $DllSource) {
+            $DllTarget = Join-Path $BinDir $dll
+            Copy-Item -Path $DllSource -Destination $DllTarget -Force
+            Write-Host "  ✅ Copied $dll" -ForegroundColor Green
+            $CopiedDlls++
+            $DllCopied = $true
+            break
+        }
+    }
+    if (-not $DllCopied) {
+        Write-Host "  ⚠️  MinGW DLL not found: $dll" -ForegroundColor Yellow
+    }
+}
+
+if ($CopiedDlls -eq $MinGWDlls.Count) {
+    Write-Host "✅ All MinGW DLLs copied - Caesar will work standalone!" -ForegroundColor Green
+} elseif ($CopiedDlls -gt 0) {
+    Write-Host "⚠️  Copied $CopiedDlls/$($MinGWDlls.Count) MinGW DLLs - some may be missing" -ForegroundColor Yellow
+} else {
+    Write-Host "❌ No MinGW DLLs found - users will need MinGW in PATH" -ForegroundColor Red
+}
 
 # Copy examples
 Write-Host "Copying examples..." -ForegroundColor Yellow
