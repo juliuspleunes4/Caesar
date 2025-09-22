@@ -1,0 +1,56 @@
+{
+  "name": "caesar-language-support",
+  "displayName": "Caesar Language Support",
+  "description": "Official Language Support for the Caesar Programming Language",
+  "version": "0.0.1",
+  "publisher": "caesar-lang",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juliuspleunes4/Caesar.git"
+  },
+  "engines": {
+    "vscode": "^1.104.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Themes"
+  ],
+  "keywords": [
+    "caesar",
+    "programming-language",
+    "syntax-highlighting",
+    "interpreter"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "caesar",
+      "aliases": ["Caesar", "caesar"],
+      "extensions": [".csr", ".caesar", ".cae"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "caesar",
+      "scopeName": "source.caesar",
+      "path": "./syntaxes/caesar.tmLanguage.json"
+    }],
+    "snippets": [{
+      "language": "caesar",
+      "path": "./snippets/caesar.json"
+    }],
+    "themes": [{
+      "label": "Caesar Dark",
+      "uiTheme": "vs-dark",
+      "path": "./themes/caesar-dark-theme.json"
+    }]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "echo 'No TypeScript to compile for language extension'",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^2.21.0"
+  }
+}
