@@ -1,25 +1,17 @@
 {
   "name": "caesar-language-server",
-  "version": "0.1.0",
-  "description": "Language Server Protocol implementation for Caesar programming language",
-  "main": "lib/server.js",
-  "engines": {
-    "node": ">=16.0.0"
+  "version": "1.0.0",
+  "description": "Language Server Protocol implementation for the Caesar Programming Language",
+  "main": "out/server.js",
+  "bin": {
+    "caesar-language-server": "./out/server.js"
   },
   "scripts": {
-    "compile": "tsc -b",
-    "watch": "tsc -b -w",
-    "start": "node lib/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "dependencies": {
-    "vscode-languageserver": "^9.0.1",
-    "vscode-languageserver-textdocument": "^1.0.11",
-    "vscode-uri": "^3.0.8"
-  },
-  "devDependencies": {
-    "@types/node": "^20.8.0",
-    "typescript": "^5.2.0"
+    "compile": "tsc -p .",
+    "build": "npm run compile",
+    "start": "node ./out/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "tsc -w -p ."
   },
   "keywords": [
     "caesar",
@@ -29,8 +21,15 @@
   ],
   "author": "Julius Pleunes",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/juliuspleunes4/Caesar.git"
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "vscode-languageserver": "^9.0.1",
+    "vscode-languageserver-textdocument": "^1.0.11"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "typescript": "^5.2.0"
   }
 }
