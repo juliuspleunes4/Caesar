@@ -851,4 +851,6 @@ Built with ❤️ by **[Julius Pleunes](https://github.com/juliuspleunes4)** - C
 
 **Caesar Programming Language** - Building the future of performant, readable code. 🏛️
 
-
+<p align="center">
+    <img src="assets/caesar_banner.png" alt="Caesar Banner" width="250">
+</p>
