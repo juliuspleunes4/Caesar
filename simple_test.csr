@@ -1,0 +1,3 @@
+print("Hello from Caesar Language Server test!")
+x = 42
+print("x =", x)

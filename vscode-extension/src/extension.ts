@@ -33,9 +33,9 @@ export function activate(context: ExtensionContext) {
     
     context.subscriptions.push(runCommand);
     
-    // Path to the language server
+    // Path to the language server (now included in extension)
     const serverModule = context.asAbsolutePath(
-        path.join('..', 'caesar-language-server', 'lib', 'server.js')
+        path.join('server', 'server.js')
     );
     
     // Debug options for the server

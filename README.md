@@ -208,12 +208,13 @@ code --install-extension juliuspleunes4.caesar-language-support
 - **🌙 Caesar Dark Theme**: Optimized dark theme designed for Caesar development
 - **🏷️ Language Recognition**: Full integration with VS Code's language ecosystem
 - **📁 File Icons**: Custom icons for Caesar source files
-- **🔧 Language Server Protocol**: Real-time error checking, autocomplete, and go-to-definition (Release Package)
+- **🔧 Language Server Protocol**: **Built-in LSP server** with real-time error checking, autocomplete, and go-to-definition
 - **▶️ Run Commands**: Click the play button or press **F5** to instantly run Caesar files
 - **🖱️ Context Menu**: Right-click in editor for "Run Caesar File" option
 - **⚡ Instant Execution**: No need to open terminals or remember commands
+- **✨ Professional IDE Experience**: Complete language support with zero configuration
 
-**Transform your development experience** - Caesar files now run as easily as Python files with professional IDE integration!
+**Transform your development experience** - Caesar files now have full professional IDE support with Python-like ease of use!
 
 ## ✨ Language Features
 

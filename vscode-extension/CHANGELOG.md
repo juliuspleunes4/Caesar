@@ -4,6 +4,33 @@ All notable changes to the "Caesar Language Support" extension will be documente
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.4] - 2025-09-22
+
+### 🚀 **Major Enhancement: Integrated Language Server Protocol**
+
+This release includes the complete Caesar Language Server directly in the extension, providing professional IDE features out-of-the-box.
+
+### ✨ **Added**
+
+#### **Complete LSP Integration**
+- **Embedded Language Server**: Full LSP server included in extension package
+- **Real-time Error Checking**: Instant syntax and semantic error highlighting
+- **Intelligent Autocomplete**: Context-aware code completion suggestions
+- **Go-to-Definition**: Navigate to symbol definitions with Ctrl+Click
+- **Symbol Navigation**: Workspace-wide symbol search and navigation
+- **Hover Information**: Rich hover tooltips with type and documentation info
+
+#### **Enhanced IDE Experience**
+- **Professional Error Diagnostics**: Real-time error squiggles and problem panel integration
+- **Automatic Server Management**: LSP server starts/stops automatically with VS Code
+- **Zero Configuration**: No additional setup required - works immediately after installation
+- **Production Ready**: Stable LSP implementation with comprehensive language support
+
+### 🛠️ **Fixed**
+- **Resolved Server Path Issues**: Fixed "Cannot find module" errors when extension is installed from marketplace
+- **Improved Reliability**: Enhanced server startup and connection management
+- **Better Error Handling**: Graceful fallback when LSP features are unavailable
+
 ## [0.0.1] - 2025-09-22
 
 ### Added
