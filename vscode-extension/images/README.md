@@ -1,10 +1,20 @@
-# Caesar Icon Placeholder
+# Caesar Extension Assets
 
-This file represents where the Caesar language icon should be placed.
-The icon should be:
-- 128x128 pixels
-- PNG format
-- Named "caesar-icon.png"
-- Features the Caesar language branding
+This directory contains the visual assets for the Caesar VS Code extension.
 
-Replace this file with the actual Caesar logo/icon when available.
+## Files
+
+- **caesar-icon.png** - Official Caesar language icon (128x128 PNG)
+  - Used as the extension icon in VS Code marketplace
+  - Used as the file icon for .csr files in VS Code
+  - Features the Caesar language branding
+
+## Usage
+
+The icon is automatically used by VS Code for:
+- Extension marketplace listing
+- File explorer icons for Caesar files (.csr, .caesar, .cae)
+- Language selector display
+- Extension management interface
+
+Caesar icon represents the strength, reliability, and imperial performance of the Caesar programming language! 🏛️

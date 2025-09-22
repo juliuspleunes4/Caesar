@@ -22,12 +22,17 @@
     "syntax-highlighting",
     "interpreter"
   ],
+  "icon": "images/caesar-icon.png",
   "contributes": {
     "languages": [{
       "id": "caesar",
       "aliases": ["Caesar", "caesar"],
       "extensions": [".csr", ".caesar", ".cae"],
-      "configuration": "./language-configuration.json"
+      "configuration": "./language-configuration.json",
+      "icon": {
+        "light": "./images/caesar-icon.png",
+        "dark": "./images/caesar-icon.png"
+      }
     }],
     "grammars": [{
       "language": "caesar",
