@@ -2,8 +2,8 @@
 # Creates a distributable ZIP package for end users
 
 param(
-    [Parameter(HelpMessage="Version number (e.g., 1.1.0)")]
-    [string]$Version = "1.1.0",
+    [Parameter(HelpMessage="Version number (e.g., 1.3.0)")]
+    [string]$Version = "1.3.0",
     
     [Parameter(HelpMessage="Output directory for the release package")]
     [string]$OutputDir = "release"
