@@ -1,0 +1,148 @@
+{
+    "Print Statement": {
+        "prefix": "print",
+        "body": [
+            "print($1)"
+        ],
+        "description": "Print statement"
+    },
+    "If Statement": {
+        "prefix": "if",
+        "body": [
+            "if $1:",
+            "    $2"
+        ],
+        "description": "If statement"
+    },
+    "If-Else Statement": {
+        "prefix": "ifelse",
+        "body": [
+            "if $1:",
+            "    $2",
+            "else:",
+            "    $3"
+        ],
+        "description": "If-else statement"
+    },
+    "If-Elif-Else Statement": {
+        "prefix": "ifelif",
+        "body": [
+            "if $1:",
+            "    $2",
+            "elif $3:",
+            "    $4",
+            "else:",
+            "    $5"
+        ],
+        "description": "If-elif-else statement"
+    },
+    "While Loop": {
+        "prefix": "while",
+        "body": [
+            "while $1:",
+            "    $2"
+        ],
+        "description": "While loop"
+    },
+    "For Loop": {
+        "prefix": "for",
+        "body": [
+            "for $1 in $2:",
+            "    $3"
+        ],
+        "description": "For loop"
+    },
+    "For Range Loop": {
+        "prefix": "forrange",
+        "body": [
+            "for $1 in range($2):",
+            "    $3"
+        ],
+        "description": "For loop with range"
+    },
+    "Function Definition": {
+        "prefix": "def",
+        "body": [
+            "def $1($2):",
+            "    $3",
+            "    return $4"
+        ],
+        "description": "Function definition"
+    },
+    "Class Definition": {
+        "prefix": "class",
+        "body": [
+            "class $1:",
+            "    def __init__(self$2):",
+            "        $3"
+        ],
+        "description": "Class definition"
+    },
+    "Class with Inheritance": {
+        "prefix": "classinherit",
+        "body": [
+            "class $1($2):",
+            "    def __init__(self$3):",
+            "        super().__init__($4)",
+            "        $5"
+        ],
+        "description": "Class with inheritance"
+    },
+    "Method Definition": {
+        "prefix": "method",
+        "body": [
+            "def $1(self$2):",
+            "    $3"
+        ],
+        "description": "Method definition"
+    },
+    "Try-Except": {
+        "prefix": "try",
+        "body": [
+            "try:",
+            "    $1",
+            "except $2:",
+            "    $3"
+        ],
+        "description": "Try-except block"
+    },
+    "List Comprehension": {
+        "prefix": "listcomp",
+        "body": [
+            "[$1 for $2 in $3]"
+        ],
+        "description": "List comprehension"
+    },
+    "Dictionary Definition": {
+        "prefix": "dict",
+        "body": [
+            "{$1: $2}"
+        ],
+        "description": "Dictionary definition"
+    },
+    "List Definition": {
+        "prefix": "list",
+        "body": [
+            "[$1]"
+        ],
+        "description": "List definition"
+    },
+    "Main Function": {
+        "prefix": "main",
+        "body": [
+            "def main():",
+            "    $1",
+            "",
+            "if __name__ == \"__main__\":",
+            "    main()"
+        ],
+        "description": "Main function pattern"
+    },
+    "Hello World": {
+        "prefix": "hello",
+        "body": [
+            "print(\"Hello, World!\")"
+        ],
+        "description": "Hello World program"
+    }
+}

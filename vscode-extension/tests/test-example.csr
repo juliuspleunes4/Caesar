@@ -1,0 +1,64 @@
+# Caesar Language Example - Testing Syntax Highlighting
+
+# This is a comment
+def fibonacci(n):
+    """Calculate fibonacci number"""
+    if n <= 1:
+        return n
+    elif n == 2:
+        return 1
+    else:
+        return fibonacci(n-1) + fibonacci(n-2)
+
+class Calculator:
+    def __init__(self, precision=2):
+        self.precision = precision
+        self.history = []
+    
+    def add(self, a, b):
+        result = a + b
+        self.history.append(f"Added {a} + {b} = {result}")
+        return result
+    
+    def multiply(self, a, b):
+        return a * b
+
+# Variables and constants
+name = "Caesar Language"
+version = 1.0
+is_fast = True
+numbers = [1, 2, 3, 4, 5]
+config = {"debug": False, "version": "1.2.1"}
+
+# Main execution
+def main():
+    calc = Calculator(precision=3)
+    
+    # Arithmetic operations
+    sum_result = calc.add(10, 20)
+    product = calc.multiply(5, 6)
+    
+    # Control flow
+    for i in range(10):
+        if i % 2 == 0:
+            print(f"Even number: {i}")
+        else:
+            print(f"Odd number: {i}")
+    
+    # While loop
+    count = 0
+    while count < 5:
+        print(f"Count: {count}")
+        count += 1
+    
+    # Function calls
+    fib_result = fibonacci(10)
+    print(f"Fibonacci(10) = {fib_result}")
+    
+    # Built-in functions
+    print(f"Length of numbers: {len(numbers)}")
+    print(f"Type of version: {type(version)}")
+    print(f"Absolute value: {abs(-42)}")
+
+if __name__ == "__main__":
+    main()

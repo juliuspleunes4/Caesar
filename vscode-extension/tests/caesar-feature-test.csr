@@ -1,0 +1,302 @@
+# Caesar Language - Complete Feature Test
+# This file demonstrates all Caesar language features with syntax highlighting
+
+# ========================================
+# 1. COMMENTS AND DOCUMENTATION
+# ========================================
+
+"""
+Multi-line string that can serve as documentation.
+This tests triple-quoted strings and escape sequences.
+"""
+
+# Single line comment
+/* Block comment for testing */
+
+# ========================================
+# 2. VARIABLES AND DATA TYPES
+# ========================================
+
+# Numbers
+integer_num = 42
+float_num = 3.14159
+hex_num = 0xFF
+binary_num = 0b1010
+octal_num = 0o755
+scientific = 1.23e-4
+
+# Strings
+single_quote = 'Hello, Caesar!'
+double_quote = "Programming language"
+escape_chars = "Line 1\nLine 2\tTabbed\\"
+f_string = f"Value: {integer_num}"
+
+# Booleans and None
+is_awesome = True
+is_slow = False
+nothing = None
+
+# Collections
+numbers_list = [1, 2, 3, 4, 5]
+mixed_list = ["Caesar", 42, True, None]
+user_dict = {
+    "name": "Caesar Developer",
+    "language": "Caesar",
+    "version": 1.2,
+    "features": ["fast", "python-like", "compiled-performance"]
+}
+
+# ========================================
+# 3. FUNCTIONS
+# ========================================
+
+def simple_function():
+    """A simple function with no parameters"""
+    return "Hello from Caesar!"
+
+def function_with_params(name, age, city="Unknown"):
+    """Function with parameters and default values"""
+    return f"Name: {name}, Age: {age}, City: {city}"
+
+def math_operations(a, b):
+    """Demonstrates all arithmetic operators"""
+    addition = a + b
+    subtraction = a - b
+    multiplication = a * b
+    division = a / b
+    modulo = a % b
+    power = a ** b
+    floor_division = a // b
+    
+    return {
+        "add": addition,
+        "sub": subtraction,
+        "mul": multiplication,
+        "div": division,
+        "mod": modulo,
+        "pow": power,
+        "floor": floor_division
+    }
+
+# ========================================
+# 4. CLASSES AND OBJECT-ORIENTED PROGRAMMING
+# ========================================
+
+class Animal:
+    """Base class for all animals"""
+    
+    def __init__(self, name, species):
+        self.name = name
+        self.species = species
+        self.energy = 100
+    
+    def speak(self):
+        return f"{self.name} makes a sound"
+    
+    def move(self):
+        if self.energy > 0:
+            self.energy -= 10
+            return f"{self.name} moves"
+        return f"{self.name} is too tired"
+
+class Dog(Animal):
+    """Dog class inheriting from Animal"""
+    
+    def __init__(self, name, breed):
+        super().__init__(name, "Canine")
+        self.breed = breed
+        self.tricks = []
+    
+    def speak(self):
+        return f"{self.name} barks: Woof!"
+    
+    def learn_trick(self, trick):
+        self.tricks.append(trick)
+        return f"{self.name} learned {trick}"
+    
+    def perform_tricks(self):
+        if not self.tricks:
+            return f"{self.name} doesn't know any tricks yet"
+        
+        performance = []
+        for trick in self.tricks:
+            performance.append(f"{self.name} performs {trick}")
+        return performance
+
+# ========================================
+# 5. CONTROL FLOW
+# ========================================
+
+def control_flow_demo(number):
+    """Demonstrates all control flow constructs"""
+    
+    # If-elif-else
+    if number > 0:
+        sign = "positive"
+    elif number < 0:
+        sign = "negative"
+    else:
+        sign = "zero"
+    
+    # While loop
+    count = 0
+    while count < 3:
+        print(f"While loop iteration: {count}")
+        count += 1
+    
+    # For loops
+    for i in range(5):
+        if i == 2:
+            continue  # Skip iteration
+        if i == 4:
+            break     # Exit loop
+        print(f"For loop: {i}")
+    
+    # For loop with collections
+    colors = ["red", "green", "blue"]
+    for color in colors:
+        print(f"Color: {color}")
+    
+    # List comprehension
+    squares = [x**2 for x in range(1, 6)]
+    even_squares = [x**2 for x in range(1, 11) if x % 2 == 0]
+    
+    return {
+        "sign": sign,
+        "squares": squares,
+        "even_squares": even_squares
+    }
+
+# ========================================
+# 6. ERROR HANDLING
+# ========================================
+
+def safe_division(a, b):
+    """Demonstrates try-except error handling"""
+    try:
+        result = a / b
+        return f"Result: {result}"
+    except ZeroDivisionError:
+        return "Cannot divide by zero!"
+    except TypeError:
+        return "Invalid types for division"
+    finally:
+        print("Division operation completed")
+
+# ========================================
+# 7. BUILT-IN FUNCTIONS
+# ========================================
+
+def builtin_functions_demo():
+    """Demonstrates Caesar's built-in functions"""
+    
+    # Type functions
+    print(f"Type of 42: {type(42)}")
+    print(f"Type of 'hello': {type('hello')}")
+    
+    # Conversion functions
+    str_num = str(123)
+    int_str = int("456")
+    float_int = float(789)
+    
+    # Collection functions
+    numbers = [1, 2, 3, 4, 5]
+    print(f"Length: {len(numbers)}")
+    print(f"Max: {max(numbers)}")
+    print(f"Min: {min(numbers)}")
+    print(f"Sum: {sum(numbers)}")
+    
+    # Math functions
+    print(f"Absolute value: {abs(-42)}")
+    
+    # Range function
+    range_list = list(range(0, 10, 2))
+    print(f"Range result: {range_list}")
+
+# ========================================
+# 8. ADVANCED FEATURES
+# ========================================
+
+def advanced_features():
+    """Demonstrates advanced Caesar features"""
+    
+    # Multiple assignment
+    x, y, z = 1, 2, 3
+    
+    # Logical operators
+    result1 = True and False
+    result2 = True or False
+    result3 = not True
+    
+    # Comparison operators
+    comparisons = {
+        "equal": 5 == 5,
+        "not_equal": 5 != 3,
+        "greater": 10 > 5,
+        "less": 3 < 7,
+        "greater_equal": 5 >= 5,
+        "less_equal": 3 <= 5
+    }
+    
+    # Membership operators
+    fruits = ["apple", "banana", "orange"]
+    has_apple = "apple" in fruits
+    no_grape = "grape" not in fruits
+    
+    return {
+        "coordinates": (x, y, z),
+        "logical": (result1, result2, result3),
+        "comparisons": comparisons,
+        "membership": {"has_apple": has_apple, "no_grape": no_grape}
+    }
+
+# ========================================
+# 9. MAIN EXECUTION
+# ========================================
+
+def main():
+    """Main function demonstrating Caesar program structure"""
+    
+    print("=== Caesar Language Feature Test ===")
+    
+    # Test functions
+    greeting = simple_function()
+    print(greeting)
+    
+    # Test function with parameters
+    person_info = function_with_params("Alice", 30, "Caesar City")
+    print(person_info)
+    
+    # Test math operations
+    math_results = math_operations(10, 3)
+    print(f"Math operations: {math_results}")
+    
+    # Test classes
+    my_dog = Dog("Buddy", "Golden Retriever")
+    print(my_dog.speak())
+    print(my_dog.learn_trick("sit"))
+    print(my_dog.learn_trick("fetch"))
+    tricks = my_dog.perform_tricks()
+    for trick in tricks:
+        print(trick)
+    
+    # Test control flow
+    flow_result = control_flow_demo(5)
+    print(f"Control flow result: {flow_result}")
+    
+    # Test error handling
+    print(safe_division(10, 2))
+    print(safe_division(10, 0))
+    
+    # Test built-in functions
+    builtin_functions_demo()
+    
+    # Test advanced features
+    advanced_result = advanced_features()
+    print(f"Advanced features: {advanced_result}")
+    
+    print("\n=== All Caesar features tested successfully! ===")
+
+# Program entry point
+if __name__ == "__main__":
+    main()

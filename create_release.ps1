@@ -2,8 +2,8 @@
 # Creates a distributable ZIP package for end users
 
 param(
-    [Parameter(HelpMessage="Version number (e.g., 1.1.0)")]
-    [string]$Version = "1.1.0",
+    [Parameter(HelpMessage="Version number (e.g., 1.3.2)")]
+    [string]$Version = "1.3.2",
     
     [Parameter(HelpMessage="Output directory for the release package")]
     [string]$OutputDir = "release"
@@ -49,6 +49,82 @@ if (Test-Path "examples") {
     Copy-Item -Path "examples\*" -Destination $ExamplesDir -Recurse
 }
 
+# Copy VS Code extension
+Write-Host "Including VS Code extension..." -ForegroundColor Yellow
+
+# Find the most recent .vsix file in vscode-extension directory
+$VSCodeExtensionFiles = Get-ChildItem -Path "vscode-extension" -Filter "caesar-language-support-*.vsix" | 
+    Sort-Object { 
+        # Extract version from filename (e.g., "caesar-language-support-1.2.3.vsix" -> "1.2.3")
+        $version = ($_.Name -replace '^caesar-language-support-(.+)\.vsix$', '$1')
+        try {
+            [System.Version]$version
+        } catch {
+            # If version parsing fails, use timestamp
+            $_.LastWriteTime
+        }
+    } -Descending
+
+if ($VSCodeExtensionFiles.Count -gt 0) {
+    $LatestExtension = $VSCodeExtensionFiles[0]
+    $VSCodeExtensionPath = $LatestExtension.FullName
+    $ExtensionFileName = $LatestExtension.Name
+    $ExtensionVersion = ($ExtensionFileName -replace '^caesar-language-support-(.+)\.vsix$', '$1')
+    
+    Copy-Item -Path $VSCodeExtensionPath -Destination $ReleaseDir
+    Write-Host "Added VS Code extension: $ExtensionFileName" -ForegroundColor Green
+    Write-Host "  Extension version: $ExtensionVersion" -ForegroundColor Cyan
+} else {
+    Write-Host "WARNING: No VS Code extension (.vsix) found in vscode-extension/" -ForegroundColor Yellow
+    Write-Host "         Build the extension first with 'npm run package' in vscode-extension/" -ForegroundColor Yellow
+    $ExtensionFileName = "caesar-language-support-0.0.1.vsix"  # Fallback for installer generation
+}
+
+# Copy Language Server
+Write-Host "Including Caesar Language Server..." -ForegroundColor Yellow
+$LSPDir = Join-Path $ReleaseDir "caesar-language-server"
+if (Test-Path "caesar-language-server\lib") {
+    # Create language server directory in release
+    New-Item -ItemType Directory -Path $LSPDir -Force | Out-Null
+    
+    # Copy compiled language server
+    Copy-Item -Path "caesar-language-server\lib" -Destination $LSPDir -Recurse -Force
+    Copy-Item -Path "caesar-language-server\package.json" -Destination $LSPDir -Force
+    Copy-Item -Path "caesar-language-server\node_modules" -Destination $LSPDir -Recurse -Force -ErrorAction SilentlyContinue
+    
+    Write-Host "Added Caesar Language Server with LSP capabilities" -ForegroundColor Green
+    Write-Host "  LSP features: autocomplete, error checking, go-to-definition" -ForegroundColor Cyan
+} else {
+    Write-Host "WARNING: Language server not compiled. Run 'npm run compile' in caesar-language-server/" -ForegroundColor Yellow
+}
+
+# Copy File Association Scripts
+Write-Host "Including file association scripts..." -ForegroundColor Yellow
+$ScriptsDir = Join-Path $ReleaseDir "scripts"
+if (Test-Path "scripts") {
+    New-Item -ItemType Directory -Path $ScriptsDir -Force | Out-Null
+    Copy-Item -Path "scripts\setup-file-association.ps1" -Destination $ScriptsDir -Force -ErrorAction SilentlyContinue
+    Copy-Item -Path "scripts\install.js" -Destination $ScriptsDir -Force -ErrorAction SilentlyContinue
+    Copy-Item -Path "scripts\test.js" -Destination $ScriptsDir -Force -ErrorAction SilentlyContinue
+    Write-Host "Added file association and utility scripts" -ForegroundColor Green
+    Write-Host "  Features: Windows file association, registry integration" -ForegroundColor Cyan
+} else {
+    Write-Host "WARNING: Scripts directory not found" -ForegroundColor Yellow
+}
+
+# Copy Assets (Icons)
+Write-Host "Including Caesar assets..." -ForegroundColor Yellow
+$AssetsDir = Join-Path $ReleaseDir "assets"
+if (Test-Path "assets") {
+    New-Item -ItemType Directory -Path $AssetsDir -Force | Out-Null
+    Copy-Item -Path "assets\caesar-icon.ico" -Destination $AssetsDir -Force -ErrorAction SilentlyContinue
+    Copy-Item -Path "assets\*.png" -Destination $AssetsDir -Force -ErrorAction SilentlyContinue
+    Write-Host "Added Caesar icons and assets" -ForegroundColor Green
+    Write-Host "  Features: Custom .csr file icons in Windows Explorer" -ForegroundColor Cyan
+} else {
+    Write-Host "WARNING: Assets directory not found" -ForegroundColor Yellow
+}
+
 # Copy documentation
 Write-Host "Copying documentation..." -ForegroundColor Yellow
 Copy-Item -Path "USER_GUIDE.md" -Destination $ReleaseDir -ErrorAction SilentlyContinue
@@ -56,10 +132,10 @@ Copy-Item -Path "USER_GUIDE.md" -Destination $ReleaseDir -ErrorAction SilentlyCo
 # Create standalone installers
 Write-Host "Creating standalone installers..." -ForegroundColor Yellow
 
-# Create standalone PowerShell installer
+# Create enhanced PowerShell installer with VS Code extension support
 $StandalonePS1 = @"
-# Caesar Programming Language Installer (Standalone)
-# This installer works with pre-built binaries
+# Caesar Programming Language Installer with VS Code Extension
+# Installer that includes automatic VS Code extension installation
 
 param(
     [Parameter(HelpMessage="Installation directory (default: C:\Caesar)")]
@@ -67,6 +143,9 @@ param(
     
     [Parameter(HelpMessage="Skip PATH modification")]
     [switch]`$SkipPath,
+    
+    [Parameter(HelpMessage="Skip VS Code extension installation")]
+    [switch]`$SkipVSCode,
     
     [Parameter(HelpMessage="Force overwrite existing installation")]
     [switch]`$Force
@@ -78,135 +157,187 @@ param(
 `$WarningColor = "Yellow"
 `$InfoColor = "Cyan"
 
-Write-Host ""
-Write-Host "======================================" -ForegroundColor `$InfoColor
-Write-Host "   Caesar Programming Language v$Version" -ForegroundColor `$InfoColor
-Write-Host "             Installer" -ForegroundColor `$InfoColor
-Write-Host "======================================" -ForegroundColor `$InfoColor
-Write-Host ""
-
-# Check for required executables in current directory
-`$CaesarExe = Join-Path `$PSScriptRoot "bin\caesar.exe"
-`$ReplExe = Join-Path `$PSScriptRoot "bin\caesar_repl.exe"
-
-if (-not (Test-Path `$CaesarExe)) {
-    Write-Host "ERROR: caesar.exe not found in bin directory!" -ForegroundColor `$ErrorColor
-    Write-Host "       Please make sure you extracted the full ZIP package." -ForegroundColor `$ErrorColor
-    exit 1
+function Write-ColorOutput {
+    param([string]`$Message, [string]`$Color = "White")
+    Write-Host `$Message -ForegroundColor `$Color
 }
 
-if (-not (Test-Path `$ReplExe)) {
-    Write-Host "ERROR: caesar_repl.exe not found in bin directory!" -ForegroundColor `$ErrorColor
-    Write-Host "       Please make sure you extracted the full ZIP package." -ForegroundColor `$ErrorColor
-    exit 1
-}
-
-# Create installation directory
-Write-Host "Creating installation directory: `$InstallDir" -ForegroundColor `$InfoColor
-
-try {
-    if (Test-Path `$InstallDir) {
-        if (`$Force) {
-            Write-Host "Removing existing installation..." -ForegroundColor `$WarningColor
-            Remove-Item -Path `$InstallDir -Recurse -Force
-        } else {
-            Write-Host "ERROR: Installation directory already exists!" -ForegroundColor `$ErrorColor
-            Write-Host "       Use -Force to overwrite or choose a different directory." -ForegroundColor `$ErrorColor
-            exit 1
+function Test-VSCodeInstalled {
+    `"""Check if VS Code is installed`"""
+    `$vscodePaths = @(
+        "`${env:LOCALAPPDATA}\Programs\Microsoft VS Code\Code.exe",
+        "`${env:PROGRAMFILES}\Microsoft VS Code\Code.exe",
+        "`${env:PROGRAMFILES(X86)}\Microsoft VS Code\Code.exe"
+    )
+    
+    foreach (`$path in `$vscodePaths) {
+        if (Test-Path `$path) {
+            return `$path
         }
     }
     
-    New-Item -ItemType Directory -Path `$InstallDir -Force | Out-Null
-    `$BinPath = Join-Path `$InstallDir "bin"
-    New-Item -ItemType Directory -Path `$BinPath -Force | Out-Null
-    
-    Write-Host "Created directory: `$InstallDir" -ForegroundColor `$SuccessColor
-} catch {
-    Write-Host "ERROR: Failed to create installation directory!" -ForegroundColor `$ErrorColor
-    Write-Host "       `$(`$_.Exception.Message)" -ForegroundColor `$ErrorColor
-    exit 1
+    # Check if 'code' command is available
+    try {
+        `$null = Get-Command "code" -ErrorAction Stop
+        return "code"
+    } catch {
+        return `$null
+    }
 }
 
-# Copy executables
-Write-Host "Installing Caesar executables..." -ForegroundColor `$InfoColor
-
-try {
-    Copy-Item -Path `$CaesarExe -Destination `$BinPath -Force
-    Copy-Item -Path `$ReplExe -Destination `$BinPath -Force
+function Install-VSCodeExtension {
+    `"""Install Caesar VS Code extension`"""
+    param([string]`$VSCodePath)
     
-    Write-Host "Installed caesar.exe" -ForegroundColor `$SuccessColor
-    Write-Host "Installed caesar_repl.exe" -ForegroundColor `$SuccessColor
-} catch {
-    Write-Host "ERROR: Failed to copy executables!" -ForegroundColor `$ErrorColor
-    Write-Host "       `$(`$_.Exception.Message)" -ForegroundColor `$ErrorColor
-    exit 1
-}
-
-# Add to PATH
-if (-not `$SkipPath) {
-    Write-Host "Adding Caesar to PATH..." -ForegroundColor `$WarningColor
+    Write-ColorOutput "🔧 Installing Caesar VS Code Extension..." `$InfoColor
+    
+    `$extensionPath = Join-Path `$PSScriptRoot "$ExtensionFileName"
+    
+    if (-not (Test-Path `$extensionPath)) {
+        Write-ColorOutput "❌ VS Code extension file not found: `$extensionPath" `$ErrorColor
+        return `$false
+    }
     
     try {
-        `$CurrentPath = [Environment]::GetEnvironmentVariable("Path", "User")
-        if (`$CurrentPath -notlike "*`$BinPath*") {
-            if (`$CurrentPath -and `$CurrentPath -ne "") {
-                `$NewPath = `$CurrentPath + ";" + `$BinPath
+        if (`$VSCodePath -eq "code") {
+            `$result = & code --install-extension `$extensionPath --force 2>&1
+        } else {
+            `$result = & "`$VSCodePath" --install-extension `$extensionPath --force 2>&1
+        }
+        
+        if (`$LASTEXITCODE -eq 0) {
+            Write-ColorOutput "✅ Caesar VS Code extension installed successfully!" `$SuccessColor
+            Write-ColorOutput "   • Syntax highlighting for .csr files" `$InfoColor
+            Write-ColorOutput "   • Code snippets and auto-completion" `$InfoColor
+            Write-ColorOutput "   • Caesar Dark theme" `$InfoColor
+            return `$true
+        } else {
+            Write-ColorOutput "❌ Failed to install VS Code extension" `$ErrorColor
+            Write-ColorOutput "Error: `$result" `$ErrorColor
+            return `$false
+        }
+    } catch {
+        Write-ColorOutput "❌ Error installing VS Code extension: `$(`$_.Exception.Message)" `$ErrorColor
+        return `$false
+    }
+}
+
+function Install-Caesar {
+    Write-ColorOutput "🏛️ Caesar Programming Language Installer" `$InfoColor
+    Write-ColorOutput "=======================================" `$InfoColor
+    
+    # Check for existing installation
+    if ((Test-Path `$InstallDir) -and -not `$Force) {
+        Write-ColorOutput "⚠️  Caesar is already installed at `$InstallDir" `$WarningColor
+        `$response = Read-Host "Do you want to overwrite it? (y/N)"
+        if (`$response -ne 'y' -and `$response -ne 'Y') {
+            Write-ColorOutput "Installation cancelled." `$WarningColor
+            return
+        }
+    }
+    
+    # Create installation directory
+    Write-ColorOutput "📁 Creating installation directory: `$InstallDir" `$InfoColor
+    try {
+        if (Test-Path `$InstallDir) {
+            Remove-Item `$InstallDir -Recurse -Force
+        }
+        New-Item -ItemType Directory -Path `$InstallDir -Force | Out-Null
+    } catch {
+        Write-ColorOutput "❌ Failed to create installation directory: `$(`$_.Exception.Message)" `$ErrorColor
+        return
+    }
+    
+    # Copy Caesar binaries
+    Write-ColorOutput "📋 Installing Caesar binaries..." `$InfoColor
+    try {
+        `$binSource = Join-Path `$PSScriptRoot "bin"
+        `$binDest = Join-Path `$InstallDir "bin"
+        
+        if (Test-Path `$binSource) {
+            Copy-Item `$binSource -Destination `$binDest -Recurse -Force
+            Write-ColorOutput "✅ Caesar binaries installed" `$SuccessColor
+        } else {
+            Write-ColorOutput "❌ Caesar binaries not found in `$binSource" `$ErrorColor
+            return
+        }
+    } catch {
+        Write-ColorOutput "❌ Failed to copy binaries: `$(`$_.Exception.Message)" `$ErrorColor
+        return
+    }
+    
+    # Copy examples
+    Write-ColorOutput "📚 Installing examples..." `$InfoColor
+    try {
+        `$examplesSource = Join-Path `$PSScriptRoot "examples"
+        `$examplesDest = Join-Path `$InstallDir "examples"
+        
+        if (Test-Path `$examplesSource) {
+            Copy-Item `$examplesSource -Destination `$examplesDest -Recurse -Force
+            Write-ColorOutput "✅ Examples installed" `$SuccessColor
+        }
+    } catch {
+        Write-ColorOutput "⚠️  Could not copy examples: `$(`$_.Exception.Message)" `$WarningColor
+    }
+    
+    # Add to PATH
+    if (-not `$SkipPath) {
+        Write-ColorOutput "🛤️  Adding Caesar to system PATH..." `$InfoColor
+        try {
+            `$binPath = Join-Path `$InstallDir "bin"
+            `$currentPath = [Environment]::GetEnvironmentVariable("PATH", "User")
+            
+            if (`$currentPath -notlike "*`$binPath*") {
+                `$newPath = "`$currentPath;`$binPath"
+                [Environment]::SetEnvironmentVariable("PATH", `$newPath, "User")
+                Write-ColorOutput "✅ Caesar added to PATH" `$SuccessColor
+                Write-ColorOutput "   Restart your terminal to use 'caesar' command" `$InfoColor
             } else {
-                `$NewPath = `$BinPath
+                Write-ColorOutput "✅ Caesar already in PATH" `$SuccessColor
             }
-            [Environment]::SetEnvironmentVariable("Path", `$NewPath, "User")
-            Write-Host "Added to user PATH" -ForegroundColor `$SuccessColor
-            Write-Host "You may need to restart your terminal for PATH changes to take effect." -ForegroundColor `$WarningColor
-        } else {
-            Write-Host "Already in PATH" -ForegroundColor `$SuccessColor
+        } catch {
+            Write-ColorOutput "⚠️  Could not add to PATH: `$(`$_.Exception.Message)" `$WarningColor
         }
-    } catch {
-        Write-Host "WARNING: Failed to add to PATH!" -ForegroundColor `$WarningColor
-        Write-Host "         You can manually add `$BinPath to your PATH." -ForegroundColor `$WarningColor
     }
-}
-
-# Copy examples if they exist
-`$SourceExamples = Join-Path `$PSScriptRoot "examples"
-if (Test-Path `$SourceExamples) {
-    Write-Host "Copying example programs..." -ForegroundColor `$InfoColor
-    try {
-        Copy-Item -Path `$SourceExamples -Destination `$InstallDir -Recurse -Force
-        `$ExamplesDir = Join-Path `$InstallDir "examples"
-        Write-Host "Installed example programs to `$ExamplesDir" -ForegroundColor `$SuccessColor
-    } catch {
-        Write-Host "WARNING: Failed to copy examples!" -ForegroundColor `$WarningColor
+    
+    # Install VS Code extension
+    if (-not `$SkipVSCode) {
+        `$vscodePath = Test-VSCodeInstalled
+        if (`$vscodePath) {
+            Write-ColorOutput "🎨 VS Code detected, installing Caesar extension..." `$InfoColor
+            `$extensionInstalled = Install-VSCodeExtension `$vscodePath
+            
+            if (`$extensionInstalled) {
+                Write-ColorOutput "" 
+                Write-ColorOutput "🎉 VS Code Integration Complete!" `$SuccessColor
+                Write-ColorOutput "   • Open any .csr file to see syntax highlighting" `$InfoColor
+                Write-ColorOutput "   • Type 'def', 'class', 'if' for code snippets" `$InfoColor
+                Write-ColorOutput "   • Switch to 'Caesar Dark' theme for best experience" `$InfoColor
+            }
+        } else {
+            Write-ColorOutput "ℹ️  VS Code not detected, skipping extension installation" `$InfoColor
+            Write-ColorOutput "   Install VS Code and run this installer again for editor support" `$InfoColor
+        }
     }
+    
+    # Installation complete
+    Write-ColorOutput "" 
+    Write-ColorOutput "🎉 Caesar Installation Complete!" `$SuccessColor
+    Write-ColorOutput "=================================" `$SuccessColor
+    Write-ColorOutput "📍 Installation directory: `$InstallDir" `$InfoColor
+    Write-ColorOutput "⚡ Caesar interpreter: `$InstallDir\bin\caesar.exe" `$InfoColor
+    Write-ColorOutput "🖥️  Caesar REPL: `$InstallDir\bin\caesar_repl.exe" `$InfoColor
+    Write-ColorOutput "📚 Examples: `$InstallDir\examples\" `$InfoColor
+    Write-ColorOutput "" 
+    Write-ColorOutput "🚀 Quick Start:" `$InfoColor
+    Write-ColorOutput "   caesar `$InstallDir\examples\hello_world.csr" `$InfoColor
+    Write-ColorOutput "   caesar_repl" `$InfoColor
+    Write-ColorOutput "" 
+    Write-ColorOutput "🏛️ Welcome to Caesar - The High-Performance Programming Language!" `$SuccessColor
 }
 
-# Installation complete
-Write-Host ""
-Write-Host "======================================" -ForegroundColor `$SuccessColor
-Write-Host "   Installation Complete!" -ForegroundColor `$SuccessColor
-Write-Host "======================================" -ForegroundColor `$SuccessColor
-Write-Host ""
-Write-Host "Caesar has been installed to: `$InstallDir" -ForegroundColor `$InfoColor
-Write-Host ""
-Write-Host "Usage:" -ForegroundColor `$InfoColor
-Write-Host "  caesar --help           Show help" -ForegroundColor `$InfoColor
-Write-Host "  caesar --version        Show version" -ForegroundColor `$InfoColor
-Write-Host "  caesar --interpret file.csr  Run a Caesar program" -ForegroundColor `$InfoColor
-Write-Host "  caesar_repl             Start interactive REPL" -ForegroundColor `$InfoColor
-Write-Host ""
-
-if (-not `$SkipPath) {
-    Write-Host "Restart your terminal or run 'refreshenv' to use Caesar from anywhere." -ForegroundColor `$WarningColor
-} else {
-    Write-Host "Add `$BinPath to your PATH to use Caesar from anywhere." -ForegroundColor `$InfoColor
-}
-
-Write-Host ""
-if (Test-Path (Join-Path `$InstallDir "examples")) {
-    Write-Host "Example programs are available in: " -NoNewline -ForegroundColor `$InfoColor
-    Write-Host (Join-Path `$InstallDir "examples") -ForegroundColor `$InfoColor
-}
-Write-Host ""
-Write-Host "Happy coding with Caesar!" -ForegroundColor `$SuccessColor
+# Run the installer
+Install-Caesar
 "@
 
 $StandalonePS1 | Out-File -FilePath (Join-Path $ReleaseDir "install.ps1") -Encoding UTF8
@@ -310,9 +441,21 @@ $ReadmeContent = @"
 - ``bin/caesar.exe`` - Caesar compiler and interpreter
 - ``bin/caesar_repl.exe`` - Interactive REPL
 - ``examples/`` - Sample Caesar programs
-- ``install.ps1`` - PowerShell installer
+- ``install.ps1`` - Enhanced PowerShell installer with VS Code extension
 - ``install.bat`` - Batch installer
+- ``$ExtensionFileName`` - VS Code extension for syntax highlighting
 - ``USER_GUIDE.md`` - Complete documentation (if included)
+
+## VS Code Integration
+
+The installer automatically detects and installs the Caesar VS Code extension if VS Code is found on your system. This provides:
+
+- **Syntax highlighting** for ``.csr`` files
+- **Code snippets** for common Caesar patterns
+- **Caesar Dark theme** optimized for Caesar development
+- **Language recognition** in the VS Code ecosystem
+
+To manually install the extension: ``code --install-extension $ExtensionFileName``
 
 ## Usage
 

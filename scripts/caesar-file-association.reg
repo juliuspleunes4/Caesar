@@ -1,0 +1,56 @@
+Windows Registry Editor Version 5.00
+
+; Caesar Programming Language File Association
+; This registry file associates .csr files with Caesar
+
+; Register the .csr file extension
+[HKEY_CURRENT_USER\Software\Classes\.csr]
+@="CaesarSourceFile"
+"Content Type"="text/plain"
+
+; Define the Caesar source file type
+[HKEY_CURRENT_USER\Software\Classes\CaesarSourceFile]
+@="Caesar Source File"
+
+; Set the default icon for .csr files
+[HKEY_CURRENT_USER\Software\Classes\CaesarSourceFile\DefaultIcon]
+@="\"%%CAESAR_PATH%%\\bin\\caesar.exe\",0"
+
+; Default action - open with VS Code (if available) or notepad
+[HKEY_CURRENT_USER\Software\Classes\CaesarSourceFile\shell]
+@="open"
+
+; Open with default editor
+[HKEY_CURRENT_USER\Software\Classes\CaesarSourceFile\shell\open]
+@="&Edit"
+
+[HKEY_CURRENT_USER\Software\Classes\CaesarSourceFile\shell\open\command]
+@="\"%%EDITOR_PATH%%\" \"%%1\""
+
+; Run with Caesar interpreter
+[HKEY_CURRENT_USER\Software\Classes\CaesarSourceFile\shell\run]
+@="&Run with Caesar"
+
+[HKEY_CURRENT_USER\Software\Classes\CaesarSourceFile\shell\run\command]
+@="\"%%CAESAR_PATH%%\\bin\\caesar.exe\" --interpret \"%%1\""
+
+; Open with Caesar REPL
+[HKEY_CURRENT_USER\Software\Classes\CaesarSourceFile\shell\repl]
+@="Open in Caesar &REPL"
+
+[HKEY_CURRENT_USER\Software\Classes\CaesarSourceFile\shell\repl\command]
+@="\"%%CAESAR_PATH%%\\bin\\caesar_repl.exe\""
+
+; Open with VS Code (if available)
+[HKEY_CURRENT_USER\Software\Classes\CaesarSourceFile\shell\vscode]
+@="Open with &VS Code"
+
+[HKEY_CURRENT_USER\Software\Classes\CaesarSourceFile\shell\vscode\command]
+@="\"%%VSCODE_PATH%%\" \"%%1\""
+
+; Properties dialog integration
+[HKEY_CURRENT_USER\Software\Classes\CaesarSourceFile\shell\properties]
+@="P&roperties"
+
+[HKEY_CURRENT_USER\Software\Classes\CaesarSourceFile\shell\properties\command]
+@="rundll32.exe shell32.dll,OpenAs_RunDLL %%1"

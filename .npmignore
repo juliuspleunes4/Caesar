@@ -1,0 +1,56 @@
+# Build artifacts
+build/
+debug/
+release/
+
+# Development files
+.git/
+.gitignore
+.vscode/
+*.tmp
+*.log
+
+# Test files
+tests/
+test_*.csr
+
+# Documentation (keep README.md)
+docs/
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+ROADMAP.md
+TROUBLESHOOTING.md
+ARCHITECTURE.md
+CHANGELOG.md
+FAQ.md
+SECURITY.md
+
+# VS Code extension (separate package)
+vscode-extension/
+
+# Language server (separate from main package)
+caesar-language-server/
+
+# Windows specific
+*.exe.stackdump
+*.bat
+
+# Build system files
+CMakeLists.txt
+CMakeCache.txt
+Makefile
+Doxyfile.in
+*.cmake
+
+# Release artifacts
+create_release.ps1
+msys2-installer.exe
+
+# Assets (keep minimal)
+assets/
+
+# Include directories (keep for headers if needed)
+# include/
+
+# Source code (not needed for binary distribution)
+src/

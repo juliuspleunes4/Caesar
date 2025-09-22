@@ -1,0 +1,126 @@
+{
+    "name": "Caesar Dark",
+    "type": "dark",
+    "colors": {
+        "editor.background": "#1e1e1e",
+        "editor.foreground": "#d4d4d4",
+        "activityBarBadge.background": "#007acc",
+        "sideBarTitle.foreground": "#bbbbbb"
+    },
+    "tokenColors": [
+        {
+            "name": "Comments",
+            "scope": [
+                "comment",
+                "punctuation.definition.comment"
+            ],
+            "settings": {
+                "fontStyle": "italic",
+                "foreground": "#6A9955"
+            }
+        },
+        {
+            "name": "Keywords",
+            "scope": [
+                "keyword.control.caesar",
+                "keyword.operator.logical.caesar",
+                "keyword.other.caesar"
+            ],
+            "settings": {
+                "foreground": "#569CD6"
+            }
+        },
+        {
+            "name": "Strings",
+            "scope": [
+                "string.quoted.double.caesar",
+                "string.quoted.single.caesar",
+                "string.quoted.triple.double.caesar",
+                "string.quoted.triple.single.caesar"
+            ],
+            "settings": {
+                "foreground": "#CE9178"
+            }
+        },
+        {
+            "name": "Numbers",
+            "scope": [
+                "constant.numeric.integer.caesar",
+                "constant.numeric.float.caesar",
+                "constant.numeric.hex.caesar",
+                "constant.numeric.binary.caesar",
+                "constant.numeric.octal.caesar"
+            ],
+            "settings": {
+                "foreground": "#B5CEA8"
+            }
+        },
+        {
+            "name": "Functions",
+            "scope": [
+                "entity.name.function.caesar"
+            ],
+            "settings": {
+                "foreground": "#DCDCAA"
+            }
+        },
+        {
+            "name": "Classes",
+            "scope": [
+                "entity.name.class.caesar"
+            ],
+            "settings": {
+                "foreground": "#4EC9B0"
+            }
+        },
+        {
+            "name": "Built-in Functions",
+            "scope": [
+                "support.function.builtin.caesar"
+            ],
+            "settings": {
+                "foreground": "#9CDCFE"
+            }
+        },
+        {
+            "name": "Constants",
+            "scope": [
+                "constant.language.caesar"
+            ],
+            "settings": {
+                "foreground": "#569CD6"
+            }
+        },
+        {
+            "name": "Operators",
+            "scope": [
+                "keyword.operator.arithmetic.caesar",
+                "keyword.operator.comparison.caesar",
+                "keyword.operator.assignment.caesar",
+                "keyword.operator.bitwise.caesar"
+            ],
+            "settings": {
+                "foreground": "#D4D4D4"
+            }
+        },
+        {
+            "name": "Variables",
+            "scope": [
+                "variable.other.caesar",
+                "variable.parameter.caesar"
+            ],
+            "settings": {
+                "foreground": "#9CDCFE"
+            }
+        },
+        {
+            "name": "Escape Characters",
+            "scope": [
+                "constant.character.escape.caesar"
+            ],
+            "settings": {
+                "foreground": "#D7BA7D"
+            }
+        }
+    ]
+}
