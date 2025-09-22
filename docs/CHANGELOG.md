@@ -4,6 +4,31 @@ All notable changes to the Caesar Programming Language project will be documente
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.5] - 2025-09-22
+
+### 🔧 Critical Fix: Standalone Executable Distribution
+
+This patch release resolves a critical dependency issue that prevented Caesar executables from running on systems without MinGW in PATH.
+
+### 🛠️ Fixed
+
+#### **Standalone Execution Issues**
+- **Bundled MinGW DLLs**: Automatically includes required runtime dependencies (`libgcc_s_seh-1.dll`, `libstdc++-6.dll`, `libwinpthread-1.dll`)
+- **NPM Installation Fix**: NPM package now works out-of-the-box without requiring users to install MinGW separately
+- **ZIP Release Fix**: Release packages now include all dependencies for standalone execution
+- **Cross-Environment Compatibility**: Caesar executables work on any Windows system regardless of development environment
+
+#### **Installation Improvements**
+- **Smart DLL Detection**: Installation scripts automatically locate and copy MinGW DLLs from common locations
+- **Enhanced User Experience**: No more silent failures or "exit code 1" issues
+- **Standalone Distribution**: Caesar now truly works as a standalone application
+
+### 📊 **Impact**
+- **✅ NPM Installation Now Truly Standalone**: `npm install -g caesar-lang` provides fully working Caesar without additional setup
+- **✅ ZIP Releases Work Everywhere**: Downloaded releases work on any Windows system
+- **✅ Developer-Friendly**: No need for users to install development tools or configure PATH
+- **✅ Consistent Experience**: Same behavior across all installation methods
+
 ## [1.3.4] - 2025-09-22
 
 ### 🚀 Enhanced User Experience: Python-like Ease of Use
