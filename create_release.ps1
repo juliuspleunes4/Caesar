@@ -51,13 +51,33 @@ if (Test-Path "examples") {
 
 # Copy VS Code extension
 Write-Host "Including VS Code extension..." -ForegroundColor Yellow
-$VSCodeExtensionPath = "vscode-extension\caesar-language-support-0.0.1.vsix"
-if (Test-Path $VSCodeExtensionPath) {
+
+# Find the most recent .vsix file in vscode-extension directory
+$VSCodeExtensionFiles = Get-ChildItem -Path "vscode-extension" -Filter "caesar-language-support-*.vsix" | 
+    Sort-Object { 
+        # Extract version from filename (e.g., "caesar-language-support-1.2.3.vsix" -> "1.2.3")
+        $version = ($_.Name -replace '^caesar-language-support-(.+)\.vsix$', '$1')
+        try {
+            [System.Version]$version
+        } catch {
+            # If version parsing fails, use timestamp
+            $_.LastWriteTime
+        }
+    } -Descending
+
+if ($VSCodeExtensionFiles.Count -gt 0) {
+    $LatestExtension = $VSCodeExtensionFiles[0]
+    $VSCodeExtensionPath = $LatestExtension.FullName
+    $ExtensionFileName = $LatestExtension.Name
+    $ExtensionVersion = ($ExtensionFileName -replace '^caesar-language-support-(.+)\.vsix$', '$1')
+    
     Copy-Item -Path $VSCodeExtensionPath -Destination $ReleaseDir
-    Write-Host "Added VS Code extension: caesar-language-support-0.0.1.vsix" -ForegroundColor Green
+    Write-Host "Added VS Code extension: $ExtensionFileName" -ForegroundColor Green
+    Write-Host "  Extension version: $ExtensionVersion" -ForegroundColor Cyan
 } else {
-    Write-Host "WARNING: VS Code extension not found at $VSCodeExtensionPath" -ForegroundColor Yellow
+    Write-Host "WARNING: No VS Code extension (.vsix) found in vscode-extension/" -ForegroundColor Yellow
     Write-Host "         Build the extension first with 'npm run package' in vscode-extension/" -ForegroundColor Yellow
+    $ExtensionFileName = "caesar-language-support-0.0.1.vsix"  # Fallback for installer generation
 }
 
 # Copy documentation
@@ -126,7 +146,7 @@ function Install-VSCodeExtension {
     
     Write-ColorOutput "🔧 Installing Caesar VS Code Extension..." `$InfoColor
     
-    `$extensionPath = Join-Path `$PSScriptRoot "caesar-language-support-0.0.1.vsix"
+    `$extensionPath = Join-Path `$PSScriptRoot "$ExtensionFileName"
     
     if (-not (Test-Path `$extensionPath)) {
         Write-ColorOutput "❌ VS Code extension file not found: `$extensionPath" `$ErrorColor
@@ -378,7 +398,7 @@ $ReadmeContent = @"
 - ``examples/`` - Sample Caesar programs
 - ``install.ps1`` - Enhanced PowerShell installer with VS Code extension
 - ``install.bat`` - Batch installer
-- ``caesar-language-support-0.0.1.vsix`` - VS Code extension for syntax highlighting
+- ``$ExtensionFileName`` - VS Code extension for syntax highlighting
 - ``USER_GUIDE.md`` - Complete documentation (if included)
 
 ## VS Code Integration
@@ -390,7 +410,7 @@ The installer automatically detects and installs the Caesar VS Code extension if
 - **Caesar Dark theme** optimized for Caesar development
 - **Language recognition** in the VS Code ecosystem
 
-To manually install the extension: ``code --install-extension caesar-language-support-0.0.1.vsix``
+To manually install the extension: ``code --install-extension $ExtensionFileName``
 
 ## Usage
 
