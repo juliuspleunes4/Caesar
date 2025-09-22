@@ -3,7 +3,7 @@
   "displayName": "Caesar Language Support",
   "description": "Official Language Support for the Caesar Programming Language",
   "version": "0.0.1",
-  "publisher": "caesar-lang",
+  "publisher": "juliuspleunes4",
   "repository": {
     "type": "git",
     "url": "https://github.com/juliuspleunes4/Caesar.git"
