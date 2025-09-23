@@ -25,7 +25,7 @@ Caesar is not just a language specification—it's a **complete professional pro
 - **Error Handling**: Detailed diagnostics with position tracking and runtime exception system
 - **Testing Framework**: Comprehensive test suite with 100% pass rate
 - **Performance Benchmarks**: Comprehensive comparison suite demonstrating superiority over Python and competitiveness with C++
-- **Professional Distribution**: NPM package (caesar-lang@1.3.6) and automated release system
+- **Professional Distribution**: NPM package (caesar-lang@1.4.0) and automated release system
 - **Universal Editor Support**: Language Server Protocol implementation for all major editors
 - **VS Code Integration**: [Official Marketplace Extension](https://marketplace.visualstudio.com/items?itemName=juliuspleunes4.caesar-language-support) with F5 run commands and play button
 - **Windows Integration**: Custom file association, icons, and context menu integration
@@ -109,7 +109,7 @@ caesar test.csr  # Just like Python!
 
 **🔧 Installation Process:**
 ```bash
-# 1. Download caesar-v1.3.6-windows.zip from GitHub Releases
+# 1. Download caesar-v1.4.0-windows.zip from GitHub Releases
 # 2. Extract to desired location
 # 3. Run automated installer
 .\install.ps1
@@ -168,7 +168,7 @@ caesar-repl                        # NPM
 # Double-click any .csr file - it should open with Caesar!
 ```
 
-✨ **New in v1.3.6**: Caesar now works exactly like Python - no need to remember flags or complex commands!
+✨ **New in v1.4.0**: Caesar now includes **enhanced data structures** (lists and dictionaries) with Python-like syntax and **professional development workflow** with automated scripts!
 
 ### 🛠️ Additional Setup (Optional)
 
@@ -632,7 +632,7 @@ cmake --build build --parallel
 powershell -ExecutionPolicy Bypass -File create_release.ps1
 ```
 
-This creates a complete standalone distribution in `release/caesar-v1.3.6-windows.zip` that includes:
+This creates a complete standalone distribution in `release/caesar-v1.4.0-windows.zip` that includes:
 - ✅ Pre-compiled executables (`caesar.exe`, `caesar_repl.exe`)
 - ✅ Example programs and documentation
 - ✅ Standalone installers (no Git/CMake required for users)
@@ -642,7 +642,7 @@ This creates a complete standalone distribution in `release/caesar-v1.3.6-window
 
 ```bash
 # Create release with specific version
-powershell -ExecutionPolicy Bypass -File create_release.ps1 -Version "1.3.6"
+powershell -ExecutionPolicy Bypass -File create_release.ps1 -Version "1.4.0"
 
 # Create release in custom directory
 powershell -ExecutionPolicy Bypass -File create_release.ps1 -OutputDir "dist"
@@ -759,7 +759,7 @@ Each debug tool provides detailed output for development and troubleshooting:
 ./src/caesar_repl
 
 # Example REPL session:
-Caesar REPL v1.3.6
+Caesar REPL v1.4.0
 >>> def greet(name):
 ...     return f"Hello, {name}!"
 ...
@@ -794,7 +794,7 @@ See the `examples/` directory for sample Caesar programs:
 | **Documentation** | ✅ Complete | API documentation and user guides |
 | **VS Code Extension** | ✅ Complete | Published to marketplace with syntax highlighting and LSP integration |
 | **Language Server Protocol** | ✅ Complete | TypeScript implementation with universal editor support |
-| **NPM Package** | ✅ Complete | Global installation (caesar-lang@1.3.6) with cross-platform CLI |
+| **NPM Package** | ✅ Complete | Global installation (caesar-lang@1.4.0) with cross-platform CLI |
 | **File Association** | ✅ Complete | Windows integration with custom icons and context menus |
 | **Professional Installation** | ✅ Complete | Automated release system with zero-manual-step setup |
 
