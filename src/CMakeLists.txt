@@ -33,3 +33,14 @@ target_link_libraries(caesar caesar_lib)
 # Create a simple REPL executable for testing
 add_executable(caesar_repl repl.cpp)
 target_link_libraries(caesar_repl caesar_lib)
+
+# Auto-copy binaries to bin directory after build
+add_custom_command(TARGET caesar POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:caesar> ${CMAKE_SOURCE_DIR}/bin/caesar.exe
+    COMMENT "Copying caesar.exe to bin directory"
+)
+
+add_custom_command(TARGET caesar_repl POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:caesar_repl> ${CMAKE_SOURCE_DIR}/bin/caesar_repl.exe
+    COMMENT "Copying caesar_repl.exe to bin directory"
+)

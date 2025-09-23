@@ -40,7 +40,9 @@ void printVersion() {
     std::cout << "  ✓ Built-in functions (print, range, len, str, int, float, type, abs)\n";
     std::cout << "  ✓ Recursive functions and complex expressions\n";
     std::cout << "  ✓ Python-style indentation and syntax\n";
+    std::cout << "  ✓ Enhanced data structures (lists and dictionaries)\n";
     std::cout << "\nBuilt with modern C++17 for optimal performance\n";
+    std::cout << "Build date: " << __DATE__ << " " << __TIME__ << "\n";
 }
 
 int main(int argc, char* argv[]) {
