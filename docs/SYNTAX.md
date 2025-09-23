@@ -53,8 +53,8 @@ empty = ""
 
 #### Booleans
 ```python
-is_ready = true
-is_finished = false
+is_ready = True
+is_finished = False
 ```
 
 #### None
@@ -74,10 +74,10 @@ multiword = "This is a longer string"
 
 ### Boolean Literals
 
-Caesar uses lowercase boolean values:
+Caesar uses Python-like uppercase booleans.
 ```python
-true_value = true
-false_value = false
+true_value = True
+false_value = False
 ```
 
 ## Enhanced Data Structures
@@ -91,7 +91,7 @@ Lists are ordered collections that can hold any type of value.
 ```python
 # Create a list
 numbers = [1, 2, 3, 4, 5]
-mixed = ["hello", 42, true, 3.14]
+mixed = ["hello", 42, True, 3.14]
 empty = []
 
 # Access elements (0-based indexing)
@@ -118,7 +118,7 @@ age = person["age"]      # 30
 
 # Dictionary examples
 config = {
-    "debug": true,
+    "debug": True,
     "max_users": 100,
     "version": "1.4.0"
 }
@@ -140,7 +140,7 @@ users = [
 data = {
     "numbers": [1, 2, 3, 4, 5],
     "names": ["Alice", "Bob", "Charlie"],
-    "active": true
+    "active": True
 }
 
 # Access nested elements
@@ -176,7 +176,7 @@ print("Empty dict length:", len(empty_dict))   # 0
 ```python
 # Configuration management
 config = {
-    "debug": true,
+    "debug": True,
     "max_connections": 100,
     "allowed_ips": ["127.0.0.1", "192.168.1.1"],
     "database": {
@@ -190,7 +190,7 @@ config = {
 mixed_data = [
     "hello",
     42,
-    true,
+    True,
     {"nested": "value"},
     [1, 2, 3]
 ]
@@ -210,7 +210,7 @@ Variables are declared and assigned using the `=` operator:
 # Simple assignment
 x = 10
 name = "Caesar"
-is_active = true
+is_active = True
 
 # Multiple assignments
 a = 5
@@ -266,13 +266,13 @@ f = 10 >= 10    # Greater than or equal: True
 
 ```python
 # Logical operations
-a = true and false   # Logical AND: false
-b = true or false    # Logical OR: true
-c = not true         # Logical NOT: false
+a = True and False   # Logical AND: False
+b = True or False    # Logical OR: True
+c = not True         # Logical NOT: False
 
 # With expressions
 result = (x > 0) and (y < 100)
-valid = (age >= 18) or (has_permission == true)
+valid = (age >= 18) or (has_permission == True)
 ```
 
 ### Unary Operators
@@ -283,8 +283,8 @@ x = 5
 y = -x          # y = -5
 
 # Logical NOT
-is_valid = true
-is_invalid = not is_valid    # false
+is_valid = True
+is_invalid = not is_valid    # False
 ```
 
 ## Control Flow
