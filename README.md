@@ -5,7 +5,7 @@
 ![Coverage](https://img.shields.io/badge/coverage-100%25-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 [![NPM Package](https://img.shields.io/npm/v/caesar-lang?label=NPM%20Package&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/caesar-lang)
-[![VS Code Extension](https://img.shields.io/visual-studio-marketplace/v/juliuspleunes4.caesar-language-support?label=VS%20Code%20Extension&logo=visual-studio-code&logoColor=white&color=007ACC)](https://marketplace.visualstudio.com/items?itemName=juliuspleunes4.caesar-language-support)
+[![VS Code Extension](https://img.shields.io/badge/VS%20Code%20Extension-v0.0.4-007ACC?logo=visual-studio-code&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=juliuspleunes4.caesar-language-support)
 ![Version](https://img.shields.io/badge/version-1.3.6-%2338257d?style=flat&labelColor=38257d&color=38257d)
 
 <p align="center">
