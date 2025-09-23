@@ -139,7 +139,7 @@ if (-not $SkipTests) {
     # Test enhanced data structures specifically
     Write-Step "Testing enhanced data structures..."
     try {
-        $testResult = & $deployBinary --interpret "test_dict.csr" 2>&1
+        $testResult = & $deployBinary --interpret "tests\enhanced-data-structures\test_dict.csr" 2>&1
         if ($LASTEXITCODE -eq 0 -and $testResult -like "*Caesar*" -and $testResult -like "*<class 'list'>*" -and $testResult -like "*<class 'dict'>*") {
             Write-Success "Enhanced data structures working correctly"
             if ($Verbose) { 
@@ -158,4 +158,4 @@ if (-not $SkipTests) {
 }
 
 Write-Host "`n🎉 All checks passed! Caesar is ready for development." -ForegroundColor Green
-Write-Host "Use .\dev-run.ps1 <file.csr> for development testing" -ForegroundColor Yellow
+Write-Host "Use scripts\dev-run.ps1 <file.csr> for development testing" -ForegroundColor Yellow

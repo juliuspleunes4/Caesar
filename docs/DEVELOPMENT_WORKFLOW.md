@@ -31,14 +31,14 @@ add_custom_command(TARGET caesar POST_BUILD
 
 ### 2. Development Scripts
 
-#### `dev-run.ps1` - Always Fresh Development Testing
+#### `scripts/dev-run.ps1` - Always Fresh Development Testing
 
 **Usage:**
 ```powershell
-.\dev-run.ps1 test.csr          # Build and run
-.\dev-run.ps1 -Parse test.csr   # Build and show AST  
-.\dev-run.ps1 -Tokens test.csr  # Build and show tokens
-.\dev-run.ps1 -Help             # Show help
+scripts\dev-run.ps1 test.csr          # Build and run
+scripts\dev-run.ps1 -Parse test.csr   # Build and show AST  
+scripts\dev-run.ps1 -Tokens test.csr  # Build and show tokens
+scripts\dev-run.ps1 -Help             # Show help
 ```
 
 **Benefits:**
@@ -47,13 +47,13 @@ add_custom_command(TARGET caesar POST_BUILD
 - Clear status messages and error handling
 - No chance of testing stale binaries
 
-#### `build-and-test.ps1` - Comprehensive Validation
+#### `scripts/build-and-test.ps1` - Comprehensive Validation
 
 **Usage:**
 ```powershell
-.\build-and-test.ps1           # Full build, test, and validation
-.\build-and-test.ps1 -Verbose  # With detailed output
-.\build-and-test.ps1 -Clean    # Clean build first
+scripts\build-and-test.ps1           # Full build, test, and validation
+scripts\build-and-test.ps1 -Verbose  # With detailed output
+scripts\build-and-test.ps1 -Clean    # Clean build first
 ```
 
 **Features:**
@@ -93,24 +93,24 @@ Build date: Sep 23 2025 21:09:24
 ### For Quick Testing
 ```powershell
 # Best practice - always use dev script
-.\dev-run.ps1 myfile.csr
+scripts\dev-run.ps1 myfile.csr
 ```
 
 ### For Development Sessions
 ```powershell
 # Start with comprehensive validation
-.\build-and-test.ps1
+scripts\build-and-test.ps1
 
 # Then use dev script for iterations
-.\dev-run.ps1 test1.csr
-.\dev-run.ps1 test2.csr
+scripts\dev-run.ps1 test1.csr
+scripts\dev-run.ps1 test2.csr
 # etc.
 ```
 
 ### For Production Builds
 ```powershell
 # Clean build with full validation
-.\build-and-test.ps1 -Clean -Verbose
+scripts\build-and-test.ps1 -Clean -Verbose
 ```
 
 ## VS Code Integration
@@ -140,7 +140,7 @@ If you still encounter issues:
 
 1. **Force rebuild and copy:**
    ```powershell
-   .\build-and-test.ps1 -Clean
+   scripts\build-and-test.ps1 -Clean
    ```
 
 2. **Check binary timestamps:**
@@ -156,8 +156,8 @@ If you still encounter issues:
 ## Key Files Modified
 
 - `src/CMakeLists.txt` - Automatic binary copying
-- `dev-run.ps1` - Development testing script  
-- `build-and-test.ps1` - Comprehensive build script
+- `scripts/dev-run.ps1` - Development testing script  
+- `scripts/build-and-test.ps1` - Comprehensive build script
 - `.vscode/tasks.json` - VS Code task integration
 - `src/main.cpp` - Version information enhancement
 

@@ -44,7 +44,8 @@ Doxyfile.in
 
 # Release artifacts
 create_release.ps1
-msys2-installer.exe
+release/archive/
+release/test-*/
 
 # Assets (keep minimal)
 assets/

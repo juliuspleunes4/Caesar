@@ -9,7 +9,7 @@
                 "-ExecutionPolicy",
                 "Bypass",
                 "-File",
-                "setup-build-env.ps1"
+                "scripts/setup-build-env.ps1"
             ],
             "group": "build",
             "presentation": {
@@ -124,7 +124,7 @@
                 "-ExecutionPolicy",
                 "Bypass",
                 "-File",
-                "dev-run.ps1",
+                "scripts/dev-run.ps1",
                 "${input:caesarFile}"
             ],
             "group": "build",
@@ -147,7 +147,7 @@
                 "-ExecutionPolicy",
                 "Bypass",
                 "-File",
-                "dev-run.ps1",
+                "scripts/dev-run.ps1",
                 "-Parse",
                 "${input:caesarFile}"
             ],

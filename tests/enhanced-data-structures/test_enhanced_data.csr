@@ -1,0 +1,33 @@
+# Caesar Language Enhanced Data Structures Test
+# Testing Lists and Dictionaries in Caesar v1.4.0
+
+# Test list creation and basic operations
+my_list = [1, 2, 3, "hello", true]
+print("List:", my_list)
+print("List length:", len(my_list))
+print("List type:", type(my_list))
+
+# Test empty list
+empty_list = []
+print("Empty list:", empty_list)
+print("Empty list length:", len(empty_list))
+print("Empty list truthy:", empty_list and true or false)
+
+# Test dictionary creation and basic operations
+my_dict = {"name": "Caesar", "version": 1.4, "features": ["lists", "dicts"]}
+print("Dictionary:", my_dict)
+print("Dictionary length:", len(my_dict))
+print("Dictionary type:", type(my_dict))
+
+# Test empty dictionary
+empty_dict = {}
+print("Empty dict:", empty_dict)
+print("Empty dict length:", len(empty_dict))
+print("Empty dict truthy:", empty_dict and true or false)
+
+# Test nested data structures
+nested = {"numbers": [1, 2, 3], "info": {"lang": "Caesar", "awesome": true}}
+print("Nested structures:", nested)
+print("Nested type:", type(nested))
+
+print("All enhanced data structure tests completed!")

@@ -1,0 +1,8 @@
+# Simpler test with basic boolean values
+my_list = [1, 2, 3]
+print("List:", my_list)
+print("List length:", len(my_list))
+
+my_dict = {"key": "value"}
+print("Dict:", my_dict)
+print("Dict length:", len(my_dict))

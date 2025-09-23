@@ -1,7 +1,10 @@
 # Build directories
 build/
 lib/
-release/
+
+# Release artifacts (keep current releases only)
+release/archive/
+release/test-*/
 
 # Compiled object files
 *.o

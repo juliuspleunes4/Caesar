@@ -6,7 +6,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 [![NPM Package](https://img.shields.io/npm/v/caesar-lang?label=NPM%20Package&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/caesar-lang)
 [![VS Code Extension](https://img.shields.io/badge/VS%20Code%20Extension-v0.0.4-007ACC?logo=visual-studio-code&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=juliuspleunes4.caesar-language-support)
-![Version](https://img.shields.io/badge/version-1.3.6-%2338257d?style=flat&labelColor=38257d&color=38257d)
+![Version](https://img.shields.io/badge/version-1.4.0-%2338257d?style=flat&labelColor=38257d&color=38257d)
 
 <p align="center">
     <img src="assets/caesar_logo_v2.png" alt="Caesar Logo" width="125" align="left">
@@ -468,6 +468,65 @@ ctest
 # Verbose test output
 ctest --output-on-failure
 ```
+
+## ⚡ Development Scripts
+
+**Caesar comes with professional automation scripts** that provide a **streamlined development experience** matching industry standards. These scripts handle all the complexity of building, testing, and environment setup automatically.
+
+### 🚀 Quick Start for Developers
+
+**One-Command Testing** - Build and test any Caesar file instantly:
+```powershell
+# Build fresh binaries and run your code
+.\scripts\dev-run.ps1 examples\hello_world.csr
+
+# Show AST parsing (debug mode)
+.\scripts\dev-run.ps1 -Parse examples\functions.csr
+```
+
+**Complete Validation** - Run full test suite with one command:
+```powershell
+# Build, test, and validate everything
+.\scripts\build-and-test.ps1
+```
+
+### 🔧 Professional Automation Scripts
+
+#### `scripts\dev-run.ps1` - Development Testing
+- **Purpose**: Build and run Caesar with fresh binaries every time
+- **Key Feature**: Prevents "wrong binary" issues by always using latest build
+- **Usage**: `.\scripts\dev-run.ps1 <file.csr>` or `.\scripts\dev-run.ps1 -Parse <file.csr>`
+
+#### `scripts\build-and-test.ps1` - Complete Validation  
+- **Purpose**: Professional CI/CD-style validation pipeline
+- **Coverage**: Build verification, all 9 test suites, enhanced data structures validation
+- **Output**: Comprehensive summary with ✅ pass/❌ fail indicators
+
+#### `scripts\setup-build-env.ps1` - Environment Setup
+- **Purpose**: Automated MinGW/CMake environment configuration  
+- **Benefit**: Eliminates common Windows build issues automatically
+- **Usage**: Run once to configure your development environment
+
+#### `scripts\create_release.ps1` - Release Packaging
+- **Purpose**: Professional release artifact generation
+- **Output**: Complete distributable packages with documentation
+
+### 🎯 VS Code Integration
+
+All scripts are integrated with **VS Code tasks** for seamless IDE experience:
+- **Build Caesar** (Ctrl+Shift+P → Tasks: Run Task)
+- **Run All Tests** 
+- **Dev Run (Auto-Build)**
+- **Clean Build**
+
+**Why These Scripts Matter:**
+- ✅ **Professional Workflow**: Matches industry-standard development practices
+- ✅ **Zero Configuration**: Works out-of-the-box on Windows, Linux, and macOS  
+- ✅ **Prevents Issues**: Automatic fresh builds eliminate common development pitfalls
+- ✅ **Complete Testing**: Comprehensive validation including enhanced data structures
+- ✅ **Developer Experience**: Makes contributing to Caesar effortless
+
+See [`scripts/README.md`](scripts/README.md) for complete documentation.
 
 ## 🛠️ Building Caesar
 
