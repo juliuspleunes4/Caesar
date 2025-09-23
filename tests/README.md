@@ -40,7 +40,7 @@ Located in `manual/` directory - these are Caesar language files (.csr) that tes
 ### C++ Unit Tests
 ```bash
 # Build and run all tests
-.\build-and-test.ps1
+.\scripts\build-and-test.ps1
 
 # Run specific test
 cd build && ctest -R test_lexer --output-on-failure
@@ -49,7 +49,7 @@ cd build && ctest -R test_lexer --output-on-failure
 ### Enhanced Data Structures Tests
 ```bash
 # Run with development script
-.\dev-run.ps1 tests\enhanced-data-structures\test_dict.csr
+.\scripts\dev-run.ps1 tests\enhanced-data-structures\test_dict.csr
 
 # Run directly
 bin\caesar.exe --interpret tests\enhanced-data-structures\test_dict.csr
@@ -57,7 +57,7 @@ bin\caesar.exe --interpret tests\enhanced-data-structures\test_dict.csr
 
 ### Manual Tests
 ```bash
-.\dev-run.ps1 tests\manual\test_function.csr
+.\scripts\dev-run.ps1 tests\manual\test_function.csr
 ```
 
 All tests should pass with the current implementation. The C++ unit tests validate core language functionality, while the .csr test files validate practical usage scenarios.

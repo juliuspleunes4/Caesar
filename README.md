@@ -112,7 +112,7 @@ caesar test.csr  # Just like Python!
 # 1. Download caesar-v1.4.0-windows.zip from GitHub Releases
 # 2. Extract to desired location
 # 3. Run automated installer
-.\install.ps1
+node scripts\install.js
 
 # 4. Verify installation
 .\bin\caesar.exe --version
@@ -585,7 +585,7 @@ For Windows users with MinGW/MSYS2, use our automated setup script to avoid comm
 
 ```powershell
 # Automated setup (recommended for Windows)
-.\setup-build-env.ps1
+.\scripts\setup-build-env.ps1
 
 # Then build normally
 cmake --build build
@@ -628,7 +628,7 @@ After making changes to the source code:
 cmake --build build --parallel
 
 # 2. Generate release package
-powershell -ExecutionPolicy Bypass -File create_release.ps1
+powershell -ExecutionPolicy Bypass -File scripts\create_release.ps1
 ```
 
 This creates a complete standalone distribution in `release/caesar-v1.4.0-windows.zip` that includes:
@@ -641,10 +641,10 @@ This creates a complete standalone distribution in `release/caesar-v1.4.0-window
 
 ```bash
 # Create release with specific version
-powershell -ExecutionPolicy Bypass -File create_release.ps1 -Version "1.4.0"
+powershell -ExecutionPolicy Bypass -File scripts\create_release.ps1 -Version "1.4.0"
 
 # Create release in custom directory
-powershell -ExecutionPolicy Bypass -File create_release.ps1 -OutputDir "dist"
+powershell -ExecutionPolicy Bypass -File scripts\create_release.ps1 -OutputDir "dist"
 ```
 
 ### Distribution

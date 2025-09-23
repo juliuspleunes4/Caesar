@@ -46,9 +46,9 @@ Simple validation tests for:
 
 ```bash
 # Run all enhanced data structure tests
-.\dev-run.ps1 tests\enhanced-data-structures\test_dict.csr
-.\dev-run.ps1 tests\enhanced-data-structures\test_enhanced_data.csr
-.\dev-run.ps1 tests\enhanced-data-structures\test_simple_data.csr
+.\scripts\dev-run.ps1 tests\enhanced-data-structures\test_dict.csr
+.\scripts\dev-run.ps1 tests\enhanced-data-structures\test_enhanced_data.csr
+.\scripts\dev-run.ps1 tests\enhanced-data-structures\test_simple_data.csr
 
 # Or run directly
 bin\caesar.exe --interpret tests\enhanced-data-structures\test_dict.csr
