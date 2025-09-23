@@ -456,8 +456,7 @@ Caesar includes a **production-quality test suite** ensuring reliability and cor
 
 ```bash
 # Run all tests
-cd build
-ctest
+cd build && ctest --output-on-failure
 
 # Run specific test categories
 ./tests/test_lexer          # Basic lexical analysis
