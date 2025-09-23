@@ -78,6 +78,142 @@ xcode-select --install
 - Requirement: CMake 3.15+
 - Solution: Update CMake from official website
 
+### Build Environment Issues (Windows MinGW/MSYS2)
+
+**Error Code 0xc0000135 - "Application failed to initialize"**
+
+This error occurs when test executables can't find required DLL dependencies, typically MinGW runtime libraries.
+
+**Quick Fix:**
+```powershell
+# Add MinGW to PATH for current session
+$env:PATH = "C:\msys64\mingw64\bin;$env:PATH"
+
+# Rebuild with correct generator
+Remove-Item -Recurse -Force build
+mkdir build && cd build
+cmake -G "MinGW Makefiles" ..
+cmake --build .
+ctest
+```
+
+**Permanent Solution:**
+1. **Add MinGW to System PATH:**
+   - Open "Environment Variables" in Windows
+   - Add `C:\msys64\mingw64\bin` to System PATH
+   - Restart terminal/IDE
+
+2. **Create build configuration script:**
+   Create `setup-build-env.ps1` in project root:
+   ```powershell
+   # setup-build-env.ps1
+   # Caesar Build Environment Setup Script
+   
+   Write-Host "Setting up Caesar build environment..." -ForegroundColor Green
+   
+   # Add MinGW to PATH if not already present
+   $mingwPath = "C:\msys64\mingw64\bin"
+   if ($env:PATH -notlike "*$mingwPath*") {
+       $env:PATH = "$mingwPath;$env:PATH"
+       Write-Host "✓ Added MinGW to PATH" -ForegroundColor Green
+   } else {
+       Write-Host "✓ MinGW already in PATH" -ForegroundColor Yellow
+   }
+   
+   # Verify MinGW tools are available
+   try {
+       $gccVersion = & gcc --version 2>$null | Select-Object -First 1
+       Write-Host "✓ GCC found: $gccVersion" -ForegroundColor Green
+   } catch {
+       Write-Host "✗ GCC not found. Please install MSYS2/MinGW64" -ForegroundColor Red
+       exit 1
+   }
+   
+   # Clean and reconfigure build if needed
+   if (Test-Path "build/CMakeCache.txt") {
+       $generator = Get-Content "build/CMakeCache.txt" | Select-String "CMAKE_GENERATOR:INTERNAL="
+       if ($generator -and $generator -notlike "*MinGW*") {
+           Write-Host "⚠ Wrong CMake generator detected. Cleaning build directory..." -ForegroundColor Yellow
+           Remove-Item -Recurse -Force build -ErrorAction SilentlyContinue
+       }
+   }
+   
+   # Create/configure build directory
+   if (-not (Test-Path "build")) {
+       Write-Host "Creating build directory..." -ForegroundColor Cyan
+       mkdir build | Out-Null
+   }
+   
+   Set-Location build
+   
+   Write-Host "Configuring CMake with MinGW..." -ForegroundColor Cyan
+   cmake -G "MinGW Makefiles" ..
+   
+   if ($LASTEXITCODE -eq 0) {
+       Write-Host "✓ Build environment ready!" -ForegroundColor Green
+       Write-Host "Run 'cmake --build .' to build the project" -ForegroundColor Cyan
+   } else {
+       Write-Host "✗ CMake configuration failed" -ForegroundColor Red
+   }
+   ```
+
+3. **Usage:**
+   ```powershell
+   # Run from project root
+   .\setup-build-env.ps1
+   
+   # Then build normally
+   cmake --build build
+   ctest -C build
+   ```
+
+**Alternative Compilers:**
+
+If MinGW causes issues, try other Windows compilers:
+
+1. **Visual Studio (MSVC):**
+   ```powershell
+   # Use Visual Studio generator (default on Windows)
+   cmake -G "Visual Studio 17 2022" ..
+   cmake --build . --config Release
+   ```
+
+2. **Clang:**
+   ```powershell
+   # Install Clang and use it
+   cmake -G "MinGW Makefiles" -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ..
+   ```
+
+**Troubleshooting Build Environment:**
+
+1. **Check available generators:**
+   ```bash
+   cmake --help
+   # Look for "Generators" section
+   ```
+
+2. **Verify compiler paths:**
+   ```powershell
+   where gcc
+   where g++
+   where mingw32-make
+   ```
+
+3. **Test MinGW installation:**
+   ```bash
+   gcc --version
+   g++ --version
+   mingw32-make --version
+   ```
+
+4. **Common MSYS2 installation fix:**
+   ```bash
+   # Update MSYS2 packages
+   pacman -Syu
+   # Install build tools
+   pacman -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
+   ```
+
 ### Compilation Errors
 
 **"C++17 features not supported"**

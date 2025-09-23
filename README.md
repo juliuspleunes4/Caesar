@@ -521,6 +521,23 @@ cmake --build . -j
 ctest
 ```
 
+#### Windows MinGW/MSYS2 Quick Setup
+
+For Windows users with MinGW/MSYS2, use our automated setup script to avoid common build issues:
+
+```powershell
+# Automated setup (recommended for Windows)
+.\setup-build-env.ps1
+
+# Then build normally
+cmake --build build
+cd build && ctest
+```
+
+#### Troubleshooting Build Issues
+
+If you encounter build problems (especially error code 0xc0000135 or CMake generator issues), see the comprehensive [**Troubleshooting Guide**](docs/TROUBLESHOOTING.md#build-environment-issues-windows-mingwmsys2) for detailed solutions.
+
 ### Build Targets
 
 ```bash
