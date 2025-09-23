@@ -126,7 +126,7 @@ caesar test.csr  # Just like Python!
 | Feature | NPM Package | Release Package |
 |---------|-------------|-----------------|
 | **Installation Time** | ~30 seconds | ~60 seconds |
-| **File Size** | 8.7 MB | 6.89 MB |
+| **File Size** | 11.24 MB | 12.77 MB |
 | **Dependencies** | Node.js 14+ | None |
 | **Auto Updates** | ✅ `npm update` | Manual download |
 | **VS Code Extension** | Manual install | ✅ Automatic |
