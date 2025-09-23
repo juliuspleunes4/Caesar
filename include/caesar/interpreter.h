@@ -24,17 +24,32 @@ namespace caesar {
 class Interpreter;
 class Environment;
 
+// Forward declarations for recursive types
+struct ValueList;
+struct ValueDict;
+
 /**
- * @brief Value type for runtime values (simplified for now)
+ * @brief Value type for runtime values (enhanced with data structures)
  */
 using Value = std::variant<
-    std::nullptr_t,              // None/null
-    bool,                        // Boolean
-    int64_t,                     // Integer
-    double,                      // Float
-    std::string,                 // String
-    std::shared_ptr<class CallableFunction>  // User-defined functions
+    std::nullptr_t,                          // None/null
+    bool,                                    // Boolean
+    int64_t,                                 // Integer
+    double,                                  // Float
+    std::string,                             // String
+    std::shared_ptr<class CallableFunction>, // User-defined functions
+    std::shared_ptr<ValueList>,              // Lists [1, 2, 3]
+    std::shared_ptr<ValueDict>               // Dictionaries {"key": "value"}
 >;
+
+// Define recursive types after Value is complete
+struct ValueList : public std::vector<Value> {
+    using std::vector<Value>::vector;  // Inherit constructors
+};
+
+struct ValueDict : public std::unordered_map<std::string, Value> {
+    using std::unordered_map<std::string, Value>::unordered_map;  // Inherit constructors
+};
 
 /**
  * @brief Runtime error class

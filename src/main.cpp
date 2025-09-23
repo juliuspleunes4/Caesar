@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
             std::cout << "AST:\n" << program->toString() << "\n";
             return 0;
         }
-        
+
         if (interpret) {
             // Interpret the program
             caesar::Interpreter interpreter;
