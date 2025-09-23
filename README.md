@@ -797,6 +797,8 @@ See the `examples/` directory for sample Caesar programs:
 | **NPM Package** | ✅ Complete | Global installation (caesar-lang@1.4.0) with cross-platform CLI |
 | **File Association** | ✅ Complete | Windows integration with custom icons and context menus |
 | **Professional Installation** | ✅ Complete | Automated release system with zero-manual-step setup |
+| **Enhanced Data Structures** | ✅ Complete | Lists `[1, 2, 3]` and dictionaries `{"key": "value"}` with Python-like syntax |
+| **Development Automation** | ✅ Complete | Professional workflow scripts (dev-run, build-and-test, setup-build-env) |
 
 ### 🚧 Planned Features (Future Releases)
 
@@ -810,7 +812,7 @@ See the `examples/` directory for sample Caesar programs:
 | **Code Optimization** | Medium | Performance optimizations and dead code elimination |
 | **Native Compilation** | High | Machine code generation and linking |
 | **Runtime System** | Medium | Memory management and garbage collection |
-| **Standard Library** | Medium | Built-in functions and data structures |
+| **Extended Standard Library** | Medium | Additional built-in functions and advanced data structure operations |
 | **Module System** | Low | Import/export functionality |
 | **Debugger Support** | Low | Debug information and breakpoint support |
 
