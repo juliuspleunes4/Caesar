@@ -1,0 +1,175 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Setup Build Environment",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "scripts/setup-build-env.ps1"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Sets up MinGW build environment and configures CMake"
+        },
+        {
+            "label": "Build Caesar",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "build"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Build the Caesar project using CMake",
+            "dependsOn": "Setup Build Environment"
+        },
+        {
+            "label": "Run All Tests",
+            "type": "shell",
+            "command": "ctest",
+            "args": [
+                "--output-on-failure"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "options": {
+                "cwd": "build"
+            },
+            "problemMatcher": [],
+            "detail": "Run all Caesar tests with verbose output",
+            "dependsOn": "Build Caesar"
+        },
+        {
+            "label": "Clean Build",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-Command",
+                "Remove-Item -Recurse -Force build -ErrorAction SilentlyContinue; Write-Host 'Build directory cleaned' -ForegroundColor Green"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Clean the build directory"
+        },
+        {
+            "label": "Run Specific Test",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-Command",
+                "$testName = Read-Host 'Enter test name (e.g., test_lexer)'; if ($testName) { ctest -R $testName --output-on-failure } else { Write-Host 'No test name provided' -ForegroundColor Red }"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "options": {
+                "cwd": "build"
+            },
+            "problemMatcher": [],
+            "detail": "Run a specific test by name",
+            "dependsOn": "Build Caesar"
+        },
+        {
+            "label": "Dev Run (Auto-Build)",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "scripts/dev-run.ps1",
+                "${input:caesarFile}"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Build and run Caesar with a file (ensures latest binary)"
+        },
+        {
+            "label": "Dev Parse (Auto-Build)",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "scripts/dev-run.ps1",
+                "-Parse",
+                "${input:caesarFile}"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Build and show AST for Caesar file (ensures latest binary)"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "caesarFile",
+            "description": "Caesar source file to run",
+            "default": "test.csr",
+            "type": "promptString"
+        }
+    ]
+}

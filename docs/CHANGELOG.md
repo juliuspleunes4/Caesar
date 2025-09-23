@@ -4,6 +4,131 @@ All notable changes to the Caesar Programming Language project will be documente
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2025-09-23
+
+### 🚀 Feature Release: Enhanced Data Structures & Professional Development Workflow
+
+This major release introduces **comprehensive enhanced data structures** (lists and dictionaries) and establishes a **professional development workflow** with industry-standard automation scripts and project organization.
+
+### 🎯 **Enhanced Data Structures** - Complete Implementation
+
+#### **Lists (Arrays)**
+- **Complete Implementation**: Full list functionality with indexing, assignment, and operations
+- **Dynamic Operations**: `append()`, `len()`, iteration support, and comprehensive manipulation
+- **Syntax Support**: Python-like list literals `[1, 2, 3]` and indexing `list[0]`
+- **Performance Optimized**: Efficient memory management and operation handling
+
+#### **Dictionaries (Hash Maps)**  
+- **Complete Implementation**: Full dictionary functionality with key-value operations
+- **Dynamic Operations**: Key assignment, retrieval, `len()`, and iteration support
+- **Syntax Support**: Python-like dict literals `{"key": value}` and access `dict["key"]`
+- **Flexible Keys**: Support for string, integer, and mixed key types
+
+#### **Built-in Function Enhancements**
+- **`len()` Function**: Universal length function for strings, lists, and dictionaries
+- **Enhanced Type System**: Complete type checking and validation for new data structures
+- **Error Handling**: Comprehensive error messages for invalid operations and access patterns
+
+### 🏗️ **Professional Development Workflow**
+
+#### **Development Scripts** - Industry-Standard Automation
+- **`scripts/dev-run.ps1`**: Development testing with automatic fresh builds (prevents "wrong binary" issues)
+- **`scripts/build-and-test.ps1`**: Complete CI/CD-style validation pipeline with comprehensive test coverage
+- **`scripts/setup-build-env.ps1`**: Automated MinGW/CMake environment configuration
+- **`scripts/create_release.ps1`**: Professional release artifact generation
+
+#### **VS Code Integration**
+- **Complete Task Integration**: All scripts integrated with VS Code tasks for seamless IDE experience
+- **Updated Task Definitions**: Professional task configuration in `.vscode/tasks.json`
+- **One-Click Development**: Build, test, and run directly from VS Code interface
+
+#### **Project Organization** - Industry Standards
+- **Centralized Scripts**: All PowerShell scripts moved from root to `scripts/` directory
+- **Enhanced Documentation**: Comprehensive `scripts/README.md` and `tests/README.md`
+- **Professional Structure**: Clean root directory with logical file organization
+- **Test Organization**: Enhanced data structures tests in dedicated `tests/enhanced-data-structures/` directory
+
+### 🧪 **Comprehensive Testing Suite**
+
+#### **Enhanced Data Structures Tests**
+- **9 Total Test Categories**: All passing with 100% success rate
+- **Dedicated Test Files**: 
+  - `test_simple_data.csr`: Basic list and dictionary operations
+  - `test_enhanced_data.csr`: Advanced data structure features
+  - `test_dict.csr`: Comprehensive dictionary testing
+- **Complete Coverage**: All features thoroughly tested and validated
+
+#### **Testing Infrastructure**
+- **Automated Validation**: Complete test suite runs with single command
+- **Performance Testing**: Stress tests for data structure operations  
+- **Integration Testing**: End-to-end workflow validation
+
+### 📝 **Documentation Enhancements**
+
+#### **README.md Updates**
+- **Development Scripts Section**: Comprehensive documentation of automation workflow
+- **Professional Presentation**: Showcases industry-standard development practices
+- **Developer Onboarding**: Clear guidance for new contributors
+- **Version Update**: Updated to v1.4.0 reflecting enhanced capabilities
+
+#### **Technical Documentation**
+- **Complete Script Documentation**: Detailed usage and purpose for all automation scripts
+- **Development Workflow**: Updated `docs/DEVELOPMENT_WORKFLOW.md` with new processes
+- **API Documentation**: Enhanced documentation for new data structure functionality
+
+### 🛠️ **Technical Improvements**
+
+#### **Interpreter Core**
+- **Enhanced Expression Evaluation**: Support for list and dictionary literals and operations
+- **Improved Error Handling**: Better error messages for data structure operations
+- **Memory Management**: Optimized handling of dynamic data structures
+- **Type System**: Enhanced type checking for complex data structures
+
+#### **Build System**
+- **CMake Integration**: Automatic binary copying to prevent "wrong binary" issues
+- **Cross-Platform Support**: Enhanced build compatibility across platforms
+- **Development Environment**: Streamlined setup and configuration process
+
+### 🧹 **Project Cleanup**
+
+#### **File Organization**
+- **Removed Outdated Files**: Deleted `caesar-lang-1.1.0.tgz` (318KB space saved)
+- **Proper Release Structure**: Organized release files in dedicated `release/` directory
+- **Updated Ignore Files**: Enhanced `.gitignore` and `.npmignore` for better organization
+
+#### **Configuration Updates**
+- **Task Configuration**: Updated VS Code tasks with new script paths
+- **Path Updates**: All documentation and configuration files updated with correct paths
+- **Clean Structure**: Professional project layout matching industry standards
+
+### 📊 **Performance & Quality**
+
+#### **Testing Results**
+- **✅ 100% Test Pass Rate**: All 9 test categories passing successfully
+- **✅ Enhanced Data Structures**: Lists and dictionaries working perfectly
+- **✅ Comprehensive Coverage**: All features thoroughly tested and validated
+- **✅ Performance Validated**: Stress tests confirm robust operation
+
+#### **Developer Experience**
+- **✅ One-Command Workflow**: Build and test with single script execution
+- **✅ Professional Tools**: Industry-standard automation and organization
+- **✅ Complete Documentation**: Comprehensive guides for all aspects
+- **✅ Zero Configuration**: Out-of-the-box development experience
+
+### 🎯 **Migration Guide**
+
+#### **For Developers**
+- **Script Locations**: All PowerShell scripts moved from root to `scripts/` directory
+- **VS Code Tasks**: Updated with new script paths (automatic if using provided tasks)
+- **New Features**: Lists and dictionaries available immediately with familiar Python syntax
+
+#### **For Users**
+- **Enhanced Capabilities**: Lists `[1, 2, 3]` and dictionaries `{"key": "value"}` now fully supported
+- **Improved Performance**: Better memory management and operation efficiency
+- **Backward Compatibility**: All existing Caesar code continues to work without changes
+
+---
+
 ## [1.3.6] - 2025-09-22
 
 ### 🛤️ Enhancement: Automatic PATH Configuration

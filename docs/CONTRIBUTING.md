@@ -67,15 +67,22 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 
 3. **Build the project**
    ```bash
+   # Linux/macOS:
    mkdir build && cd build
    cmake ..
    cmake --build . --parallel
+   
+   # Windows (MinGW/MSYS2) - Use automated setup:
+   .\setup-build-env.ps1
+   cmake --build build
    ```
 
 4. **Run tests to ensure everything works**
    ```bash
    ctest --output-on-failure
    ```
+
+   **Note for Windows users:** If you encounter build issues (like error 0xc0000135), see our [Troubleshooting Guide](TROUBLESHOOTING.md#build-environment-issues-windows-mingwmsys2) or use the `setup-build-env.ps1` script.
 
 ### Development Workflow
 

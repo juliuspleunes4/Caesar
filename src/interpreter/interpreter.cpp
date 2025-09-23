@@ -290,13 +290,38 @@ void Interpreter::visit(AssignmentExpression& node) {
 }
 
 void Interpreter::visit(ListExpression& node) {
-    (void)node;
-    last_value = std::string("[list]");
+    // Create a new list and evaluate all elements
+    auto list = std::make_shared<ValueList>();
+    
+    for (const auto& element : node.elements) {
+        element->accept(*this);
+        list->push_back(last_value);
+    }
+    
+    last_value = list;
 }
 
 void Interpreter::visit(DictExpression& node) {
-    (void)node;
-    last_value = std::string("[dict]");
+    // Create a new dictionary and evaluate all key-value pairs
+    auto dict = std::make_shared<ValueDict>();
+    
+    for (const auto& pair : node.pairs) {
+        // Evaluate key
+        pair.first->accept(*this);
+        Value key = last_value;
+        
+        // Convert key to string (dictionaries use string keys)
+        std::string key_str = valueToString(key);
+        
+        // Evaluate value  
+        pair.second->accept(*this);
+        Value value = last_value;
+        
+        // Store in dictionary
+        (*dict)[key_str] = value;
+    }
+    
+    last_value = dict;
 }
 
 // Statement visitors
@@ -424,30 +449,10 @@ void Interpreter::visit(Program& node) {
 
 // Helper functions
 void Interpreter::initializeBuiltins() {
-    builtins["print"] = [](const std::vector<Value>& args) -> Value {
+    builtins["print"] = [this](const std::vector<Value>& args) -> Value {
         for (size_t i = 0; i < args.size(); ++i) {
             if (i > 0) std::cout << " ";
-            
-            std::string output = std::visit([](const auto& v) -> std::string {
-                using T = std::decay_t<decltype(v)>;
-                if constexpr (std::is_same_v<T, std::nullptr_t>) {
-                    return "None";
-                } else if constexpr (std::is_same_v<T, bool>) {
-                    return v ? "True" : "False";
-                } else if constexpr (std::is_same_v<T, std::string>) {
-                    return v;
-                } else if constexpr (std::is_same_v<T, int64_t>) {
-                    return std::to_string(v);
-                } else if constexpr (std::is_same_v<T, double>) {
-                    return std::to_string(v);
-                } else if constexpr (std::is_same_v<T, std::shared_ptr<CallableFunction>>) {
-                    return "<function " + v->getDeclaration()->name + ">";
-                } else {
-                    return "[object]";
-                }
-            }, args[i]);
-            
-            std::cout << output;
+            std::cout << valueToString(args[i]);
         }
         std::cout << std::endl;
         return nullptr;
@@ -493,6 +498,12 @@ void Interpreter::initializeBuiltins() {
         
         if (std::holds_alternative<std::string>(args[0])) {
             return static_cast<int64_t>(std::get<std::string>(args[0]).length());
+        } else if (std::holds_alternative<std::shared_ptr<ValueList>>(args[0])) {
+            auto list = std::get<std::shared_ptr<ValueList>>(args[0]);
+            return static_cast<int64_t>(list->size());
+        } else if (std::holds_alternative<std::shared_ptr<ValueDict>>(args[0])) {
+            auto dict = std::get<std::shared_ptr<ValueDict>>(args[0]);
+            return static_cast<int64_t>(dict->size());
         }
         
         throw RuntimeError("object has no len()");
@@ -598,6 +609,10 @@ void Interpreter::initializeBuiltins() {
                 return "<class 'float'>";
             } else if constexpr (std::is_same_v<T, std::shared_ptr<CallableFunction>>) {
                 return "<class 'function'>";
+            } else if constexpr (std::is_same_v<T, std::shared_ptr<ValueList>>) {
+                return "<class 'list'>";
+            } else if constexpr (std::is_same_v<T, std::shared_ptr<ValueDict>>) {
+                return "<class 'dict'>";
             } else {
                 return "<class 'object'>";
             }
@@ -625,7 +640,7 @@ void Interpreter::initializeBuiltins() {
 }
 
 std::string Interpreter::valueToString(const Value& value) {
-    return std::visit([](const auto& v) -> std::string {
+    return std::visit([this](const auto& v) -> std::string {
         using T = std::decay_t<decltype(v)>;
         if constexpr (std::is_same_v<T, std::nullptr_t>) {
             return "None";
@@ -639,6 +654,24 @@ std::string Interpreter::valueToString(const Value& value) {
             return std::to_string(v);
         } else if constexpr (std::is_same_v<T, std::shared_ptr<CallableFunction>>) {
             return "<function " + v->getDeclaration()->name + ">";
+        } else if constexpr (std::is_same_v<T, std::shared_ptr<ValueList>>) {
+            std::string result = "[";
+            for (size_t i = 0; i < v->size(); ++i) {
+                if (i > 0) result += ", ";
+                result += valueToString((*v)[i]);
+            }
+            result += "]";
+            return result;
+        } else if constexpr (std::is_same_v<T, std::shared_ptr<ValueDict>>) {
+            std::string result = "{";
+            bool first = true;
+            for (const auto& pair : *v) {
+                if (!first) result += ", ";
+                first = false;
+                result += "\"" + pair.first + "\": " + valueToString(pair.second);
+            }
+            result += "}";
+            return result;
         } else {
             return "[object]";
         }
@@ -660,6 +693,10 @@ bool Interpreter::isTruthy(const Value& value) {
             return !v.empty();
         } else if constexpr (std::is_same_v<T, std::shared_ptr<CallableFunction>>) {
             return true; // Functions are always truthy
+        } else if constexpr (std::is_same_v<T, std::shared_ptr<ValueList>>) {
+            return !v->empty(); // Empty lists are falsy
+        } else if constexpr (std::is_same_v<T, std::shared_ptr<ValueDict>>) {
+            return !v->empty(); // Empty dictionaries are falsy
         } else {
             return true;
         }
@@ -673,7 +710,28 @@ bool Interpreter::isEqual(const Value& a, const Value& b) {
         using T = std::decay_t<decltype(left)>;
         using U = std::decay_t<decltype(right)>;
         if constexpr (std::is_same_v<T, U>) {
-            return left == right;
+            if constexpr (std::is_same_v<T, std::shared_ptr<ValueList>>) {
+                // Compare list contents
+                if (left->size() != right->size()) return false;
+                for (size_t i = 0; i < left->size(); ++i) {
+                    // Note: This is a simplified comparison
+                    // In a full implementation, we might need recursive equality checking
+                    if ((*left)[i].index() != (*right)[i].index()) return false;
+                }
+                return true;
+            } else if constexpr (std::is_same_v<T, std::shared_ptr<ValueDict>>) {
+                // Compare dictionary contents
+                if (left->size() != right->size()) return false;
+                for (const auto& pair : *left) {
+                    auto it = right->find(pair.first);
+                    if (it == right->end()) return false;
+                    // Note: This is a simplified comparison
+                    if (pair.second.index() != it->second.index()) return false;
+                }
+                return true;
+            } else {
+                return left == right;
+            }
         } else {
             return false;
         }

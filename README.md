@@ -6,7 +6,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 [![NPM Package](https://img.shields.io/npm/v/caesar-lang?label=NPM%20Package&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/caesar-lang)
 [![VS Code Extension](https://img.shields.io/badge/VS%20Code%20Extension-v0.0.4-007ACC?logo=visual-studio-code&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=juliuspleunes4.caesar-language-support)
-![Version](https://img.shields.io/badge/version-1.3.6-%2338257d?style=flat&labelColor=38257d&color=38257d)
+![Version](https://img.shields.io/badge/version-1.4.0-%2338257d?style=flat&labelColor=38257d&color=38257d)
 
 <p align="center">
     <img src="assets/caesar_logo_v2.png" alt="Caesar Logo" width="125" align="left">
@@ -25,7 +25,7 @@ Caesar is not just a language specification—it's a **complete professional pro
 - **Error Handling**: Detailed diagnostics with position tracking and runtime exception system
 - **Testing Framework**: Comprehensive test suite with 100% pass rate
 - **Performance Benchmarks**: Comprehensive comparison suite demonstrating superiority over Python and competitiveness with C++
-- **Professional Distribution**: NPM package (caesar-lang@1.3.6) and automated release system
+- **Professional Distribution**: NPM package (caesar-lang@1.4.0) and automated release system
 - **Universal Editor Support**: Language Server Protocol implementation for all major editors
 - **VS Code Integration**: [Official Marketplace Extension](https://marketplace.visualstudio.com/items?itemName=juliuspleunes4.caesar-language-support) with F5 run commands and play button
 - **Windows Integration**: Custom file association, icons, and context menu integration
@@ -109,10 +109,10 @@ caesar test.csr  # Just like Python!
 
 **🔧 Installation Process:**
 ```bash
-# 1. Download caesar-v1.3.6-windows.zip from GitHub Releases
+# 1. Download caesar-v1.4.0-windows.zip from GitHub Releases
 # 2. Extract to desired location
 # 3. Run automated installer
-.\install.ps1
+node scripts\install.js
 
 # 4. Verify installation
 .\bin\caesar.exe --version
@@ -126,7 +126,7 @@ caesar test.csr  # Just like Python!
 | Feature | NPM Package | Release Package |
 |---------|-------------|-----------------|
 | **Installation Time** | ~30 seconds | ~60 seconds |
-| **File Size** | 8.7 MB | 6.89 MB |
+| **File Size** | 11.24 MB | 12.77 MB |
 | **Dependencies** | Node.js 14+ | None |
 | **Auto Updates** | ✅ `npm update` | Manual download |
 | **VS Code Extension** | Manual install | ✅ Automatic |
@@ -168,7 +168,7 @@ caesar-repl                        # NPM
 # Double-click any .csr file - it should open with Caesar!
 ```
 
-✨ **New in v1.3.6**: Caesar now works exactly like Python - no need to remember flags or complex commands!
+✨ **New in v1.4.0**: Caesar now includes **enhanced data structures** (lists and dictionaries) with Python-like syntax and **professional development workflow** with automated scripts!
 
 ### 🛠️ Additional Setup (Optional)
 
@@ -456,8 +456,7 @@ Caesar includes a **production-quality test suite** ensuring reliability and cor
 
 ```bash
 # Run all tests
-cd build
-ctest
+cd build && ctest --output-on-failure
 
 # Run specific test categories
 ./tests/test_lexer          # Basic lexical analysis
@@ -468,6 +467,65 @@ ctest
 # Verbose test output
 ctest --output-on-failure
 ```
+
+## ⚡ Development Scripts
+
+**Caesar comes with professional automation scripts** that provide a **streamlined development experience** matching industry standards. These scripts handle all the complexity of building, testing, and environment setup automatically.
+
+### 🚀 Quick Start for Developers
+
+**One-Command Testing** - Build and test any Caesar file instantly:
+```powershell
+# Build fresh binaries and run your code
+.\scripts\dev-run.ps1 examples\hello_world.csr
+
+# Show AST parsing (debug mode)
+.\scripts\dev-run.ps1 -Parse examples\functions.csr
+```
+
+**Complete Validation** - Run full test suite with one command:
+```powershell
+# Build, test, and validate everything
+.\scripts\build-and-test.ps1
+```
+
+### 🔧 Professional Automation Scripts
+
+#### `scripts\dev-run.ps1` - Development Testing
+- **Purpose**: Build and run Caesar with fresh binaries every time
+- **Key Feature**: Prevents "wrong binary" issues by always using latest build
+- **Usage**: `.\scripts\dev-run.ps1 <file.csr>` or `.\scripts\dev-run.ps1 -Parse <file.csr>`
+
+#### `scripts\build-and-test.ps1` - Complete Validation  
+- **Purpose**: Professional CI/CD-style validation pipeline
+- **Coverage**: Build verification, all 9 test suites, enhanced data structures validation
+- **Output**: Comprehensive summary with ✅ pass/❌ fail indicators
+
+#### `scripts\setup-build-env.ps1` - Environment Setup
+- **Purpose**: Automated MinGW/CMake environment configuration  
+- **Benefit**: Eliminates common Windows build issues automatically
+- **Usage**: Run once to configure your development environment
+
+#### `scripts\create_release.ps1` - Release Packaging
+- **Purpose**: Professional release artifact generation
+- **Output**: Complete distributable packages with documentation
+
+### 🎯 VS Code Integration
+
+All scripts are integrated with **VS Code tasks** for seamless IDE experience:
+- **Build Caesar** (Ctrl+Shift+P → Tasks: Run Task)
+- **Run All Tests** 
+- **Dev Run (Auto-Build)**
+- **Clean Build**
+
+**Why These Scripts Matter:**
+- ✅ **Professional Workflow**: Matches industry-standard development practices
+- ✅ **Zero Configuration**: Works out-of-the-box on Windows, Linux, and macOS  
+- ✅ **Prevents Issues**: Automatic fresh builds eliminate common development pitfalls
+- ✅ **Complete Testing**: Comprehensive validation including enhanced data structures
+- ✅ **Developer Experience**: Makes contributing to Caesar effortless
+
+See [`scripts/README.md`](scripts/README.md) for complete documentation.
 
 ## 🛠️ Building Caesar
 
@@ -521,6 +579,23 @@ cmake --build . -j
 ctest
 ```
 
+#### Windows MinGW/MSYS2 Quick Setup
+
+For Windows users with MinGW/MSYS2, use our automated setup script to avoid common build issues:
+
+```powershell
+# Automated setup (recommended for Windows)
+.\scripts\setup-build-env.ps1
+
+# Then build normally
+cmake --build build
+cd build && ctest
+```
+
+#### Troubleshooting Build Issues
+
+If you encounter build problems (especially error code 0xc0000135 or CMake generator issues), see the comprehensive [**Troubleshooting Guide**](docs/TROUBLESHOOTING.md#build-environment-issues-windows-mingwmsys2) for detailed solutions.
+
 ### Build Targets
 
 ```bash
@@ -553,10 +628,10 @@ After making changes to the source code:
 cmake --build build --parallel
 
 # 2. Generate release package
-powershell -ExecutionPolicy Bypass -File create_release.ps1
+powershell -ExecutionPolicy Bypass -File scripts\create_release.ps1
 ```
 
-This creates a complete standalone distribution in `release/caesar-v1.3.6-windows.zip` that includes:
+This creates a complete standalone distribution in `release/caesar-v1.4.0-windows.zip` that includes:
 - ✅ Pre-compiled executables (`caesar.exe`, `caesar_repl.exe`)
 - ✅ Example programs and documentation
 - ✅ Standalone installers (no Git/CMake required for users)
@@ -566,10 +641,10 @@ This creates a complete standalone distribution in `release/caesar-v1.3.6-window
 
 ```bash
 # Create release with specific version
-powershell -ExecutionPolicy Bypass -File create_release.ps1 -Version "1.3.6"
+powershell -ExecutionPolicy Bypass -File scripts\create_release.ps1 -Version "1.4.0"
 
 # Create release in custom directory
-powershell -ExecutionPolicy Bypass -File create_release.ps1 -OutputDir "dist"
+powershell -ExecutionPolicy Bypass -File scripts\create_release.ps1 -OutputDir "dist"
 ```
 
 ### Distribution
@@ -683,7 +758,7 @@ Each debug tool provides detailed output for development and troubleshooting:
 ./src/caesar_repl
 
 # Example REPL session:
-Caesar REPL v1.3.6
+Caesar REPL v1.4.0
 >>> def greet(name):
 ...     return f"Hello, {name}!"
 ...
@@ -718,9 +793,11 @@ See the `examples/` directory for sample Caesar programs:
 | **Documentation** | ✅ Complete | API documentation and user guides |
 | **VS Code Extension** | ✅ Complete | Published to marketplace with syntax highlighting and LSP integration |
 | **Language Server Protocol** | ✅ Complete | TypeScript implementation with universal editor support |
-| **NPM Package** | ✅ Complete | Global installation (caesar-lang@1.3.6) with cross-platform CLI |
+| **NPM Package** | ✅ Complete | Global installation (caesar-lang@1.4.0) with cross-platform CLI |
 | **File Association** | ✅ Complete | Windows integration with custom icons and context menus |
 | **Professional Installation** | ✅ Complete | Automated release system with zero-manual-step setup |
+| **Enhanced Data Structures** | ✅ Complete | Lists `[1, 2, 3]` and dictionaries `{"key": "value"}` with Python-like syntax |
+| **Development Automation** | ✅ Complete | Professional workflow scripts (dev-run, build-and-test, setup-build-env) |
 
 ### 🚧 Planned Features (Future Releases)
 
@@ -734,7 +811,7 @@ See the `examples/` directory for sample Caesar programs:
 | **Code Optimization** | Medium | Performance optimizations and dead code elimination |
 | **Native Compilation** | High | Machine code generation and linking |
 | **Runtime System** | Medium | Memory management and garbage collection |
-| **Standard Library** | Medium | Built-in functions and data structures |
+| **Extended Standard Library** | Medium | Additional built-in functions and advanced data structure operations |
 | **Module System** | Low | Import/export functionality |
 | **Debugger Support** | Low | Debug information and breakpoint support |
 

@@ -2,8 +2,8 @@
 # Creates a distributable ZIP package for end users
 
 param(
-    [Parameter(HelpMessage="Version number (e.g., 1.3.6)")]
-    [string]$Version = "1.3.6",
+    [Parameter(HelpMessage="Version number (e.g., 1.4.0)")]
+    [string]$Version = "1.4.0",
     
     [Parameter(HelpMessage="Output directory for the release package")]
     [string]$OutputDir = "release"
@@ -16,11 +16,20 @@ Write-Host "   Caesar Release Packager v$Version" -ForegroundColor Cyan
 Write-Host "======================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Ensure build exists
+# Ensure build exists and is current
 if (-not (Test-Path "build\src\caesar.exe")) {
     Write-Host "ERROR: Build not found! Please run 'cmake --build build' first." -ForegroundColor Red
     exit 1
 }
+
+# Force fresh build to ensure latest version with all enhancements
+Write-Host "Building latest version to ensure current binaries..." -ForegroundColor Yellow
+$buildResult = cmake --build build
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "ERROR: Build failed! Cannot create release with outdated binaries." -ForegroundColor Red
+    exit 1
+}
+Write-Host "✅ Build completed successfully - using latest binaries" -ForegroundColor Green
 
 # Create release directory structure
 $ReleaseName = "caesar-v$Version-windows"

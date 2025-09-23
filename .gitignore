@@ -1,7 +1,10 @@
 # Build directories
 build/
 lib/
-release/
+
+# Release artifacts (keep current releases only)
+release/archive/
+release/test-*/
 
 # Compiled object files
 *.o
@@ -28,8 +31,11 @@ cmake_install.cmake
 Makefile
 CTestTestfile.cmake
 
-# IDE files
-.vscode/
+# IDE files (keep shared project configurations)
+.vscode/settings.json
+.vscode/launch.json
+.vscode/c_cpp_properties.json
+.vscode/*.code-workspace
 .idea/
 *.swp
 *.swo
