@@ -6,7 +6,7 @@
 #
 # Usage: .\setup-build-env.ps1
 #
-# Author: Caesar Development Team
+# Author: J.J.G. Pleunes
 # Version: 1.0.0
 
 Write-Host "Caesar Build Environment Setup" -ForegroundColor Magenta
@@ -34,12 +34,12 @@ if (Test-Path $mingwPath) {
     if ($env:PATH -notlike "*$mingwPath*") {
         $env:PATH = "$mingwPath;$env:PATH"
         $pathUpdated = $true
-        Write-Host "✓ Added MinGW to PATH: $mingwPath" -ForegroundColor Green
+        Write-Host "SUCCESS: Added MinGW to PATH: $mingwPath" -ForegroundColor Green
     } else {
-        Write-Host "✓ MinGW already in PATH" -ForegroundColor Yellow
+        Write-Host "INFO: MinGW already in PATH" -ForegroundColor Yellow
     }
 } else {
-    Write-Host "⚠ MinGW not found at $mingwPath" -ForegroundColor Yellow
+    Write-Host "WARNING: MinGW not found at $mingwPath" -ForegroundColor Yellow
     Write-Host "  Please install MSYS2 from: https://www.msys2.org/" -ForegroundColor Cyan
     Write-Host "  Then run: pacman -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake" -ForegroundColor Cyan
 }
@@ -55,7 +55,7 @@ $alternativePaths = @(
 foreach ($altPath in $alternativePaths) {
     if ((Test-Path $altPath) -and ($env:PATH -notlike "*$altPath*") -and (-not $pathUpdated)) {
         $env:PATH = "$altPath;$env:PATH"
-        Write-Host "✓ Found alternative MinGW at: $altPath" -ForegroundColor Green
+        Write-Host "SUCCESS: Found alternative MinGW at: $altPath" -ForegroundColor Green
         $pathUpdated = $true
         break
     }
@@ -78,19 +78,19 @@ foreach ($tool in $buildTools.Keys) {
     if (Test-Command $tool) {
         try {
             $version = & $tool --version 2>$null | Select-Object -First 1
-            Write-Host "✓ $($buildTools[$tool]): $version" -ForegroundColor Green
+            Write-Host "SUCCESS: $($buildTools[$tool]): $version" -ForegroundColor Green
         } catch {
-            Write-Host "✓ $($buildTools[$tool]): Found" -ForegroundColor Green
+            Write-Host "SUCCESS: $($buildTools[$tool]): Found" -ForegroundColor Green
         }
     } else {
-        Write-Host "✗ $($buildTools[$tool]): Not found" -ForegroundColor Red
+        Write-Host "ERROR: $($buildTools[$tool]): Not found" -ForegroundColor Red
         $allToolsFound = $false
     }
 }
 
 if (-not $allToolsFound) {
     Write-Host ""
-    Write-Host "❌ Missing build tools. Please install MSYS2 and required packages:" -ForegroundColor Red
+    Write-Host "ERROR: Missing build tools. Please install MSYS2 and required packages:" -ForegroundColor Red
     Write-Host "   1. Download and install MSYS2: https://www.msys2.org/" -ForegroundColor Cyan
     Write-Host "   2. Open MSYS2 terminal and run:" -ForegroundColor Cyan
     Write-Host "      pacman -Syu" -ForegroundColor White
@@ -107,14 +107,14 @@ Write-Host "Checking build configuration..." -ForegroundColor Cyan
 if (Test-Path "build/CMakeCache.txt") {
     $generator = Get-Content "build/CMakeCache.txt" | Select-String "CMAKE_GENERATOR:INTERNAL="
     if ($generator -and $generator -notlike "*MinGW*") {
-        Write-Host "⚠ Wrong CMake generator detected: $generator" -ForegroundColor Yellow
+        Write-Host "WARNING: Wrong CMake generator detected: $generator" -ForegroundColor Yellow
         Write-Host "  Cleaning build directory to fix generator mismatch..." -ForegroundColor Yellow
         
         try {
             Remove-Item -Recurse -Force build -ErrorAction Stop
-            Write-Host "✓ Build directory cleaned" -ForegroundColor Green
+            Write-Host "SUCCESS: Build directory cleaned" -ForegroundColor Green
         } catch {
-            Write-Host "✗ Failed to clean build directory: $($_.Exception.Message)" -ForegroundColor Red
+            Write-Host "ERROR: Failed to clean build directory: $($_.Exception.Message)" -ForegroundColor Red
             Write-Host "  Please manually delete the 'build' folder and try again" -ForegroundColor Cyan
             exit 1
         }
@@ -126,9 +126,9 @@ if (-not (Test-Path "build")) {
     Write-Host "Creating build directory..." -ForegroundColor Cyan
     try {
         mkdir build | Out-Null
-        Write-Host "✓ Build directory created" -ForegroundColor Green
+        Write-Host "SUCCESS: Build directory created" -ForegroundColor Green
     } catch {
-        Write-Host "✗ Failed to create build directory: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "ERROR: Failed to create build directory: $($_.Exception.Message)" -ForegroundColor Red
         exit 1
     }
 }
@@ -144,7 +144,7 @@ try {
     
     if ($LASTEXITCODE -eq 0) {
         Write-Host ""
-        Write-Host "🎉 Build environment setup complete!" -ForegroundColor Green
+        Write-Host "SUCCESS: Build environment setup complete!" -ForegroundColor Green
         Write-Host ""
         Write-Host "Next steps:" -ForegroundColor Cyan
         Write-Host "  1. Build the project:  cmake --build ." -ForegroundColor White
@@ -154,7 +154,7 @@ try {
         Write-Host "For future sessions, ensure MinGW is in your PATH or run this script again." -ForegroundColor Yellow
     } else {
         Write-Host ""
-        Write-Host "❌ CMake configuration failed!" -ForegroundColor Red
+        Write-Host "ERROR: CMake configuration failed!" -ForegroundColor Red
         Write-Host ""
         Write-Host "Common solutions:" -ForegroundColor Cyan
         Write-Host "  1. Ensure all build tools are properly installed" -ForegroundColor White
@@ -164,6 +164,6 @@ try {
         exit 1
     }
 } catch {
-    Write-Host "✗ CMake execution failed: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "X CMake execution failed: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
 }
