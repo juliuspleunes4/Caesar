@@ -1,11 +1,12 @@
 # Caesar Language Syntax Reference
 
-Caesar is a Python-like programming language with C++ performance. This document describes the complete syntax and features currently implemented in Caesar v1.1.0.
+Caesar is a Python-like programming language with C++ performance. This document describes the complete syntax and features currently implemented in Caesar v1.4.0.
 
 ## Table of Contents
 
 - [Comments](#comments)
 - [Data Types](#data-types)
+- [Enhanced Data Structures](#enhanced-data-structures)
 - [Variables](#variables)
 - [Operators](#operators)
 - [Control Flow](#control-flow)
@@ -52,8 +53,8 @@ empty = ""
 
 #### Booleans
 ```python
-is_ready = True
-is_finished = False
+is_ready = true
+is_finished = false
 ```
 
 #### None
@@ -73,10 +74,130 @@ multiword = "This is a longer string"
 
 ### Boolean Literals
 
-Caesar uses Python-style boolean values:
+Caesar uses lowercase boolean values:
 ```python
-true_value = True
-false_value = False
+true_value = true
+false_value = false
+```
+
+## Enhanced Data Structures
+
+Caesar v1.4.0 introduces enhanced data structures that provide powerful collection types with familiar syntax.
+
+### Lists
+
+Lists are ordered collections that can hold any type of value.
+
+```python
+# Create a list
+numbers = [1, 2, 3, 4, 5]
+mixed = ["hello", 42, true, 3.14]
+empty = []
+
+# Access elements (0-based indexing)
+first = numbers[0]     # 1
+last = numbers[4]      # 5
+
+# Lists support various operations
+fruits = ["apple", "banana", "orange"]
+print(fruits[1])        # banana
+```
+
+### Dictionaries
+
+Dictionaries are key-value pairs that provide efficient lookups.
+
+```python
+# Create a dictionary
+person = {"name": "Alice", "age": 30, "city": "New York"}
+empty_dict = {}
+
+# Access values
+name = person["name"]    # "Alice"
+age = person["age"]      # 30
+
+# Dictionary examples
+config = {
+    "debug": true,
+    "max_users": 100,
+    "version": "1.4.0"
+}
+```
+
+### Nested Structures
+
+Lists and dictionaries can be nested to create complex data structures.
+
+```python
+# List of dictionaries
+users = [
+    {"name": "Alice", "age": 30},
+    {"name": "Bob", "age": 25},
+    {"name": "Charlie", "age": 35}
+]
+
+# Dictionary with lists
+data = {
+    "numbers": [1, 2, 3, 4, 5],
+    "names": ["Alice", "Bob", "Charlie"],
+    "active": true
+}
+
+# Access nested elements
+first_user = users[0]["name"]        # "Alice"
+first_number = data["numbers"][0]    # 1
+```
+
+### Built-in Functions for Data Structures
+
+Enhanced data structures work seamlessly with Caesar's built-in functions:
+
+```python
+# Using len() with lists and dictionaries
+numbers = [1, 2, 3, 4, 5]
+person = {"name": "Alice", "age": 30}
+
+print("List length:", len(numbers))    # 5
+print("Dict length:", len(person))     # 2
+
+# Using type() to check data structure types
+print("Type of list:", type(numbers))      # "list"
+print("Type of dict:", type(person))       # "dictionary"
+
+# Empty collections
+empty_list = []
+empty_dict = {}
+print("Empty list length:", len(empty_list))   # 0
+print("Empty dict length:", len(empty_dict))   # 0
+```
+
+### Practical Examples
+
+```python
+# Configuration management
+config = {
+    "debug": true,
+    "max_connections": 100,
+    "allowed_ips": ["127.0.0.1", "192.168.1.1"],
+    "database": {
+        "host": "localhost",
+        "port": 5432,
+        "name": "caesar_app"
+    }
+}
+
+# Working with mixed data types
+mixed_data = [
+    "hello",
+    42,
+    true,
+    {"nested": "value"},
+    [1, 2, 3]
+]
+
+print("Mixed data length:", len(mixed_data))   # 5
+print("First string:", mixed_data[0])          # "hello"
+print("Nested dict:", mixed_data[3]["nested"]) # "value"
 ```
 
 ## Variables
@@ -89,7 +210,7 @@ Variables are declared and assigned using the `=` operator:
 # Simple assignment
 x = 10
 name = "Caesar"
-is_active = True
+is_active = true
 
 # Multiple assignments
 a = 5
@@ -145,13 +266,13 @@ f = 10 >= 10    # Greater than or equal: True
 
 ```python
 # Logical operations
-a = True and False   # Logical AND: False
-b = True or False    # Logical OR: True
-c = not True         # Logical NOT: False
+a = true and false   # Logical AND: false
+b = true or false    # Logical OR: true
+c = not true         # Logical NOT: false
 
 # With expressions
 result = (x > 0) and (y < 100)
-valid = (age >= 18) or (has_permission == True)
+valid = (age >= 18) or (has_permission == true)
 ```
 
 ### Unary Operators
@@ -162,8 +283,8 @@ x = 5
 y = -x          # y = -5
 
 # Logical NOT
-is_valid = True
-is_invalid = not is_valid    # False
+is_valid = true
+is_invalid = not is_valid    # false
 ```
 
 ## Control Flow
@@ -484,11 +605,6 @@ if __name__ == "__main__":
 
 The following features are planned for future versions of Caesar but are not yet implemented:
 
-### Collections (Planned)
-- **Lists**: `[1, 2, 3]` - Dynamic arrays
-- **Dictionaries**: `{"key": "value"}` - Hash maps
-- **Tuples**: `(1, 2, 3)` - Immutable sequences
-
 ### Object-Oriented Programming (Planned)
 - **Classes**: Full class definitions with methods
 - **Inheritance**: Class inheritance and polymorphism
@@ -579,4 +695,4 @@ if __name__ == "__main__":
 
 ---
 
-*Caesar Programming Language v1.1.0 - A Python-like language with C++ performance*
+*Caesar Programming Language v1.4.0 - A Python-like language with C++ performance*
