@@ -1,5 +1,6 @@
 # Caesar
 
+[![Official Website](https://img.shields.io/badge/🌐%20Official%20Website-www.caesarlang.com-4A90E2?style=for-the-badge&logo=globe&logoColor=white)](https://www.caesarlang.com)
 ![Build Status](https://img.shields.io/badge/build-passing-green)
 ![Tests](https://img.shields.io/badge/tests-9%2F9%20passing-green)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-green)
@@ -30,6 +31,33 @@ Caesar is not just a language specification—it's a **complete professional pro
 - **VS Code Integration**: [Official Marketplace Extension](https://marketplace.visualstudio.com/items?itemName=juliuspleunes4.caesar-language-support) with F5 run commands and play button
 - **Windows Integration**: Custom file association, icons, and context menu integration
 - **Zero-Setup Installation**: Automated installation with no manual configuration required
+
+## 🌐 Official Website & Community
+
+**Visit [www.caesarlang.com](https://www.caesarlang.com)** for the complete Caesar experience!
+
+### 🎯 **What's Available Online:**
+- **📚 Interactive Documentation**: Complete language reference with live examples *(coming soon!)*
+- **🎮 Online Playground**: Try Caesar directly in your browser - no installation needed! *(coming soon!)*
+- **📦 Download Center**: Get the latest releases for all platforms
+  - **Windows**: Full ZIP package with installer (available now)
+  - **macOS**: Native builds *(coming soon!)*
+  - **Linux**: Debian/RPM packages *(coming soon!)*
+- **🏆 Performance Benchmarks**: Live comparisons showing Caesar's 2-50x Python speedup
+- **📖 Learning Resources**: Tutorials, best practices, and advanced guides *(coming soon!)*
+- **🎨 Code Examples**: Curated collection of practical Caesar programs *(coming soon!)*
+
+### 🤝 **Community & Support:**  *(coming soon!)*
+- **💬 Discord Community**: Join our growing developer community (link coming soon)
+- **🐛 Issue Tracker**: Report bugs and request features on [GitHub Issues](https://github.com/juliuspleunes4/Caesar/issues)
+- **📧 Contact Maintainer**: Reach out through GitHub discussions or issues
+- **🌟 Contribute**: Check our [Contributing Guide](docs/CONTRIBUTING.md) to get involved
+- **📢 Stay Updated**: Follow development progress and announcements
+
+### 🚀 **Try Caesar Right Now:** *(coming soon!)*
+Don't want to install anything yet? Visit **[www.caesarlang.com/playground](https://www.caesarlang.com/playground)** and start coding with Caesar instantly in your browser!
+
+---
 
 ## 📥 Installation Options
 
@@ -1082,6 +1110,26 @@ Built with ❤️ by **[Julius Pleunes](https://github.com/juliuspleunes4)** - C
 - **CMake Community**: Build system and cross-platform support
 - **Doxygen**: Documentation generation tools
 - **Open Source Community**: Continuous learning and collaboration
+
+---
+
+## 🌐 Links & Resources
+
+### **Official Website**
+🌍 **[www.caesarlang.com](https://www.caesarlang.com)** - Complete documentation, playground, and downloads
+
+### **Development & Community**
+- 🐱 **GitHub Repository**: [github.com/juliuspleunes4/Caesar](https://github.com/juliuspleunes4/Caesar)
+- 📦 **NPM Package**: [npmjs.com/package/caesar-lang](https://www.npmjs.com/package/caesar-lang)
+- 🔧 **VS Code Extension**: [Caesar Language Support](https://marketplace.visualstudio.com/items?itemName=juliuspleunes4.caesar-language-support)
+- 💬 **Discord Community**: Coming soon - join our growing developer community!
+- 🐛 **Issue Tracker**: [GitHub Issues](https://github.com/juliuspleunes4/Caesar/issues)
+- 📚 **Documentation**: [Contributing Guide](docs/CONTRIBUTING.md) | [Development Workflow](docs/DEVELOPMENT_WORKFLOW.md)
+
+### **Contact & Support**
+- 📧 **Maintainer**: Contact through [GitHub Discussions](https://github.com/juliuspleunes4/Caesar/discussions)
+- 🎯 **Feature Requests**: Use [GitHub Issues](https://github.com/juliuspleunes4/Caesar/issues) with enhancement label
+- 🤝 **Collaboration**: Check our [Contributing Guide](docs/CONTRIBUTING.md) to get involved
 
 ---
 
