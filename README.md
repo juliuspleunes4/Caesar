@@ -51,8 +51,8 @@ Caesar is not just a language specification—it's a **complete professional pro
 - **📖 Learning Resources**: Tutorials, best practices, and advanced guides *(coming soon!)*
 - **🎨 Code Examples**: Curated collection of practical Caesar programs *(coming soon!)*
 
-### 🤝 **Community & Support:**  *(coming soon!)*
-- **💬 Discord Community**: Join our growing developer community (link coming soon)
+### 🤝 **Community & Support:**
+- **💬 Discord Community**: [Join our Discord server](https://discord.gg/BjQraBgQSs)
 - **🐛 Issue Tracker**: Report bugs and request features on [GitHub Issues](https://github.com/juliuspleunes4/Caesar/issues)
 - **📧 Contact Maintainer**: Reach out through GitHub discussions or issues
 - **🌟 Contribute**: Check our [Contributing Guide](docs/CONTRIBUTING.md) to get involved
@@ -1196,7 +1196,7 @@ Built with ❤️ by **[Julius Pleunes](https://github.com/juliuspleunes4)** - C
 - 🐱 **GitHub Repository**: [github.com/juliuspleunes4/Caesar](https://github.com/juliuspleunes4/Caesar)
 - 📦 **NPM Package**: [npmjs.com/package/caesar-lang](https://www.npmjs.com/package/caesar-lang)
 - 🔧 **VS Code Extension**: [Caesar Language Support](https://marketplace.visualstudio.com/items?itemName=juliuspleunes4.caesar-language-support)
-- 💬 **Discord Community**: Coming soon - join our growing developer community!
+- 💬 **Discord Community**: [Join our Discord server](https://discord.gg/BjQraBgQSs)
 - 🐛 **Issue Tracker**: [GitHub Issues](https://github.com/juliuspleunes4/Caesar/issues)
 - 📚 **Documentation**: [Contributing Guide](docs/CONTRIBUTING.md) | [Development Workflow](docs/DEVELOPMENT_WORKFLOW.md)
 
