@@ -226,11 +226,39 @@ function Test-VSCodeInstalled {
     }
 }
 
+function Uninstall-OldVSCodeExtension {
+    `"""Uninstall old Caesar VS Code extension versions`"""
+    param([string]`$VSCodePath)
+    
+    try {
+        if (`$VSCodePath -eq "code") {
+            `$installed = & code --list-extensions 2>&1 | Select-String "juliuspleunes4.caesar-language-support"
+        } else {
+            `$installed = & "`$VSCodePath" --list-extensions 2>&1 | Select-String "juliuspleunes4.caesar-language-support"
+        }
+        
+        if (`$installed) {
+            Write-ColorOutput "🔄 Removing old Caesar extension version..." `$InfoColor
+            if (`$VSCodePath -eq "code") {
+                & code --uninstall-extension juliuspleunes4.caesar-language-support 2>&1 | Out-Null
+            } else {
+                & "`$VSCodePath" --uninstall-extension juliuspleunes4.caesar-language-support 2>&1 | Out-Null
+            }
+            Write-ColorOutput "✅ Old extension removed" `$SuccessColor
+        }
+    } catch {
+        # Ignore errors - extension might not be installed
+    }
+}
+
 function Install-VSCodeExtension {
     `"""Install Caesar VS Code extension`"""
     param([string]`$VSCodePath)
     
     Write-ColorOutput "🔧 Installing Caesar VS Code Extension..." `$InfoColor
+    
+    # First, uninstall any old version
+    Uninstall-OldVSCodeExtension `$VSCodePath
     
     `$extensionPath = Join-Path `$PSScriptRoot "$ExtensionFileName"
     
@@ -263,14 +291,44 @@ function Install-VSCodeExtension {
     }
 }
 
+function Get-InstalledVersion {
+    `"""Get currently installed Caesar version`"""
+    param([string]`$InstallPath)
+    
+    `$caesarExe = Join-Path `$InstallPath "bin\caesar.exe"
+    if (Test-Path `$caesarExe) {
+        try {
+            `$versionOutput = & `$caesarExe --version 2>&1
+            if (`$versionOutput -match "v?(\d+\.\d+\.\d+)") {
+                return `$Matches[1]
+            }
+        } catch {
+            return "unknown"
+        }
+    }
+    return `$null
+}
+
 function Install-Caesar {
-    Write-ColorOutput "🏛️ Caesar Programming Language Installer" `$InfoColor
-    Write-ColorOutput "=======================================" `$InfoColor
+    Write-ColorOutput "🏛️ Caesar Programming Language Installer v$Version" `$InfoColor
+    Write-ColorOutput "===================================================" `$InfoColor
+    Write-ColorOutput "" 
     
     # Check for existing installation
+    `$installedVersion = Get-InstalledVersion `$InstallDir
+    `$isUpgrade = `$false
+    
     if ((Test-Path `$InstallDir) -and -not `$Force) {
-        Write-ColorOutput "⚠️  Caesar is already installed at `$InstallDir" `$WarningColor
-        `$response = Read-Host "Do you want to overwrite it? (y/N)"
+        if (`$installedVersion) {
+            Write-ColorOutput "📦 Detected existing Caesar v`$installedVersion" `$InfoColor
+            Write-ColorOutput "🆕 Installing Caesar v$Version" `$InfoColor
+            `$isUpgrade = `$true
+            Write-ColorOutput "" 
+        } else {
+            Write-ColorOutput "⚠️  Caesar is already installed at `$InstallDir" `$WarningColor
+        }
+        
+        `$response = Read-Host "Do you want to continue? (y/N)"
         if (`$response -ne 'y' -and `$response -ne 'Y') {
             Write-ColorOutput "Installation cancelled." `$WarningColor
             return
@@ -278,12 +336,21 @@ function Install-Caesar {
     }
     
     # Create installation directory
-    Write-ColorOutput "📁 Creating installation directory: `$InstallDir" `$InfoColor
+    if (`$isUpgrade) {
+        Write-ColorOutput "♻️  Removing old version..." `$InfoColor
+    } else {
+        Write-ColorOutput "📁 Creating installation directory: `$InstallDir" `$InfoColor
+    }
+    
     try {
         if (Test-Path `$InstallDir) {
             Remove-Item `$InstallDir -Recurse -Force
         }
         New-Item -ItemType Directory -Path `$InstallDir -Force | Out-Null
+        
+        if (`$isUpgrade) {
+            Write-ColorOutput "✅ Old version removed" `$SuccessColor
+        }
     } catch {
         Write-ColorOutput "❌ Failed to create installation directory: `$(`$_.Exception.Message)" `$ErrorColor
         return
@@ -363,8 +430,19 @@ function Install-Caesar {
     
     # Installation complete
     Write-ColorOutput "" 
-    Write-ColorOutput "🎉 Caesar Installation Complete!" `$SuccessColor
-    Write-ColorOutput "=================================" `$SuccessColor
+    if (`$isUpgrade) {
+        Write-ColorOutput "🎉 Caesar Upgrade Complete!" `$SuccessColor
+        Write-ColorOutput "============================" `$SuccessColor
+        if (`$installedVersion) {
+            Write-ColorOutput "📦 Upgraded from v`$installedVersion to v$Version" `$InfoColor
+        }
+        Write-ColorOutput "✅ Old version completely removed" `$SuccessColor
+        Write-ColorOutput "✅ New version installed successfully" `$SuccessColor
+    } else {
+        Write-ColorOutput "🎉 Caesar Installation Complete!" `$SuccessColor
+        Write-ColorOutput "=================================" `$SuccessColor
+    }
+    Write-ColorOutput "" 
     Write-ColorOutput "📍 Installation directory: `$InstallDir" `$InfoColor
     Write-ColorOutput "⚡ Caesar interpreter: `$InstallDir\bin\caesar.exe" `$InfoColor
     Write-ColorOutput "🖥️  Caesar REPL: `$InstallDir\bin\caesar_repl.exe" `$InfoColor
@@ -374,7 +452,11 @@ function Install-Caesar {
     Write-ColorOutput "   caesar `$InstallDir\examples\hello_world.csr" `$InfoColor
     Write-ColorOutput "   caesar_repl" `$InfoColor
     Write-ColorOutput "" 
-    Write-ColorOutput "🏛️ Welcome to Caesar - The High-Performance Programming Language!" `$SuccessColor
+    if (`$isUpgrade) {
+        Write-ColorOutput "✨ Enjoy the new features in Caesar v$Version!" `$SuccessColor
+    } else {
+        Write-ColorOutput "🏛️ Welcome to Caesar - The High-Performance Programming Language!" `$SuccessColor
+    }
 }
 
 # Run the installer
@@ -433,14 +515,22 @@ if exist "%~dp0examples" (
     echo + Examples copied
 )
 
-REM Add to PATH
+REM Add to PATH (check if not already present to avoid duplicates)
 echo Adding to PATH...
-setx PATH "%PATH%;%INSTALL_DIR%\bin" > nul 2>&1
+set "BIN_PATH=%INSTALL_DIR%\bin"
+
+REM Get current PATH and check if Caesar is already in it
+echo %PATH% | findstr /C:"%BIN_PATH%" > nul
 if %errorlevel% equ 0 (
-    echo + Added to user PATH ^(restart terminal to take effect^)
+    echo + Caesar already in PATH
 ) else (
-    echo WARNING: Failed to add to PATH automatically
-    echo          Please manually add %INSTALL_DIR%\bin to your PATH
+    setx PATH "%PATH%;%BIN_PATH%" > nul 2>&1
+    if %errorlevel% equ 0 (
+        echo + Added to user PATH ^(restart terminal to take effect^)
+    ) else (
+        echo WARNING: Failed to add to PATH automatically
+        echo          Please manually add %BIN_PATH% to your PATH
+    )
 )
 
 echo.
