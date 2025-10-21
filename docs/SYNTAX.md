@@ -1,6 +1,6 @@
 # Caesar Language Syntax Reference
 
-Caesar is a Python-like programming language with C++ performance. This document describes **only the features that are actually implemented** in Caesar v1.4.0, verified against the source code.
+Caesar is a Python-like programming language with C++ performance. This document describes describes the complete syntax and features, currently implemented and verified against the source code.
 
 **Last Verified:** October 6, 2025  
 **Source Code Review:** Complete implementation verification performed
