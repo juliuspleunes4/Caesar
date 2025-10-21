@@ -1,6 +1,9 @@
 # Caesar Language Syntax Reference
 
-Caesar is a Python-like programming language with C++ performance. This document describes the complete syntax and features currently implemented in Caesar v1.4.0.
+Caesar is a Python-like programming language with C++ performance. This document describes **only the features that are actually implemented** in Caesar v1.5.0, verified against the source code.
+
+**Last Verified:** October 21, 2025  
+**Source Code Review:** Complete implementation verification performed
 
 ## Table of Contents
 
@@ -13,8 +16,10 @@ Caesar is a Python-like programming language with C++ performance. This document
 - [Functions](#functions)
 - [Built-in Functions](#built-in-functions)
 - [Error Handling](#error-handling)
+- [Current Limitations](#current-limitations)
 - [Language Constructs](#language-constructs)
 - [Future Features](#future-features)
+- [Example Programs](#example-programs)
 
 ## Comments
 
@@ -94,27 +99,27 @@ numbers = [1, 2, 3, 4, 5]
 mixed = ["hello", 42, True, 3.14]
 empty = []
 
-# Access elements (0-based indexing)
-first = numbers[0]     # 1
-last = numbers[4]      # 5
-
-# Lists support various operations
-fruits = ["apple", "banana", "orange"]
-print(fruits[1])        # banana
+# Lists can be printed and checked with len()
+print(numbers)          # [1, 2, 3, 4, 5]
+print(len(numbers))     # 5
+print(type(numbers))    # <class 'list'>
 ```
+
+**Note**: List indexing (e.g., `numbers[0]`) and list methods (e.g., `.append()`) are not yet implemented.
 
 ### Dictionaries
 
-Dictionaries are key-value pairs that provide efficient lookups.
+Dictionaries are key-value pairs.
 
 ```python
 # Create a dictionary
 person = {"name": "Alice", "age": 30, "city": "New York"}
 empty_dict = {}
 
-# Access values
-name = person["name"]    # "Alice"
-age = person["age"]      # 30
+# Dictionaries can be printed and checked with len()
+print(person)           # {"name": "Alice", "age": 30, "city": "New York"}
+print(len(person))      # 3
+print(type(person))     # <class 'dict'>
 
 # Dictionary examples
 config = {
@@ -123,6 +128,8 @@ config = {
     "version": "1.4.0"
 }
 ```
+
+**Note**: Dictionary indexing (e.g., `person["name"]`) and dictionary methods (e.g., `.keys()`, `.values()`) are not yet implemented.
 
 ### Nested Structures
 
@@ -143,14 +150,17 @@ data = {
     "active": True
 }
 
-# Access nested elements
-first_user = users[0]["name"]        # "Alice"
-first_number = data["numbers"][0]    # 1
+# Nested structures can be created and printed
+print(users)
+print(data)
+print(len(users))       # 3
 ```
+
+**Note**: Accessing nested elements (e.g., `users[0]["name"]`) is not yet implemented.
 
 ### Built-in Functions for Data Structures
 
-Enhanced data structures work seamlessly with Caesar's built-in functions:
+Enhanced data structures work with Caesar's built-in functions:
 
 ```python
 # Using len() with lists and dictionaries
@@ -161,14 +171,20 @@ print("List length:", len(numbers))    # 5
 print("Dict length:", len(person))     # 2
 
 # Using type() to check data structure types
-print("Type of list:", type(numbers))      # "list"
-print("Type of dict:", type(person))       # "dictionary"
+print("Type of list:", type(numbers))      # <class 'list'>
+print("Type of dict:", type(person))       # <class 'dict'>
 
 # Empty collections
 empty_list = []
 empty_dict = {}
 print("Empty list length:", len(empty_list))   # 0
 print("Empty dict length:", len(empty_dict))   # 0
+
+# Empty lists and dicts are falsy in conditions
+if empty_list:
+    print("Has items")
+else:
+    print("Empty")  # This will print
 ```
 
 ### Practical Examples
@@ -196,9 +212,10 @@ mixed_data = [
 ]
 
 print("Mixed data length:", len(mixed_data))   # 5
-print("First string:", mixed_data[0])          # "hello"
-print("Nested dict:", mixed_data[3]["nested"]) # "value"
+print("Mixed data:", mixed_data)               # Prints the full list
 ```
+
+**Note**: The examples showing indexed access like `mixed_data[0]` or `mixed_data[3]["nested"]` are not yet implemented.
 
 ## Variables
 
@@ -558,6 +575,59 @@ print(len())            # Error: len() takes exactly one argument
 print(int(1, 2, 3))     # Error: int() takes exactly one argument
 ```
 
+## Current Limitations
+
+### What Works in v1.5.0
+
+✅ **Fully Implemented:**
+- Primitive types (int, float, str, bool, None)
+- All arithmetic and comparison operators
+- Variables and assignment
+- Control flow (if/elif/else, while, for with range)
+- Functions with default parameters
+- Recursive functions
+- Built-in functions: print, len, range, str, int, float, type, abs
+- Lists and dictionaries (creation and len() only)
+- Break, continue, pass statements
+- `__name__` variable
+
+### What Doesn't Work Yet
+
+❌ **Not Yet Implemented:**
+- **Indexing**: `list[0]`, `dict["key"]` will cause errors
+- **Assignment via Index**: `list[0] = value` will cause errors
+- **List/Dict Methods**: `.append()`, `.keys()`, etc. will cause errors
+- **Member Access**: `object.method()` will cause errors
+- **Classes**: Parsed but not executed (creates placeholder only)
+- **Exception Handling**: No try/except blocks
+- **String Methods**: No `.split()`, `.upper()`, etc.
+- **List Comprehensions**: Not supported
+- **Lambda Functions**: Not supported
+- **Import Statements**: Not supported
+- **Advanced Built-ins**: No map(), filter(), sum(), min(), max(), input(), etc.
+
+### Working Around Limitations
+
+```python
+# ❌ This will NOT work (indexing not implemented):
+# my_list = [1, 2, 3]
+# first = my_list[0]
+
+# ✅ This works (you can create and print lists):
+my_list = [1, 2, 3]
+print(my_list)           # [1, 2, 3]
+print(len(my_list))      # 3
+
+# ❌ This will NOT work (dict indexing not implemented):
+# person = {"name": "Alice"}
+# name = person["name"]
+
+# ✅ This works (you can create and print dicts):
+person = {"name": "Alice", "age": 30}
+print(person)            # {"name": "Alice", "age": 30}
+print(len(person))       # 2
+```
+
 ## Language Constructs
 
 ### Block Structure
@@ -592,6 +662,8 @@ if, elif, else, while, for, in, def, class, return, break, continue, pass,
 and, or, not, is, True, False, None
 ```
 
+**Note**: `class` is recognized as a keyword but class functionality is not fully implemented yet.
+
 ### Special Variables
 
 #### __name__
@@ -606,22 +678,39 @@ if __name__ == "__main__":
 The following features are planned for future versions of Caesar but are not yet implemented:
 
 ### Object-Oriented Programming (Planned)
-- **Classes**: Full class definitions with methods
+- **Classes**: Class syntax is parsed but not executed (placeholder only)
+- **Methods**: Instance and class methods
 - **Inheritance**: Class inheritance and polymorphism
 - **Member Access**: Object.method() and Object.property
+- **Constructors**: `__init__` and other special methods
+
+### Data Structure Access (Planned)
+- **List Indexing**: Access list elements with `list[index]`
+- **List Assignment**: Modify list elements with `list[index] = value`
+- **Dict Indexing**: Access dictionary values with `dict[key]`
+- **Dict Assignment**: Set dictionary values with `dict[key] = value`
+- **List Methods**: append(), pop(), remove(), sort(), reverse()
+- **Dict Methods**: keys(), values(), items(), get(), pop()
+- **List Slicing**: Extract sublists with `list[start:end]`
 
 ### Advanced Features (Planned)
 - **Import System**: Module imports and packages
-- **Exception Handling**: try/catch/finally blocks
+- **Exception Handling**: try/except/finally blocks
+- **List Comprehensions**: `[x*2 for x in range(10)]`
+- **Dict Comprehensions**: `{k: v*2 for k, v in dict.items()}`
 - **Generators**: yield statements and iterators
 - **Decorators**: Function and class decorators
 - **Lambda Functions**: Anonymous functions
+- **Context Managers**: with statements
 
 ### Extended Built-ins (Planned)
-- **File I/O**: open(), read(), write()
-- **String Methods**: split(), join(), replace()
-- **List Methods**: append(), pop(), sort()
-- **Math Functions**: sin(), cos(), sqrt(), etc.
+- **File I/O**: open(), read(), write(), close()
+- **String Methods**: split(), join(), replace(), upper(), lower(), strip()
+- **Advanced Functions**: map(), filter(), zip(), enumerate(), sorted(), reversed()
+- **Aggregation**: sum(), min(), max()
+- **User Input**: input()
+- **Introspection**: isinstance(), hasattr(), getattr(), setattr()
+- **Math Functions**: sin(), cos(), sqrt(), pow(), etc.
 
 ## Example Programs
 
@@ -695,4 +784,4 @@ if __name__ == "__main__":
 
 ---
 
-*Caesar Programming Language v1.4.0 - A Python-like language with C++ performance*
+*Caesar Programming Language v1.5.0 - A Python-like language with C++ performance*

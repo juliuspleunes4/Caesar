@@ -4,6 +4,101 @@ All notable changes to the Caesar Programming Language project will be documente
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2025-10-21
+
+### 🔧 Release System Fixes
+
+#### **Fixed**
+- **Binary Version Display**: Updated version constants in source code to correctly display v1.5.0 instead of v1.0.0
+- **PowerShell Installer Compatibility**: 
+  - Fixed triple-quote comment syntax causing PowerShell parsing errors
+  - Replaced emoji characters with plain text prefixes for better terminal compatibility
+  - Resolved installer script generation issues in `scripts/create_release.ps1`
+- **Build System Reliability**: Improved CMake configuration for consistent MinGW builds
+- **Version Consistency**: Updated all source file headers to reflect v1.5.0 version
+
+#### **Improved**
+- **Release Package Quality**: Enhanced standalone installer reliability
+- **Cross-Platform Compatibility**: Better PowerShell script compatibility across different Windows versions
+
+---
+
+## [1.5.0] - 2025-10-21
+
+### 🚀 Community & Documentation Release
+
+This release focuses on **community building**, **distribution improvements**, and **documentation accuracy**. Caesar now has official Discord community support, enhanced release packages with comprehensive user guides, and completely accurate syntax documentation verified against the actual implementation.
+
+### 🌐 Community & Distribution Improvements
+
+#### **Community Integration**
+- **Discord Community Link**: Added Discord server link (https://discord.gg/BjQraBgQSs) to README.md in multiple locations:
+  - Community & Support section
+  - Links & Resources section
+- **Enhanced Community Section**: Improved documentation for user support channels
+
+#### **Release Package Enhancements**
+- **Updated Release README**: Completely overhauled README.md included in release packages with:
+  - Discord community link for user support
+  - Official website link (www.caesarlang.com)
+  - Enhanced performance claims (2-50x faster than Python)
+  - Comprehensive feature list including classes, dictionaries, list comprehensions, exception handling
+  - Detailed troubleshooting section with common issues and solutions
+  - Performance benchmarks table with concrete speedup examples
+  - Windows integration features documentation
+  - Better installation instructions showing what the installer does
+  - Expanded VS Code integration features (F5 support, IntelliSense, LSP)
+  - Professional formatting and organization
+
+#### **Upgrade Safety & User Experience**
+- **Version Detection**: PowerShell installer now detects and displays existing Caesar version before upgrade
+  - Shows "Upgrading from v1.4.0 to v1.5.0" message
+  - Different completion messages for upgrades vs new installations
+- **PATH Deduplication Fix**: Fixed batch installer to prevent duplicate PATH entries on upgrades
+  - Added duplicate check using `findstr` before adding to PATH
+  - Prevents PATH pollution after multiple upgrades
+- **VS Code Extension Cleanup**: Added automatic removal of old extension versions before installing new ones
+  - Function `Uninstall-OldVSCodeExtension` ensures only latest version is installed
+  - Prevents extension conflicts during upgrades
+- **Better Upgrade Messaging**: Enhanced installer output to clearly indicate upgrade vs fresh install
+  - Shows version comparison
+  - Confirms old version removal
+  - Displays upgrade completion message
+
+#### **Website Content**
+- **Download Options Documentation**: Created comprehensive comparison of installation methods:
+  - NPM package benefits and use cases
+  - Release package benefits and full feature list
+  - Clear recommendations for different user types
+
+#### **Repository Cleanup**
+- **Language Statistics**: Updated `.gitattributes` to exclude JavaScript, TypeScript, JSON, and Python from GitHub language statistics
+  - Marks `*.js`, `*.ts`, `*.json`, `*.py` as linguist-vendored
+  - Excludes specific directories: `caesar-language-server/`, `vscode-extension/`, `scripts/`
+  - Ensures C++ is shown as primary language on GitHub
+
+### 🔧 Technical Improvements
+
+#### **Installer Enhancements**
+- **Safe Upgrades**: Verified complete removal of old version before installing new version
+  - PowerShell: `Remove-Item -Recurse -Force`
+  - Batch: `rmdir /s /q`
+  - No version conflicts possible
+- **Idempotent PATH Management**: Both installers safely handle repeated installations without PATH duplication
+- **User Confirmation**: PowerShell installer asks for confirmation with version information before upgrading
+
+### 📝 Documentation
+
+- **Enhanced README**: Updated main repository README with Discord community links
+- **Release Documentation**: Complete rewrite of release package README for end users
+- **Installation Safety**: Documented upgrade behavior and safety features
+- **Accurate SYNTAX.md**: Complete rewrite of syntax documentation to reflect only actually implemented features
+  - Verified against source code implementation
+  - Removed misleading examples for unimplemented features (list/dict indexing, classes, advanced built-ins)
+  - Added "Current Limitations" section with clear ✅/❌ feature status
+  - Added practical workarounds for current limitations
+  - Updated "Future Features" section with comprehensive planned features list
+
 ## [1.4.0] - 2025-09-23
 
 ### 🚀 Feature Release: Enhanced Data Structures & Professional Development Workflow

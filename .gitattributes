@@ -43,8 +43,15 @@ examples/* linguist-documentation=true
 *.hpp linguist-language=C++
 *.hxx linguist-language=C++
 
-# Python Files (Performance comparison benchmarks)
-*.py linguist-language=Python
+# JavaScript/TypeScript Files (VS Code extension, Language Server) - Exclude from stats
+*.js linguist-vendored=true
+*.ts linguist-vendored=true
+*.json linguist-vendored=true
+caesar-language-server/* linguist-vendored=true
+vscode-extension/* linguist-vendored=true
+
+# Python Files (Performance comparison benchmarks) - Exclude from stats
+*.py linguist-vendored=true
 
 # Caesar Language Files (Language examples and test cases)
 # Old: *.csr linguist-language=Caesar linguist-detectable=true
@@ -54,7 +61,7 @@ examples/* linguist-documentation=true
 # =============================================================================
 # Test Files - Count toward language statistics with specific detection
 # =============================================================================
-tests/comparison/python/*.py linguist-language=Python
+tests/comparison/python/*.py linguist-vendored=true
 tests/comparison/cpp/*.cpp linguist-language=C++
 tests/comparison/caesar/*.csr linguist-language=Caesar
 tests/manual/*.csr linguist-language=Caesar

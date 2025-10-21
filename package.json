@@ -1,6 +1,6 @@
 {
   "name": "caesar-lang",
-  "version": "1.4.0",
+  "version": "1.5.1",
   "description": "High-performance interpreted language with easy syntax",
   "main": "lib/index.js",
   "bin": {

@@ -2,7 +2,7 @@
  * @file main.cpp
  * @brief Main entry point for the Caesar compiler
  * @author J.J.G. Pleunes
- * @version 1.0.0
+ * @version 1.5.0
  */
 
 #include "caesar/caesar.h"

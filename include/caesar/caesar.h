@@ -2,7 +2,7 @@
  * @file caesar.h
  * @brief Main header file for the Caesar programming language
  * @author J.J.G. Pleunes
- * @version 1.0.0
+ * @version 1.5.1
  * 
  * Caesar is a Python-like programming language with C-speed performance,
  * built using modern C++ and LLVM backend for efficient compilation.
@@ -31,9 +31,9 @@ namespace caesar {
  */
 struct Version {
     static constexpr int MAJOR = 1;
-    static constexpr int MINOR = 0;
-    static constexpr int PATCH = 0;
-    static constexpr const char* STRING = "1.0.0";
+    static constexpr int MINOR = 5;
+    static constexpr int PATCH = 1;
+    static constexpr const char* STRING = "1.5.1";
 };
 
 /**

@@ -1,12 +1,17 @@
 # Caesar
 
+[![Official Website](https://img.shields.io/badge/🌐%20Official%20Website-www.caesarlang.com-4A90E2?style=for-the-badge&logo=globe&logoColor=white)](https://www.caesarlang.com)
+<br>
+
+<br>
+
 ![Build Status](https://img.shields.io/badge/build-passing-green)
 ![Tests](https://img.shields.io/badge/tests-9%2F9%20passing-green)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 [![NPM Package](https://img.shields.io/npm/v/caesar-lang?label=NPM%20Package&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/caesar-lang)
 [![VS Code Extension](https://img.shields.io/badge/VS%20Code%20Extension-v0.0.4-007ACC?logo=visual-studio-code&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=juliuspleunes4.caesar-language-support)
-![Version](https://img.shields.io/badge/version-1.4.0-%2338257d?style=flat&labelColor=38257d&color=38257d)
+![Version](https://img.shields.io/badge/version-1.5.1-%2338257d?style=flat&labelColor=38257d&color=38257d)
 
 <p align="center">
     <img src="assets/caesar_logo_v2.png" alt="Caesar Logo" width="125" align="left">
@@ -31,142 +36,239 @@ Caesar is not just a language specification—it's a **complete professional pro
 - **Windows Integration**: Custom file association, icons, and context menu integration
 - **Zero-Setup Installation**: Automated installation with no manual configuration required
 
+## 🌐 Official Website & Community
+
+**Visit [www.caesarlang.com](https://www.caesarlang.com)** for the complete Caesar experience!
+
+### 🎯 **What's Available Online:**
+- **📚 Interactive Documentation**: Complete language reference with live examples *(coming soon!)*
+- **🎮 Online Playground**: Try Caesar directly in your browser - no installation needed! *(coming soon!)*
+- **📦 Download Center**: Get the latest releases for all platforms
+  - **Windows**: Full Release Package with installer (available now)
+  - **macOS**: Native builds *(coming soon!)*
+  - **Linux**: Debian/RPM packages *(coming soon!)*
+- **🏆 Performance Benchmarks**: Live comparisons showing Caesar's 2-50x Python speedup
+- **📖 Learning Resources**: Tutorials, best practices, and advanced guides *(coming soon!)*
+- **🎨 Code Examples**: Curated collection of practical Caesar programs *(coming soon!)*
+
+### 🤝 **Community & Support:**
+- **💬 Discord Community**: [Join our Discord server](https://discord.gg/BjQraBgQSs)
+- **🐛 Issue Tracker**: Report bugs and request features on [GitHub Issues](https://github.com/juliuspleunes4/Caesar/issues)
+- **📧 Contact Maintainer**: Reach out through GitHub discussions or issues
+- **🌟 Contribute**: Check our [Contributing Guide](docs/CONTRIBUTING.md) to get involved
+- **📢 Stay Updated**: Follow development progress and announcements
+
+### 🚀 **Try Caesar Right Now:** *(coming soon!)*
+Don't want to install anything yet? Visit **[www.caesarlang.com/playground](https://www.caesarlang.com/playground)** and start coding with Caesar instantly in your browser!
+
+---
+
 ## 📥 Installation Options
 
-Caesar offers **two professional installation methods** to suit different user preferences and development workflows. Both provide complete functionality with automatic Windows file association and custom icons for `.csr` files.
+Caesar offers **two distinct installation methods** designed for different use cases. Choose the method that best fits your needs:
 
-### 🚀 Option 1: NPM Package (Recommended for Developers)
+## 🏆 **Option 1: Release Package** ⭐ **RECOMMENDED FOR FULL EXPERIENCE**
+
+**🎯 The Complete Caesar Experience - Everything Included!**
+
+**Direct Download**: Get the latest version from [GitHub Releases](https://github.com/juliuspleunes4/Caesar/releases) or [www.caesarlang.com](https://www.caesarlang.com)
+
+### ✨ **Full Windows Integration:**
+- 🎨 **Custom Caesar Icons**: Beautiful `.csr` file icons in Windows Explorer
+- 🖱️ **File Association**: Double-click `.csr` files to run with Caesar
+- 📋 **Context Menu**: Right-click → "Run with Caesar" / "Open in Caesar REPL"
+- 🏷️ **File Type Recognition**: Windows recognizes `.csr` as "Caesar Source File"
+
+### 🔧 **Professional Development Tools:**
+- 🚀 **Auto VS Code Extension**: Automatically installs Caesar Language Support if VS Code detected
+- 🧠 **Language Server Protocol**: Full IDE features (autocomplete, error checking, go-to-definition)
+- 🎯 **Syntax Highlighting**: Beautiful Caesar code presentation
+- ⚡ **F5 Run Support**: Execute Caesar files directly from VS Code
+
+### 💼 **Enterprise-Ready Features:**
+- 📦 **Standalone Executables**: No external dependencies required
+- 🛡️ **Professional Installer**: PowerShell-based setup with progress indication
+- 📚 **Complete Documentation**: User guides, examples, and API reference included
+- 🎛️ **Windows Registry Integration**: Proper system integration
+
+**💡 Perfect For:**
+- **Production Use**: Full system integration for daily Caesar development
+- **End Users**: Complete out-of-the-box experience with all features
+- **Educational Settings**: Everything needed for teaching and learning
+- **Professional Development**: Maximum productivity with full tooling
+
+**📋 Requirements:**
+- **Windows 10/11** (64-bit)
+- **PowerShell** (for automated installation)
+- **VS Code** (optional, but recommended for best experience)
+
+**🔧 Installation Process:**
+```bash
+# 1. Download caesar-v1.4.0-windows.zip from GitHub Releases or website
+# 2. Extract to desired location (e.g., C:\Caesar)
+# 3. Run the automated installer (choose one):
+#    PowerShell (Recommended): Double-click install.ps1 or via command line: powershell -ExecutionPolicy Bypass -File install.ps1
+#    Command Prompt: Double-click install.bat
+
+# 4. Verify installation with full Windows integration
+caesar --version
+
+# 5. Test file association - double-click any .csr file!
+# 6. Open VS Code - Caesar extension should be installed automatically
+```
+
+---
+
+## ⚡ **Option 2: NPM Package** 🧪 **FOR QUICK GETTING STARTED ONLY**
+
+**🎯 Minimal Installation - Just the Basics**
 
 **Quick Global Installation:**
 ```bash
 npm install -g caesar-lang
 ```
 
-**✅ What You Get:**
-- ✅ **Global CLI Access**: `caesar` command available system-wide
-- ✅ **Python-like Simplicity**: Run `caesar file.csr` just like `python file.py` - no flags needed!
-- ✅ **Automatic File Association**: `.csr` files open with Caesar by default
-- ✅ **Custom Windows Icons**: Beautiful Caesar icons for `.csr` files in File Explorer
-- ✅ **Context Menu Integration**: Right-click → "Run with Caesar" / "Open in Caesar REPL"
-- ✅ **Cross-Platform CLI**: Works on Windows, macOS, and Linux
-- ✅ **Automatic Updates**: Easy version management with `npm update -g caesar-lang`
-- ✅ **Complete Examples**: All example programs included
-- ✅ **Zero Manual Setup**: Everything configured automatically
+### ⚠️ **Limited Functionality:**
+- ✅ **Basic CLI Access**: `caesar` command available system-wide
+- ✅ **Core Execution**: Run `.csr` files from command line
+- ✅ **Cross-Platform**: Works on Windows, macOS, and Linux
+- ❌ **NO Windows Integration**: No file icons, associations, or context menus
+- ❌ **NO VS Code Extension**: Must install manually from marketplace
+- ❌ **NO Language Server**: No IDE features or autocomplete
+- ❌ **NO File Recognition**: Windows treats `.csr` files as unknown
+
+### 🔄 **Quick Testing Benefits:**
+- ⚡ **Fast Installation**: ~5 seconds to get running
+- 🔄 **Easy Updates**: `npm update -g caesar-lang`
+- 🌐 **Cross-Platform**: Test Caesar on any operating system
+- 📦 **Package Manager**: Integrates with Node.js workflows
 
 **💡 Perfect For:**
-- Active developers who prefer package managers
-- Users who want automatic updates
-- Cross-platform development environments
-- Teams managing dependencies through NPM
+- **Quick Evaluation**: Testing Caesar language features rapidly
+- **CI/CD Pipelines**: Automated testing and script execution
+- **Cross-Platform Development**: Running Caesar on non-Windows systems
+- **Temporary Use**: Short-term projects without full system integration
 
 **📋 Requirements:**
 - **Node.js 14+** (for NPM package manager)
-- **Windows** (for file association features)
+- **Any Operating System** (Windows, macOS, Linux)
 
 **🔧 Installation Process:**
 ```bash
-# 1. Install globally
+# 1. Install globally (basic functionality only)
 npm install -g caesar-lang
 
-# 2. Verify installation
+# 2. Verify basic installation
 caesar --version
 
-# 3. Run examples (Python-like simplicity!)
+# 3. Run Caesar files (command line only)
 caesar examples/hello_world.csr
 
-# 4. Start REPL
+# Note: For full experience, use Release Package instead!
+```
+
+---
+
+## 📊 **Installation Method Comparison**
+
+| Feature | 🏆 Release Package | ⚡ NPM Package |
+|---------|----------------|----------------|
+| **Target Use Case** | **Full Production Experience** | **Quick Testing Only** |
+| **Windows File Icons** | ✅ Beautiful Caesar icons | ❌ Generic file icons |
+| **File Association** | ✅ Double-click to run | ❌ Command line only |
+| **Context Menu** | ✅ Right-click integration | ❌ No integration |
+| **VS Code Extension** | ✅ Auto-installed | ❌ Manual install required |
+| **Language Server** | ✅ Full IDE features | ❌ No IDE support |
+| **System Integration** | ✅ Complete Windows integration | ❌ Basic CLI only |
+| **Installation Time** | ~60 seconds | ~30 seconds |
+| **File Size** | 12.77 MB | 11.24 MB |
+| **Dependencies** | None | Node.js 14+ |
+| **Auto Updates** | Manual download | ✅ `npm update` |
+| **Cross-Platform** | Windows only | ✅ All platforms |
+| **Professional Use** | ✅ **Recommended** | ❌ Testing only |
+
+## 🎯 **Which Should You Choose?**
+
+### 🏆 **Choose Release Package If:**
+- You want the **complete Caesar experience**
+- You're developing on **Windows**
+- You want **beautiful file icons** and **system integration**
+- You use **VS Code** for development
+- You plan to use Caesar for **real projects**
+- You want **professional-grade tooling**
+
+### ⚡ **Choose NPM Package If:**
+- You just want to **quickly test** Caesar language features
+- You're on **macOS or Linux**
+- You're using Caesar in **CI/CD pipelines**
+- You **don't need Windows integration**
+- You prefer **package managers** over installers
+- You're doing **temporary evaluation**
+
+---
+
+## 🚀 **Quick Start Guide**
+
+### 🏆 **Release Package - Full Experience:**
+
+After installation, enjoy the complete Caesar experience:
+
+```bash
+# Verify your full installation (added to PATH automatically)
+caesar --version
+
+# Run examples with full Windows integration
+caesar examples\hello_world.csr
+
+# Test file association - double-click ANY .csr file!
+# Files should open with beautiful Caesar icons
+
+# VS Code Integration (automatically installed)
+# - Open VS Code - Caesar extension is already there!
+# - Open any .csr file - syntax highlighting works instantly
+# - Press F5 to run current Caesar file
+# - Click the ▶️ play button in editor toolbar
+# - Right-click → "Run Caesar File"
+
+# Context menu integration
+# Right-click any .csr file in Windows Explorer:
+# → "Run with Caesar"
+# → "Open in Caesar REPL"
+
+# Start interactive REPL (also added to PATH)
+caesar_repl
+```
+
+### ⚡ **NPM Package - Basic Testing:**
+
+Basic command-line functionality only:
+
+```bash
+# Verify basic installation (command line only)
+caesar --version
+
+# Run Caesar files (command line only - no file association)
+caesar examples/hello_world.csr
+
+# Start REPL (basic version)
 caesar-repl
 
-# 5. Create and run your own files
-echo 'print("Hello from Caesar!")' > test.csr
-caesar test.csr  # Just like Python!
+# ⚠️ What's MISSING with NPM:
+# - No file icons (generic file appearance)
+# - No double-click to run (.csr files not recognized)
+# - No context menu integration
+# - No VS Code extension (must install manually)
+# - No Language Server Protocol support
+# - No system integration
+
+# To get VS Code support with NPM, install manually:
+# 1. Open VS Code Extensions (Ctrl+Shift+X)
+# 2. Search "Caesar Language Support"
+# 3. Install manually (not automatic like Release Package version)
 ```
 
-### 🗂️ Option 2: Release Package (Recommended for End Users)
-
-**Direct Download**: Get the latest version from [GitHub Releases](https://github.com/juliuspleunes4/Caesar/releases)
-
-**✅ What You Get:**
-- ✅ **Pre-compiled Executables**: No compilation required
-- ✅ **VS Code Extension**: Automatic installation if VS Code is detected
-- ✅ **Language Server Protocol**: Full IDE features (autocomplete, error checking, go-to-definition)
-- ✅ **Automatic File Association**: `.csr` files open with Caesar by default
-- ✅ **Custom Windows Icons**: Beautiful Caesar icons for `.csr` files
-- ✅ **Professional Installer**: PowerShell-based setup with progress indication
-- ✅ **Complete Documentation**: User guides and examples included
-- ✅ **Standalone Operation**: No external dependencies required
-
-**💡 Perfect For:**
-- End users who prefer traditional installers
-- Environments without Node.js/NPM
-- Users who want VS Code integration out-of-the-box
-- Educational settings with restricted package manager access
-
-**📋 Requirements:**
-- **Windows 10/11** (64-bit)
-- **PowerShell** (for automated installation)
-- **VS Code** (optional, for enhanced development experience)
-
-**🔧 Installation Process:**
-```bash
-# 1. Download caesar-v1.4.0-windows.zip from GitHub Releases
-# 2. Extract to desired location
-# 3. Run automated installer
-node scripts\install.js
-
-# 4. Verify installation
-.\bin\caesar.exe --version
-
-# 5. Run examples
-.\bin\caesar.exe examples\hello_world.csr
-```
-
-### 📊 Installation Comparison
-
-| Feature | NPM Package | Release Package |
-|---------|-------------|-----------------|
-| **Installation Time** | ~30 seconds | ~60 seconds |
-| **File Size** | 11.24 MB | 12.77 MB |
-| **Dependencies** | Node.js 14+ | None |
-| **Auto Updates** | ✅ `npm update` | Manual download |
-| **VS Code Extension** | Manual install | ✅ Automatic |
-| **Language Server** | Manual setup | ✅ Included |
-| **File Association** | ✅ Automatic | ✅ Automatic |
-| **Custom Icons** | ✅ Included | ✅ Included |
-| **Global CLI** | ✅ `caesar` | Local `.\bin\caesar.exe` |
-| **Cross-Platform** | ✅ Windows/Mac/Linux | Windows only |
-
-### 🎯 Quick Start (Both Methods)
-
-After installation, Caesar is as easy to use as Python! Try these commands:
-
-```bash
-# Check installation
-caesar --version                    # NPM
-.\bin\caesar.exe --version         # Release
-
-# Run Caesar files (Python-like simplicity!)
-caesar examples/hello_world.csr    # NPM - Just like "python file.py"!
-.\bin\caesar.exe examples/hello_world.csr  # Release
-
-# More examples - no flags needed!
-caesar examples/fibonacci.csr      # NPM
-caesar examples/control_flow.csr   # NPM
-.\bin\caesar.exe examples/fibonacci.csr      # Release
-.\bin\caesar.exe examples/control_flow.csr   # Release
-
-# Start interactive REPL
-caesar-repl                        # NPM  
-.\bin\caesar_repl.exe             # Release
-
-# VS Code Integration (NPM with extension installed)
-# Press F5 in VS Code to run current Caesar file!
-# Click the ▶️ play button in editor toolbar!
-# Right-click → "Run Caesar File"
-
-# File association test (both methods)
-# Double-click any .csr file - it should open with Caesar!
-```
+### 💡 **Pro Tip:**
+**Want the full Caesar experience?** Use the Release Package! The NPM version is intentionally minimal - perfect for quick testing, but you'll miss out on the beautiful file icons, system integration, and automatic VS Code setup that makes Caesar a joy to use daily.
 
 ✨ **New in v1.4.0**: Caesar now includes **enhanced data structures** (lists and dictionaries) with Python-like syntax and **professional development workflow** with automated scripts!
 
@@ -649,7 +751,7 @@ powershell -ExecutionPolicy Bypass -File scripts\create_release.ps1 -OutputDir "
 
 ### Distribution
 
-The generated ZIP file can be:
+The generated Release Package file can be:
 - Uploaded to GitHub releases
 - Distributed to end users
 - Installed by users without any development tools
@@ -1082,6 +1184,26 @@ Built with ❤️ by **[Julius Pleunes](https://github.com/juliuspleunes4)** - C
 - **CMake Community**: Build system and cross-platform support
 - **Doxygen**: Documentation generation tools
 - **Open Source Community**: Continuous learning and collaboration
+
+---
+
+## 🌐 Links & Resources
+
+### **Official Website**
+🌍 **[www.caesarlang.com](https://www.caesarlang.com)** - Complete documentation, playground, and downloads
+
+### **Development & Community**
+- 🐱 **GitHub Repository**: [github.com/juliuspleunes4/Caesar](https://github.com/juliuspleunes4/Caesar)
+- 📦 **NPM Package**: [npmjs.com/package/caesar-lang](https://www.npmjs.com/package/caesar-lang)
+- 🔧 **VS Code Extension**: [Caesar Language Support](https://marketplace.visualstudio.com/items?itemName=juliuspleunes4.caesar-language-support)
+- 💬 **Discord Community**: [Join our Discord server](https://discord.gg/BjQraBgQSs)
+- 🐛 **Issue Tracker**: [GitHub Issues](https://github.com/juliuspleunes4/Caesar/issues)
+- 📚 **Documentation**: [Contributing Guide](docs/CONTRIBUTING.md) | [Development Workflow](docs/DEVELOPMENT_WORKFLOW.md)
+
+### **Contact & Support**
+- 📧 **Maintainer**: Contact through [GitHub Discussions](https://github.com/juliuspleunes4/Caesar/discussions)
+- 🎯 **Feature Requests**: Use [GitHub Issues](https://github.com/juliuspleunes4/Caesar/issues) with enhancement label
+- 🤝 **Collaboration**: Check our [Contributing Guide](docs/CONTRIBUTING.md) to get involved
 
 ---
 
