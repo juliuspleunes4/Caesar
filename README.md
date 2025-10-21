@@ -11,7 +11,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 [![NPM Package](https://img.shields.io/npm/v/caesar-lang?label=NPM%20Package&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/caesar-lang)
 [![VS Code Extension](https://img.shields.io/badge/VS%20Code%20Extension-v0.0.4-007ACC?logo=visual-studio-code&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=juliuspleunes4.caesar-language-support)
-![Version](https://img.shields.io/badge/version-1.4.0-%2338257d?style=flat&labelColor=38257d&color=38257d)
+![Version](https://img.shields.io/badge/version-1.5.0-%2338257d?style=flat&labelColor=38257d&color=38257d)
 
 <p align="center">
     <img src="assets/caesar_logo_v2.png" alt="Caesar Logo" width="125" align="left">

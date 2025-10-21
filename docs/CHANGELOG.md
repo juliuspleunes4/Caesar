@@ -4,7 +4,11 @@ All notable changes to the Caesar Programming Language project will be documente
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.5.0] - 2025-10-21
+
+### 🚀 Community & Documentation Release
+
+This release focuses on **community building**, **distribution improvements**, and **documentation accuracy**. Caesar now has official Discord community support, enhanced release packages with comprehensive user guides, and completely accurate syntax documentation verified against the actual implementation.
 
 ### 🌐 Community & Distribution Improvements
 
@@ -69,6 +73,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **Enhanced README**: Updated main repository README with Discord community links
 - **Release Documentation**: Complete rewrite of release package README for end users
 - **Installation Safety**: Documented upgrade behavior and safety features
+- **Accurate SYNTAX.md**: Complete rewrite of syntax documentation to reflect only actually implemented features
+  - Verified against source code implementation
+  - Removed misleading examples for unimplemented features (list/dict indexing, classes, advanced built-ins)
+  - Added "Current Limitations" section with clear ✅/❌ feature status
+  - Added practical workarounds for current limitations
+  - Updated "Future Features" section with comprehensive planned features list
 
 ## [1.4.0] - 2025-09-23
 
