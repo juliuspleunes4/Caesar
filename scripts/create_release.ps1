@@ -3,7 +3,7 @@
 
 param(
     [Parameter(HelpMessage="Version number (e.g., 1.4.0)")]
-    [string]$Version = "1.5.0",
+    [string]$Version = "1.5.1",
     
     [Parameter(HelpMessage="Output directory for the release package")]
     [string]$OutputDir = "release"

@@ -4,6 +4,25 @@ All notable changes to the Caesar Programming Language project will be documente
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2025-10-21
+
+### 🔧 Release System Fixes
+
+#### **Fixed**
+- **Binary Version Display**: Updated version constants in source code to correctly display v1.5.0 instead of v1.0.0
+- **PowerShell Installer Compatibility**: 
+  - Fixed triple-quote comment syntax causing PowerShell parsing errors
+  - Replaced emoji characters with plain text prefixes for better terminal compatibility
+  - Resolved installer script generation issues in `scripts/create_release.ps1`
+- **Build System Reliability**: Improved CMake configuration for consistent MinGW builds
+- **Version Consistency**: Updated all source file headers to reflect v1.5.0 version
+
+#### **Improved**
+- **Release Package Quality**: Enhanced standalone installer reliability
+- **Cross-Platform Compatibility**: Better PowerShell script compatibility across different Windows versions
+
+---
+
 ## [1.5.0] - 2025-10-21
 
 ### 🚀 Community & Documentation Release
