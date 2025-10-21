@@ -204,7 +204,7 @@ function Write-ColorOutput {
 }
 
 function Test-VSCodeInstalled {
-    `"""Check if VS Code is installed`"""
+    # Check if VS Code is installed
     `$vscodePaths = @(
         "`${env:LOCALAPPDATA}\Programs\Microsoft VS Code\Code.exe",
         "`${env:PROGRAMFILES}\Microsoft VS Code\Code.exe",
@@ -227,7 +227,7 @@ function Test-VSCodeInstalled {
 }
 
 function Uninstall-OldVSCodeExtension {
-    `"""Uninstall old Caesar VS Code extension versions`"""
+    # Uninstall old Caesar VS Code extension versions
     param([string]`$VSCodePath)
     
     try {
@@ -238,13 +238,13 @@ function Uninstall-OldVSCodeExtension {
         }
         
         if (`$installed) {
-            Write-ColorOutput "🔄 Removing old Caesar extension version..." `$InfoColor
+            Write-ColorOutput "[VSCODE] Removing old Caesar extension version..." `$InfoColor
             if (`$VSCodePath -eq "code") {
                 & code --uninstall-extension juliuspleunes4.caesar-language-support 2>&1 | Out-Null
             } else {
                 & "`$VSCodePath" --uninstall-extension juliuspleunes4.caesar-language-support 2>&1 | Out-Null
             }
-            Write-ColorOutput "✅ Old extension removed" `$SuccessColor
+            Write-ColorOutput "SUCCESS: Old extension removed" `$SuccessColor
         }
     } catch {
         # Ignore errors - extension might not be installed
@@ -252,10 +252,10 @@ function Uninstall-OldVSCodeExtension {
 }
 
 function Install-VSCodeExtension {
-    `"""Install Caesar VS Code extension`"""
+    # Install Caesar VS Code extension
     param([string]`$VSCodePath)
     
-    Write-ColorOutput "🔧 Installing Caesar VS Code Extension..." `$InfoColor
+    Write-ColorOutput "[VSCODE] Installing Caesar VS Code Extension..." `$InfoColor
     
     # First, uninstall any old version
     Uninstall-OldVSCodeExtension `$VSCodePath
@@ -263,7 +263,7 @@ function Install-VSCodeExtension {
     `$extensionPath = Join-Path `$PSScriptRoot "$ExtensionFileName"
     
     if (-not (Test-Path `$extensionPath)) {
-        Write-ColorOutput "❌ VS Code extension file not found: `$extensionPath" `$ErrorColor
+        Write-ColorOutput "ERROR: VS Code extension file not found: `$extensionPath" `$ErrorColor
         return `$false
     }
     
@@ -275,24 +275,24 @@ function Install-VSCodeExtension {
         }
         
         if (`$LASTEXITCODE -eq 0) {
-            Write-ColorOutput "✅ Caesar VS Code extension installed successfully!" `$SuccessColor
+            Write-ColorOutput "SUCCESS: Caesar VS Code extension installed successfully!" `$SuccessColor
             Write-ColorOutput "   • Syntax highlighting for .csr files" `$InfoColor
             Write-ColorOutput "   • Code snippets and auto-completion" `$InfoColor
             Write-ColorOutput "   • Caesar Dark theme" `$InfoColor
             return `$true
         } else {
-            Write-ColorOutput "❌ Failed to install VS Code extension" `$ErrorColor
+            Write-ColorOutput "ERROR: Failed to install VS Code extension" `$ErrorColor
             Write-ColorOutput "Error: `$result" `$ErrorColor
             return `$false
         }
     } catch {
-        Write-ColorOutput "❌ Error installing VS Code extension: `$(`$_.Exception.Message)" `$ErrorColor
+        Write-ColorOutput "ERROR: Error installing VS Code extension: `$(`$_.Exception.Message)" `$ErrorColor
         return `$false
     }
 }
 
 function Get-InstalledVersion {
-    `"""Get currently installed Caesar version`"""
+    # Get currently installed Caesar version
     param([string]`$InstallPath)
     
     `$caesarExe = Join-Path `$InstallPath "bin\caesar.exe"
@@ -310,7 +310,7 @@ function Get-InstalledVersion {
 }
 
 function Install-Caesar {
-    Write-ColorOutput "🏛️ Caesar Programming Language Installer v$Version" `$InfoColor
+    Write-ColorOutput "Caesar Programming Language Installer v$Version" `$InfoColor
     Write-ColorOutput "===================================================" `$InfoColor
     Write-ColorOutput "" 
     
@@ -320,12 +320,12 @@ function Install-Caesar {
     
     if ((Test-Path `$InstallDir) -and -not `$Force) {
         if (`$installedVersion) {
-            Write-ColorOutput "📦 Detected existing Caesar v`$installedVersion" `$InfoColor
-            Write-ColorOutput "🆕 Installing Caesar v$Version" `$InfoColor
+            Write-ColorOutput "[UPGRADE] Detected existing Caesar v`$installedVersion" `$InfoColor
+            Write-ColorOutput "[UPGRADE] Installing Caesar v$Version" `$InfoColor
             `$isUpgrade = `$true
             Write-ColorOutput "" 
         } else {
-            Write-ColorOutput "⚠️  Caesar is already installed at `$InstallDir" `$WarningColor
+            Write-ColorOutput "WARNING: Caesar is already installed at `$InstallDir" `$WarningColor
         }
         
         `$response = Read-Host "Do you want to continue? (y/N)"
@@ -337,9 +337,9 @@ function Install-Caesar {
     
     # Create installation directory
     if (`$isUpgrade) {
-        Write-ColorOutput "♻️  Removing old version..." `$InfoColor
+        Write-ColorOutput "[UPGRADE] Removing old version..." `$InfoColor
     } else {
-        Write-ColorOutput "📁 Creating installation directory: `$InstallDir" `$InfoColor
+        Write-ColorOutput "[INSTALL] Creating installation directory: `$InstallDir" `$InfoColor
     }
     
     try {
@@ -349,10 +349,10 @@ function Install-Caesar {
         New-Item -ItemType Directory -Path `$InstallDir -Force | Out-Null
         
         if (`$isUpgrade) {
-            Write-ColorOutput "✅ Old version removed" `$SuccessColor
+            Write-ColorOutput "SUCCESS: Old version removed" `$SuccessColor
         }
     } catch {
-        Write-ColorOutput "❌ Failed to create installation directory: `$(`$_.Exception.Message)" `$ErrorColor
+        Write-ColorOutput "ERROR: Failed to create installation directory: `$(`$_.Exception.Message)" `$ErrorColor
         return
     }
     
@@ -364,13 +364,13 @@ function Install-Caesar {
         
         if (Test-Path `$binSource) {
             Copy-Item `$binSource -Destination `$binDest -Recurse -Force
-            Write-ColorOutput "✅ Caesar binaries installed" `$SuccessColor
+            Write-ColorOutput "SUCCESS: Caesar binaries installed" `$SuccessColor
         } else {
-            Write-ColorOutput "❌ Caesar binaries not found in `$binSource" `$ErrorColor
+            Write-ColorOutput "ERROR: Caesar binaries not found in `$binSource" `$ErrorColor
             return
         }
     } catch {
-        Write-ColorOutput "❌ Failed to copy binaries: `$(`$_.Exception.Message)" `$ErrorColor
+        Write-ColorOutput "ERROR: Failed to copy binaries: `$(`$_.Exception.Message)" `$ErrorColor
         return
     }
     
@@ -382,15 +382,15 @@ function Install-Caesar {
         
         if (Test-Path `$examplesSource) {
             Copy-Item `$examplesSource -Destination `$examplesDest -Recurse -Force
-            Write-ColorOutput "✅ Examples installed" `$SuccessColor
+            Write-ColorOutput "SUCCESS: Examples installed" `$SuccessColor
         }
     } catch {
-        Write-ColorOutput "⚠️  Could not copy examples: `$(`$_.Exception.Message)" `$WarningColor
+        Write-ColorOutput "WARNING: Could not copy examples: `$(`$_.Exception.Message)" `$WarningColor
     }
     
     # Add to PATH
     if (-not `$SkipPath) {
-        Write-ColorOutput "🛤️  Adding Caesar to system PATH..." `$InfoColor
+        Write-ColorOutput "[PATH] Adding Caesar to system PATH..." `$InfoColor
         try {
             `$binPath = Join-Path `$InstallDir "bin"
             `$currentPath = [Environment]::GetEnvironmentVariable("PATH", "User")
@@ -398,13 +398,13 @@ function Install-Caesar {
             if (`$currentPath -notlike "*`$binPath*") {
                 `$newPath = "`$currentPath;`$binPath"
                 [Environment]::SetEnvironmentVariable("PATH", `$newPath, "User")
-                Write-ColorOutput "✅ Caesar added to PATH" `$SuccessColor
+                Write-ColorOutput "SUCCESS: Caesar added to PATH" `$SuccessColor
                 Write-ColorOutput "   Restart your terminal to use 'caesar' command" `$InfoColor
             } else {
-                Write-ColorOutput "✅ Caesar already in PATH" `$SuccessColor
+                Write-ColorOutput "SUCCESS: Caesar already in PATH" `$SuccessColor
             }
         } catch {
-            Write-ColorOutput "⚠️  Could not add to PATH: `$(`$_.Exception.Message)" `$WarningColor
+            Write-ColorOutput "WARNING: Could not add to PATH: `$(`$_.Exception.Message)" `$WarningColor
         }
     }
     
@@ -412,18 +412,18 @@ function Install-Caesar {
     if (-not `$SkipVSCode) {
         `$vscodePath = Test-VSCodeInstalled
         if (`$vscodePath) {
-            Write-ColorOutput "🎨 VS Code detected, installing Caesar extension..." `$InfoColor
+            Write-ColorOutput "[VSCODE] VS Code detected, installing Caesar extension..." `$InfoColor
             `$extensionInstalled = Install-VSCodeExtension `$vscodePath
             
             if (`$extensionInstalled) {
                 Write-ColorOutput "" 
-                Write-ColorOutput "🎉 VS Code Integration Complete!" `$SuccessColor
+                Write-ColorOutput "SUCCESS: VS Code Integration Complete!" `$SuccessColor
                 Write-ColorOutput "   • Open any .csr file to see syntax highlighting" `$InfoColor
                 Write-ColorOutput "   • Type 'def', 'class', 'if' for code snippets" `$InfoColor
                 Write-ColorOutput "   • Switch to 'Caesar Dark' theme for best experience" `$InfoColor
             }
         } else {
-            Write-ColorOutput "ℹ️  VS Code not detected, skipping extension installation" `$InfoColor
+            Write-ColorOutput "INFO: VS Code not detected, skipping extension installation" `$InfoColor
             Write-ColorOutput "   Install VS Code and run this installer again for editor support" `$InfoColor
         }
     }
@@ -431,31 +431,31 @@ function Install-Caesar {
     # Installation complete
     Write-ColorOutput "" 
     if (`$isUpgrade) {
-        Write-ColorOutput "🎉 Caesar Upgrade Complete!" `$SuccessColor
+        Write-ColorOutput "SUCCESS: Caesar Upgrade Complete!" `$SuccessColor
         Write-ColorOutput "============================" `$SuccessColor
         if (`$installedVersion) {
-            Write-ColorOutput "📦 Upgraded from v`$installedVersion to v$Version" `$InfoColor
+            Write-ColorOutput "[INFO] Upgraded from v`$installedVersion to v$Version" `$InfoColor
         }
-        Write-ColorOutput "✅ Old version completely removed" `$SuccessColor
-        Write-ColorOutput "✅ New version installed successfully" `$SuccessColor
+        Write-ColorOutput "SUCCESS: Old version completely removed" `$SuccessColor
+        Write-ColorOutput "SUCCESS: New version installed successfully" `$SuccessColor
     } else {
-        Write-ColorOutput "🎉 Caesar Installation Complete!" `$SuccessColor
+        Write-ColorOutput "SUCCESS: Caesar Installation Complete!" `$SuccessColor
         Write-ColorOutput "=================================" `$SuccessColor
     }
     Write-ColorOutput "" 
-    Write-ColorOutput "📍 Installation directory: `$InstallDir" `$InfoColor
-    Write-ColorOutput "⚡ Caesar interpreter: `$InstallDir\bin\caesar.exe" `$InfoColor
-    Write-ColorOutput "🖥️  Caesar REPL: `$InstallDir\bin\caesar_repl.exe" `$InfoColor
-    Write-ColorOutput "📚 Examples: `$InstallDir\examples\" `$InfoColor
+    Write-ColorOutput "[INFO] Installation directory: `$InstallDir" `$InfoColor
+    Write-ColorOutput "[INFO] Caesar interpreter: `$InstallDir\bin\caesar.exe" `$InfoColor
+    Write-ColorOutput "[INFO] Caesar REPL: `$InstallDir\bin\caesar_repl.exe" `$InfoColor
+    Write-ColorOutput "[INFO] Examples: `$InstallDir\examples\" `$InfoColor
     Write-ColorOutput "" 
-    Write-ColorOutput "🚀 Quick Start:" `$InfoColor
+    Write-ColorOutput "[QUICKSTART] Quick Start:" `$InfoColor
     Write-ColorOutput "   caesar `$InstallDir\examples\hello_world.csr" `$InfoColor
     Write-ColorOutput "   caesar_repl" `$InfoColor
     Write-ColorOutput "" 
     if (`$isUpgrade) {
-        Write-ColorOutput "✨ Enjoy the new features in Caesar v$Version!" `$SuccessColor
+        Write-ColorOutput "SUCCESS: Enjoy the new features in Caesar v$Version!" `$SuccessColor
     } else {
-        Write-ColorOutput "🏛️ Welcome to Caesar - The High-Performance Programming Language!" `$SuccessColor
+        Write-ColorOutput "SUCCESS: Welcome to Caesar - The High-Performance Programming Language!" `$SuccessColor
     }
 }
 
