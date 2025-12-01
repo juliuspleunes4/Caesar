@@ -216,16 +216,21 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             // Check if it's a string literal (starts with ")
             if (!instr.src1.value.empty() && instr.src1.value[0] == '"') {
                 emitLine("const char* " + instr.dest.value + " = " + instr.src1.value + ";");
-                register_types[instr.dest.value] = "char*";
+                register_types[instr.dest.value] = "const char*";
             } else {
                 emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + ";");
                 register_types[instr.dest.value] = "int64_t";
             }
             break;
             
-        case IROpcode::GET_VAR:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + ";");
+        case IROpcode::GET_VAR: {
+            // Get type from variable if known
+            auto vit = variable_types.find(instr.src1.value);
+            std::string var_type = (vit != variable_types.end()) ? vit->second : "int64_t";
+            emitLine(var_type + " " + instr.dest.value + " = " + instr.src1.value + ";");
+            register_types[instr.dest.value] = var_type;
             break;
+        }
             
         case IROpcode::SET_VAR: {
             emitLine(instr.dest.value + " = " + instr.src1.value + ";");
@@ -297,7 +302,7 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
                     std::string param = call_params[0];
                     // Check register type
                     auto it = register_types.find(param);
-                    if (it != register_types.end() && it->second == "char*") {
+                    if (it != register_types.end() && (it->second == "char*" || it->second == "const char*")) {
                         emitLine("caesar_print_str(" + param + ");");
                     } else {
                         emitLine("caesar_print_int(" + param + ");");
