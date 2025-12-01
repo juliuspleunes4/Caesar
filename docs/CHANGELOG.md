@@ -8,9 +8,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### 🚀 Language Features & Documentation Improvements
 
-This release adds significant new language features including iteration support, member access, and an interactive REPL, along with comprehensive documentation fixes.
+This release adds significant new language features including iteration support, member access, an interactive REPL, and a complete **IR generation and compilation pipeline** supporting multiple backends.
 
 ### ✨ New Features
+
+#### **IR Generation & Compilation Pipeline** 🎉
+- **Three-Address Code IR**: Complete intermediate representation with 30+ opcodes
+  - Arithmetic operations (ADD, SUB, MUL, DIV, MOD, NEG)
+  - Comparison operations (EQ, NE, LT, LE, GT, GE)
+  - Logical operations (AND, OR, NOT)
+  - Memory operations (LOAD, STORE, LOAD_CONST, ALLOC)
+  - Control flow (LABEL, JUMP, JUMP_IF_TRUE, JUMP_IF_FALSE, CALL, RETURN)
+  - Variable operations (DECLARE, ASSIGN, GET_VAR, SET_VAR)
+- **Basic Block Structure**: Organized IR with labeled basic blocks for control flow
+- **Multiple Code Generation Backends**:
+  - **Bytecode Generator**: Stack-based virtual machine bytecode
+  - **x86-64 Assembly Generator**: Native assembly code with register allocation
+  - **C Transpiler**: Generates compilable C code from Caesar source
+- **New CLI Options**:
+  - `--ir`: Display intermediate representation
+  - `--asm`: Generate x86-64 assembly code
+  - `--c`: Transpile to C code
+  - `-o <file>`: Specify output file for generated code
+- **Complete AST → IR Visitor**: Converts all expression and statement types to IR
+- **Comprehensive Test Suite**: `tests/test_ir.cpp` with 6 test scenarios covering all backends
 
 #### **Iteration Support**
 - **List Iteration**: `for item in [1, 2, 3]` now works correctly
@@ -48,8 +69,10 @@ This release adds significant new language features including iteration support,
 ### 🧪 Testing
 
 - **New Test File**: Added `tests/enhanced-data-structures/test_iteration.csr` for iteration features
+- **IR/Codegen Tests**: Added `tests/test_ir.cpp` with comprehensive IR and code generation tests
 - **Example Files Fixed**: Restored inline comments in `functions.csr` and `control_flow.csr`
 - **Version Updates**: Updated version display in `complete_demo.csr`
+- **All Tests Passing**: 10/10 test suites pass (100% success rate)
 
 ---
 
