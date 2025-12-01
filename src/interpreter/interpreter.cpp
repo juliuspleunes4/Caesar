@@ -275,6 +275,8 @@ void Interpreter::visit(CallExpression& node) {
 
 void Interpreter::visit(MemberExpression& node) {
     (void)node;
+    // TODO: Implement member expression evaluation (e.g., object.property, object.method())
+    // Currently returns nullptr as member access is not yet supported
     last_value = nullptr;
 }
 
@@ -415,6 +417,8 @@ void Interpreter::visit(FunctionDefinition& node) {
 
 void Interpreter::visit(ClassDefinition& node) {
     (void)node;
+    // TODO: Implement full class support with methods, inheritance, and instantiation
+    // Currently only stores a placeholder string - classes cannot be instantiated yet
     environment->define(node.name, std::string("__class_" + node.name));
 }
 

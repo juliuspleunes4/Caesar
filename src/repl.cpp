@@ -26,7 +26,8 @@ void printHelp() {
     std::cout << "  exit     - Exit the REPL\n";
     std::cout << "  quit     - Exit the REPL\n";
     std::cout << "  tokens   - Toggle token display mode\n";
-    std::cout << "\nEnter Caesar code to see tokenization (compilation coming soon!)\n";
+    std::cout << "\nEnter Caesar code to see tokenization.\n";
+    std::cout << "Note: Use 'caesar -i file.csr' for full program execution.\n";
 }
 
 int main() {
