@@ -227,9 +227,15 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + ";");
             break;
             
-        case IROpcode::SET_VAR:
+        case IROpcode::SET_VAR: {
             emitLine(instr.dest.value + " = " + instr.src1.value + ";");
+            // Track variable type from source register
+            auto it = register_types.find(instr.src1.value);
+            if (it != register_types.end()) {
+                variable_types[instr.dest.value] = it->second;
+            }
             break;
+        }
             
         case IROpcode::ADD:
             emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " + " + instr.src2.value + ";");
@@ -322,15 +328,33 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
 std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     output.str("");
     variable_types.clear();
+    register_types.clear();
     
-    // First pass: collect all variables
+    // First pass: collect all variables and track types
+    std::unordered_map<std::string, std::string> temp_register_types;
     for (const auto& block : blocks) {
         for (const auto& instr : block.instructions) {
+            // Track register types from LOAD_CONST
+            if (instr.opcode == IROpcode::LOAD_CONST && instr.dest.type == IROperandType::REGISTER) {
+                if (!instr.src1.value.empty() && instr.src1.value[0] == '"') {
+                    temp_register_types[instr.dest.value] = "const char*";
+                } else {
+                    temp_register_types[instr.dest.value] = "int64_t";
+                }
+            }
+            // Track variable types from SET_VAR
             if (instr.opcode == IROpcode::SET_VAR && instr.dest.type == IROperandType::VARIABLE) {
-                variable_types[instr.dest.value] = "int64_t";
+                auto it = temp_register_types.find(instr.src1.value);
+                if (it != temp_register_types.end()) {
+                    variable_types[instr.dest.value] = it->second;
+                } else {
+                    variable_types[instr.dest.value] = "int64_t";  // Default
+                }
             }
             if (instr.opcode == IROpcode::GET_VAR && instr.src1.type == IROperandType::VARIABLE) {
-                variable_types[instr.src1.value] = "int64_t";
+                if (variable_types.find(instr.src1.value) == variable_types.end()) {
+                    variable_types[instr.src1.value] = "int64_t";  // Default
+                }
             }
         }
     }
