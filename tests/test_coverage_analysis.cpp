@@ -352,13 +352,13 @@ void printCoverageReport(const CoverageReport& report) {
     
     std::cout << "\nTested Features (" << report.testedFeatures.size() << "):\n";
     for (const auto& feature : report.testedFeatures) {
-        std::cout << "  ✓ " << feature << "\n";
+        std::cout << "  [+] " << feature << "\n";
     }
     
     if (!report.untestedFeatures.empty()) {
         std::cout << "\nUntested Features (" << report.untestedFeatures.size() << "):\n";
         for (const auto& feature : report.untestedFeatures) {
-            std::cout << "  ❌ " << feature << "\n";
+            std::cout << "  [-] " << feature << "\n";
         }
     }
     
@@ -388,13 +388,13 @@ void generateCoverageSummary(const std::vector<CoverageReport>& reports) {
     std::cout << "Average Coverage: " << averageCoverage << "%\n";
     
     if (averageCoverage >= 90.0) {
-        std::cout << "✅ EXCELLENT test coverage!\n";
+        std::cout << "[EXCELLENT] test coverage!\n";
     } else if (averageCoverage >= 80.0) {
-        std::cout << "✓ GOOD test coverage!\n";
+        std::cout << "[GOOD] test coverage!\n";
     } else if (averageCoverage >= 70.0) {
-        std::cout << "⚠ ADEQUATE test coverage, consider adding more tests\n";
+        std::cout << "[WARNING] ADEQUATE test coverage, consider adding more tests\n";
     } else {
-        std::cout << "❌ POOR test coverage, more tests needed\n";
+        std::cout << "[POOR] test coverage, more tests needed\n";
     }
     
     std::cout << std::string(60, '=') << "\n";

@@ -43,18 +43,18 @@ void printVersion() {
     std::cout << "Native compiler for the Caesar programming language\n";
     std::cout << "Python-like syntax with true C-speed performance\n";
     std::cout << "\nLanguage Features:\n";
-    std::cout << "  ✓ Native compilation to x86-64 executables\n";
-    std::cout << "  ✓ Functions with default parameters\n";
-    std::cout << "  ✓ Control flow (if/elif/else, while, for)\n";
-    std::cout << "  ✓ Loop control (break, continue)\n";
-    std::cout << "  ✓ Built-in functions (print, range, len, str, int, float, type, abs)\n";
-    std::cout << "  ✓ Recursive functions and complex expressions\n";
-    std::cout << "  ✓ Python-style indentation and syntax\n";
-    std::cout << "  ✓ Enhanced data structures (lists and dictionaries)\n";
+    std::cout << "  [+] Native compilation to x86-64 executables\n";
+    std::cout << "  [+] Functions with default parameters\n";
+    std::cout << "  [+] Control flow (if/elif/else, while, for)\n";
+    std::cout << "  [+] Loop control (break, continue)\n";
+    std::cout << "  [+] Built-in functions (print, range, len, str, int, float, type, abs)\n";
+    std::cout << "  [+] Recursive functions and complex expressions\n";
+    std::cout << "  [+] Python-style indentation and syntax\n";
+    std::cout << "  [+] Enhanced data structures (lists and dictionaries)\n";
     std::cout << "\nCompiler Features:\n";
-    std::cout << "  ✓ Multi-stage compilation (Lexer → Parser → IR → Codegen)\n";
-    std::cout << "  ✓ Multiple backends (Native x86-64, C transpiler, Bytecode)\n";
-    std::cout << "  ✓ Built-in interpreter for rapid development\n";
+    std::cout << "  [+] Multi-stage compilation (Lexer -> Parser -> IR -> Codegen)\n";
+    std::cout << "  [+] Multiple backends (Native x86-64, C transpiler, Bytecode)\n";
+    std::cout << "  [+] Built-in interpreter for rapid development\n";
     std::cout << "\nBuilt with modern C++17\n";
     std::cout << "Build date: " << __DATE__ << " " << __TIME__ << "\n";
 }
@@ -245,10 +245,10 @@ int main(int argc, char* argv[]) {
             remove(temp_c_file.c_str());
             
             if (result == 0) {
-                std::cout << "✓ Successfully compiled to: " << output_file << "\n";
+                std::cout << "[SUCCESS] Compiled to: " << output_file << "\n";
                 std::cout << "Run with: .\\" << output_file << "\n";
             } else {
-                std::cerr << "✗ Compilation failed\n";
+                std::cerr << "[ERROR] Compilation failed\n";
                 return 1;
             }
             

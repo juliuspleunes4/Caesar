@@ -56,15 +56,15 @@ void test_cmake_configuration() {
     
     // Check if CMakeLists.txt exists in root (from build/tests, need to go up 2 levels)
     assert(fileExists("../../CMakeLists.txt"));
-    std::cout << "✓ Root CMakeLists.txt exists\n";
+    std::cout << "[OK] Root CMakeLists.txt exists\n";
     
     // Check if CMakeLists.txt exists in src
     assert(fileExists("../../src/CMakeLists.txt"));
-    std::cout << "✓ Source CMakeLists.txt exists\n";
+    std::cout << "[OK] Source CMakeLists.txt exists\n";
     
     // Check if CMakeLists.txt exists in tests
     assert(fileExists("../../tests/CMakeLists.txt"));
-    std::cout << "✓ Tests CMakeLists.txt exists\n";
+    std::cout << "[OK] Tests CMakeLists.txt exists\n";
     
     // Read and verify root CMakeLists.txt content
     std::string rootCMake = readFile("../../CMakeLists.txt");
@@ -72,9 +72,9 @@ void test_cmake_configuration() {
     assert(contains(rootCMake, "cmake_minimum_required"));
     assert(contains(rootCMake, "project"));
     assert(contains(rootCMake, "set(CMAKE_CXX_STANDARD"));
-    std::cout << "✓ Root CMakeLists.txt has required elements\n";
+    std::cout << "[OK] Root CMakeLists.txt has required elements\n";
     
-    std::cout << "✓ CMake configuration tests passed\n";
+    std::cout << "[OK] CMake configuration tests passed\n";
 }
 
 void test_build_targets() {
@@ -82,23 +82,23 @@ void test_build_targets() {
     
     // Check if we can access build directory by checking for Makefile
     assert(fileExists("../Makefile"));
-    std::cout << "✓ Build directory accessible (Makefile found)\n";
+    std::cout << "[OK] Build directory accessible (Makefile found)\n";
     
     // Check if Makefile was generated
     assert(fileExists("../Makefile"));
-    std::cout << "✓ Makefile generated\n";
+    std::cout << "[OK] Makefile generated\n";
     
     // Check if CMakeCache.txt exists
     assert(fileExists("../CMakeCache.txt"));
-    std::cout << "✓ CMakeCache.txt exists\n";
+    std::cout << "[OK] CMakeCache.txt exists\n";
     
     // Check for expected build targets
     std::string cacheContent = readFile("../CMakeCache.txt");
     if (!cacheContent.empty()) {
-        std::cout << "✓ CMakeCache.txt is readable\n";
+        std::cout << "[OK] CMakeCache.txt is readable\n";
     }
     
-    std::cout << "✓ Build targets tests passed\n";
+    std::cout << "[OK] Build targets tests passed\n";
 }
 
 void test_executable_generation() {
@@ -109,18 +109,18 @@ void test_executable_generation() {
     bool replExists = fileExists("../src/caesar_repl") || fileExists("../src/caesar_repl.exe");
     
     if (caesarExists) {
-        std::cout << "✓ Caesar main executable exists\n";
+        std::cout << "[OK] Caesar main executable exists\n";
     } else {
         std::cout << "⚠ Caesar main executable not found (may not be built yet)\n";
     }
     
     if (replExists) {
-        std::cout << "✓ Caesar REPL executable exists\n";
+        std::cout << "[OK] Caesar REPL executable exists\n";
     } else {
         std::cout << "⚠ Caesar REPL executable not found (may not be built yet)\n";
     }
     
-    std::cout << "✓ Executable generation tests completed\n";
+    std::cout << "[OK] Executable generation tests completed\n";
 }
 
 void test_library_generation() {
@@ -131,12 +131,12 @@ void test_library_generation() {
                      fileExists("../src/caesar_lib.lib");
     
     if (libExists) {
-        std::cout << "✓ Caesar static library exists\n";
+        std::cout << "[OK] Caesar static library exists\n";
     } else {
         std::cout << "⚠ Caesar static library not found (may not be built yet)\n";
     }
     
-    std::cout << "✓ Library generation tests completed\n";
+    std::cout << "[OK] Library generation tests completed\n";
 }
 
 void test_test_executables() {
@@ -147,7 +147,7 @@ void test_test_executables() {
                           fileExists("test_lexer.exe");
     
     if (lexerTestExists) {
-        std::cout << "✓ Lexer test executable exists\n";
+        std::cout << "[OK] Lexer test executable exists\n";
     } else {
         std::cout << "⚠ Lexer test executable not found (may not be built yet)\n";
     }
@@ -173,8 +173,8 @@ void test_test_executables() {
         }
     }
     
-    std::cout << "✓ Found " << foundTests << " test executables\n";
-    std::cout << "✓ Test executable generation tests completed\n";
+    std::cout << "[OK] Found " << foundTests << " test executables\n";
+    std::cout << "[OK] Test executable generation tests completed\n";
 }
 
 void test_compiler_flags() {
@@ -186,21 +186,21 @@ void test_compiler_flags() {
     if (!cacheContent.empty()) {
         // Check for C++ standard setting
         if (contains(cacheContent, "CMAKE_CXX_STANDARD")) {
-            std::cout << "✓ C++ standard is configured\n";
+            std::cout << "[OK] C++ standard is configured\n";
         }
         
         // Check for compiler flags
         if (contains(cacheContent, "CMAKE_CXX_FLAGS")) {
-            std::cout << "✓ C++ compiler flags are configured\n";
+            std::cout << "[OK] C++ compiler flags are configured\n";
         }
         
         // Check for build type
         if (contains(cacheContent, "CMAKE_BUILD_TYPE")) {
-            std::cout << "✓ Build type is configured\n";
+            std::cout << "[OK] Build type is configured\n";
         }
     }
     
-    std::cout << "✓ Compiler flag tests completed\n";
+    std::cout << "[OK] Compiler flag tests completed\n";
 }
 
 void test_dependency_resolution() {
@@ -210,25 +210,25 @@ void test_dependency_resolution() {
     std::string srcCMake = readFile("../src/CMakeLists.txt");
     if (!srcCMake.empty()) {
         if (contains(srcCMake, "target_include_directories")) {
-            std::cout << "✓ Include directories are configured\n";
+            std::cout << "[OK] Include directories are configured\n";
         }
         
         if (contains(srcCMake, "target_link_libraries")) {
-            std::cout << "✓ Library linking is configured\n";
+            std::cout << "[OK] Library linking is configured\n";
         }
     }
     
     // Check if include directory exists (from build/tests, need to go up 2 levels)
     assert(fileExists("../../include/caesar/caesar.h"));
-    std::cout << "✓ Include directory accessible\n";
+    std::cout << "[OK] Include directory accessible\n";
     
     // Check for required header files
     assert(fileExists("../../include/caesar/caesar.h"));
     assert(fileExists("../../include/caesar/lexer.h"));
     assert(fileExists("../../include/caesar/token.h"));
-    std::cout << "✓ Required header files exist\n";
+    std::cout << "[OK] Required header files exist\n";
     
-    std::cout << "✓ Dependency resolution tests passed\n";
+    std::cout << "[OK] Dependency resolution tests passed\n";
 }
 
 void test_build_configuration_options() {
@@ -248,17 +248,17 @@ void test_build_configuration_options() {
         
         for (const auto& var : checkVars) {
             if (contains(cacheContent, var)) {
-                std::cout << "✓ " << var << " is configured\n";
+                std::cout << "[OK] " << var << " is configured\n";
             }
         }
     }
     
     // Check if Doxyfile configuration exists (for documentation)
     if (fileExists("../Doxyfile.in")) {
-        std::cout << "✓ Doxygen configuration template exists\n";
+        std::cout << "[OK] Doxygen configuration template exists\n";
     }
     
-    std::cout << "✓ Build configuration options tests completed\n";
+    std::cout << "[OK] Build configuration options tests completed\n";
 }
 
 void test_clean_build() {
@@ -278,15 +278,15 @@ void test_clean_build() {
         }
     }
     
-    std::cout << "✓ Found " << foundArtifacts << " build artifact directories\n";
+    std::cout << "[OK] Found " << foundArtifacts << " build artifact directories\n";
     
     // Check if Makefile has clean target (if readable)
     std::string makefile = readFile("../build/Makefile");
     if (!makefile.empty() && contains(makefile, "clean")) {
-        std::cout << "✓ Clean target is available in Makefile\n";
+        std::cout << "[OK] Clean target is available in Makefile\n";
     }
     
-    std::cout << "✓ Clean build tests completed\n";
+    std::cout << "[OK] Clean build tests completed\n";
 }
 
 void test_cross_platform_compatibility() {
@@ -297,22 +297,22 @@ void test_cross_platform_compatibility() {
     
     if (!cacheContent.empty()) {
         if (contains(cacheContent, "CMAKE_SYSTEM_NAME")) {
-            std::cout << "✓ System name is detected\n";
+            std::cout << "[OK] System name is detected\n";
         }
         
         if (contains(cacheContent, "CMAKE_SYSTEM_PROCESSOR")) {
-            std::cout << "✓ System processor is detected\n";
+            std::cout << "[OK] System processor is detected\n";
         }
         
         // Check for Windows-specific or Unix-specific configurations
         if (contains(cacheContent, "WIN32") || contains(cacheContent, "Windows")) {
-            std::cout << "✓ Windows-specific configuration detected\n";
+            std::cout << "[OK] Windows-specific configuration detected\n";
         } else if (contains(cacheContent, "UNIX") || contains(cacheContent, "Linux")) {
-            std::cout << "✓ Unix/Linux-specific configuration detected\n";
+            std::cout << "[OK] Unix/Linux-specific configuration detected\n";
         }
     }
     
-    std::cout << "✓ Cross-platform compatibility tests completed\n";
+    std::cout << "[OK] Cross-platform compatibility tests completed\n";
 }
 
 int main() {
@@ -338,3 +338,4 @@ int main() {
         return 1;
     }
 }
+

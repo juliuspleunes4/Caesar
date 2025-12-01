@@ -104,7 +104,7 @@ def main():
     test_recursion()
     test_built_ins()
     
-    print("🎉 All features working perfectly!")
+    print("[SUCCESS] All features working perfectly!")
     print("Caesar is ready for production use!")
 
 if __name__ == "__main__":
