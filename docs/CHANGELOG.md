@@ -22,12 +22,21 @@ This release adds significant new language features including iteration support,
 - **Multiple Code Generation Backends**:
   - **Bytecode Generator**: Stack-based virtual machine bytecode
   - **x86-64 Assembly Generator**: Native assembly code with register allocation
-  - **C Transpiler**: Generates compilable C code from Caesar source
+  - **C Transpiler**: Generates compilable C code from Caesar source with full type safety
+- **C Code Generator Enhancements**:
+  - **Advanced Type Tracking**: Registers and variables tracked as `int64_t` or `const char*`
+  - **Two-Pass Type Analysis**: First pass detects variable types from initial assignments
+  - **Type Propagation**: Types flow from constants → registers → variables
+  - **Type-Aware Built-in Functions**: `caesar_print_str()` for strings, `caesar_print_int()` for integers
+  - **Parameter Tracking**: PARAM instructions collected and passed to CALL instructions
+  - **Clean C Output**: Generated C code compiles without warnings
+- **Compilation as Default**: `caesar code.csr` now compiles to executable (interpretation requires `-i` flag)
 - **New CLI Options**:
   - `--ir`: Display intermediate representation
   - `--asm`: Generate x86-64 assembly code
   - `--c`: Transpile to C code
-  - `-o <file>`: Specify output file for generated code
+  - `-o <file>`: Specify output file for compiled executable
+- **Complete Compilation Pipeline**: Source → Lexer → Parser → AST → IR → C Code → GCC → Executable
 - **Complete AST → IR Visitor**: Converts all expression and statement types to IR
 - **Comprehensive Test Suite**: `tests/test_ir.cpp` with 6 test scenarios covering all backends
 
