@@ -28,9 +28,11 @@ Caesar supports single-line comments using the `#` symbol:
 ```python
 # This is a comment at the top of the file
 print("Hello, World!")  # This is also a comment
-```
 
-**Note**: Comments at the beginning of a function body (immediately after `def func():`) may cause parsing issues. Place comments on their own line outside of the indented block or after statements.
+def greet():
+    # Comments work inside function bodies too
+    print("Hello!")
+```
 
 ## Data Types
 

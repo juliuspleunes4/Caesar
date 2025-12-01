@@ -264,6 +264,9 @@ std::unique_ptr<PassStatement> Parser::passStatement() {
 std::unique_ptr<BlockStatement> Parser::blockStatement() {
     consume(TokenType::INDENT, "Expected indented block");
     
+    // Skip newlines from comment lines to allow comments at start of function bodies
+    skipNewlines();
+    
     std::vector<std::unique_ptr<Statement>> statements;
     
     while (!check(TokenType::DEDENT) && !isAtEnd()) {
