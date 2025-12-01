@@ -9,6 +9,8 @@
 #include "caesar/lexer.h"
 #include "caesar/parser.h"
 #include "caesar/interpreter.h"
+#include "caesar/ir.h"
+#include "caesar/codegen.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -22,11 +24,15 @@ void printUsage(const char* program_name) {
     std::cout << "  -t, --tokens     Show tokenization output\n";
     std::cout << "  -p, --parse      Show parsing output (AST)\n";
     std::cout << "  -i, --interpret  Execute the program using the interpreter\n";
-    std::cout << "  -o <output>      Specify output file (for future use)\n\n";
+    std::cout << "  --ir             Show IR (Intermediate Representation)\n";
+    std::cout << "  --asm            Generate x86-64 assembly code\n";
+    std::cout << "  --c              Generate C code (transpile)\n";
+    std::cout << "  -o <output>      Specify output file\n\n";
     std::cout << "Examples:\n";
     std::cout << "  " << program_name << " --interpret program.csr    # Run program\n";
     std::cout << "  " << program_name << " --parse program.csr        # Show AST\n";
-    std::cout << "  " << program_name << " --tokens program.csr       # Show tokens\n\n";
+    std::cout << "  " << program_name << " --ir program.csr           # Show IR\n";
+    std::cout << "  " << program_name << " --c program.csr -o out.c   # Transpile to C\n\n";
     std::cout << "For interactive mode, use: caesar_repl\n";
 }
 
@@ -53,6 +59,9 @@ int main(int argc, char* argv[]) {
     
     bool show_tokens = false;
     bool show_parse = false;
+    bool show_ir = false;
+    bool generate_asm = false;
+    bool generate_c = false;
     bool interpret = false;
     std::string input_file;
     std::string output_file;
@@ -71,6 +80,12 @@ int main(int argc, char* argv[]) {
             show_tokens = true;
         } else if (arg == "-p" || arg == "--parse") {
             show_parse = true;
+        } else if (arg == "--ir") {
+            show_ir = true;
+        } else if (arg == "--asm") {
+            generate_asm = true;
+        } else if (arg == "--c") {
+            generate_c = true;
         } else if (arg == "-i" || arg == "--interpret") {
             interpret = true;
         } else if (arg == "-o" && i + 1 < argc) {
@@ -124,6 +139,50 @@ int main(int argc, char* argv[]) {
             return 0;
         }
 
+        // Generate IR if requested or needed for code generation
+        if (show_ir || generate_asm || generate_c) {
+            caesar::IRGenerator ir_gen;
+            auto ir_blocks = ir_gen.generate(program.get());
+            
+            if (show_ir) {
+                std::cout << "IR (Intermediate Representation):\n";
+                std::cout << ir_gen.toString() << "\n";
+                return 0;
+            }
+            
+            // Generate assembly code
+            if (generate_asm) {
+                auto codegen = caesar::CodeGeneratorFactory::create(caesar::TargetArch::X86_64);
+                std::string asm_code = codegen->generate(ir_blocks);
+                
+                if (!output_file.empty()) {
+                    std::ofstream out(output_file);
+                    out << asm_code;
+                    out.close();
+                    std::cout << "Assembly code written to '" << output_file << "'\n";
+                } else {
+                    std::cout << "x86-64 Assembly:\n" << asm_code << "\n";
+                }
+                return 0;
+            }
+            
+            // Generate C code
+            if (generate_c) {
+                auto codegen = caesar::CodeGeneratorFactory::createCGenerator();
+                std::string c_code = codegen->generate(ir_blocks);
+                
+                if (!output_file.empty()) {
+                    std::ofstream out(output_file);
+                    out << c_code;
+                    out.close();
+                    std::cout << "C code written to '" << output_file << "'\n";
+                } else {
+                    std::cout << "C Code:\n" << c_code << "\n";
+                }
+                return 0;
+            }
+        }
+
         if (interpret) {
             // Interpret the program
             caesar::Interpreter interpreter;
@@ -131,10 +190,9 @@ int main(int argc, char* argv[]) {
         } else {
             std::cout << "Successfully parsed " << tokens.size() << " tokens from '" 
                       << input_file << "'\n";
-            
-            // TODO: Add IR generation and compilation stages
-            std::cout << "Note: IR generation and compilation not yet implemented.\n";
-            std::cout << "Use -i/--interpret to execute the program.\n";
+            std::cout << "\nTo execute: caesar --interpret " << input_file << "\n";
+            std::cout << "To see IR:  caesar --ir " << input_file << "\n";
+            std::cout << "To compile: caesar --c " << input_file << " -o output.c\n";
         }
         
     } catch (const caesar::CaesarException& e) {

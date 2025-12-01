@@ -4,6 +4,78 @@ All notable changes to the Caesar Programming Language project will be documente
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### 🚀 Language Features & Documentation Improvements
+
+This release adds significant new language features including iteration support, member access, an interactive REPL, and a complete **IR generation and compilation pipeline** supporting multiple backends.
+
+### ✨ New Features
+
+#### **IR Generation & Compilation Pipeline** 🎉
+- **Three-Address Code IR**: Complete intermediate representation with 30+ opcodes
+  - Arithmetic operations (ADD, SUB, MUL, DIV, MOD, NEG)
+  - Comparison operations (EQ, NE, LT, LE, GT, GE)
+  - Logical operations (AND, OR, NOT)
+  - Memory operations (LOAD, STORE, LOAD_CONST, ALLOC)
+  - Control flow (LABEL, JUMP, JUMP_IF_TRUE, JUMP_IF_FALSE, CALL, RETURN)
+  - Variable operations (DECLARE, ASSIGN, GET_VAR, SET_VAR)
+- **Basic Block Structure**: Organized IR with labeled basic blocks for control flow
+- **Multiple Code Generation Backends**:
+  - **Bytecode Generator**: Stack-based virtual machine bytecode
+  - **x86-64 Assembly Generator**: Native assembly code with register allocation
+  - **C Transpiler**: Generates compilable C code from Caesar source
+- **New CLI Options**:
+  - `--ir`: Display intermediate representation
+  - `--asm`: Generate x86-64 assembly code
+  - `--c`: Transpile to C code
+  - `-o <file>`: Specify output file for generated code
+- **Complete AST → IR Visitor**: Converts all expression and statement types to IR
+- **Comprehensive Test Suite**: `tests/test_ir.cpp` with 6 test scenarios covering all backends
+
+#### **Iteration Support**
+- **List Iteration**: `for item in [1, 2, 3]` now works correctly
+- **Dictionary Iteration**: `for key in {"a": 1, "b": 2}` iterates over keys
+- **String Iteration**: `for char in "Hello"` iterates over characters
+
+#### **Member Expression Support**
+- **Length/Size Properties**: `.length` and `.size` properties now work for lists, dictionaries, and strings
+- **Dictionary Dot Access**: Dictionary values can be accessed via dot notation for string keys (e.g., `dict.key`)
+
+#### **REPL Enhancements**
+- **Code Execution**: REPL now parses and executes code instead of just tokenizing
+- **Persistent State**: Interpreter state persists across lines in REPL session
+- **Toggle Modes**: Added toggle modes for token display and execution
+
+#### **Class Definition Improvement**
+- **Class Body Processing**: Class bodies are now processed so methods can be defined (instantiation not yet supported)
+
+### 🐛 Bug Fixes
+
+#### **Parser Bug Fix**
+- **Comments in Function Bodies**: Fixed a bug where comments at the start of function bodies would cause parsing errors
+  - Fixed lexer to process indentation for comment lines
+  - Fixed parser to handle newlines after INDENT tokens
+
+### 📝 Documentation Fixes
+
+- **SYNTAX.md**: Corrected documentation - single quotes ARE supported for string literals
+- **SYNTAX.md**: Added example showing comments work inside function bodies
+- **FAQ.md, ROADMAP.md, DEVELOPMENT_WORKFLOW.md**: Updated version references from v1.1.0 → v1.5.1
+- **FAQ.md**: Lists and dictionaries now listed as implemented features (were under "Coming Soon")
+- **README.md, FAQ.md**: Fixed CLI examples to use required `-i` flag for execution
+- **ARCHITECTURE.md**: Updated Value system documentation to include `ValueList` and `ValueDict` types
+
+### 🧪 Testing
+
+- **New Test File**: Added `tests/enhanced-data-structures/test_iteration.csr` for iteration features
+- **IR/Codegen Tests**: Added `tests/test_ir.cpp` with comprehensive IR and code generation tests
+- **Example Files Fixed**: Restored inline comments in `functions.csr` and `control_flow.csr`
+- **Version Updates**: Updated version display in `complete_demo.csr`
+- **All Tests Passing**: 10/10 test suites pass (100% success rate)
+
+---
+
 ## [1.5.1] - 2025-10-21
 
 ### 🔧 Release System Fixes

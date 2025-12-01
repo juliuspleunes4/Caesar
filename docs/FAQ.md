@@ -19,13 +19,13 @@ Caesar was created to explore the full spectrum of language design and implement
 |---------|---------|---------|
 | **Syntax** | Python-like, clean and readable | Clean and readable |
 | **Performance** | C++ speed (compiled) | Interpreted (slower) |
-| **Ecosystem** | Growing (v1.1.0) | Massive, mature |
+| **Ecosystem** | Growing (v1.5.1) | Massive, mature |
 | **Learning Curve** | Easy (Python-familiar) | Easy |
 | **Use Cases** | Performance-critical apps | General purpose |
 
 ### Is Caesar production-ready?
 
-Caesar v1.1.0 is suitable for:
+Caesar v1.5.1 is suitable for:
 - ✅ **Learning and education**: Excellent for teaching programming concepts
 - ✅ **Prototyping**: Quick algorithm development and testing
 - ✅ **Performance experiments**: Benchmarking and optimization research
@@ -53,7 +53,7 @@ Caesar is compiled to native code, providing significant performance improvement
 
 ### What Python features are supported?
 
-**Currently Supported (v1.1.0):**
+**Currently Supported (v1.5.1):**
 ```python
 # Variables and basic data types
 x = 42
@@ -84,11 +84,17 @@ def factorial(n):
 # Built-in functions
 print(len("hello"))
 print(type(42))
+
+# Lists and dictionaries (creation, len(), type())
+numbers = [1, 2, 3, 4, 5]
+person = {"name": "Alice", "age": 30}
+print(len(numbers))  # 5
+print(len(person))   # 2
 ```
 
-**Coming Soon (v1.2.0):**
-- Lists: `[1, 2, 3]`
-- Dictionaries: `{"key": "value"}`
+**Coming Soon (future versions):**
+- List indexing: `numbers[0]`
+- Dictionary access: `person["name"]`
 - String methods: `"hello".upper()`
 
 **Future Versions:**
@@ -107,7 +113,7 @@ Not currently. Caesar is a separate language implementation and cannot directly 
 
 **Option 1: Download Release (Recommended)**
 1. Visit [Caesar Releases](https://github.com/juliuspleunes4/Caesar/releases)
-2. Download `caesar-v1.1.0-windows.zip` (or your platform)
+2. Download `caesar-v1.5.1-windows.zip` (or your platform)
 3. Extract and run `caesar.exe`
 
 **Option 2: Build from Source**
@@ -125,13 +131,16 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for detailed installation help.
 
 ```bash
 # Interactive mode (REPL)
-caesar
+caesar_repl
 
 # Run a file
-caesar program.csr
+caesar -i program.csr
 
-# Debug mode
-caesar --debug program.csr
+# Show tokenization
+caesar --tokens program.csr
+
+# Show parse tree
+caesar --parse program.csr
 ```
 
 ## Development Questions
@@ -149,9 +158,8 @@ We welcome contributions! See our [CONTRIBUTING.md](CONTRIBUTING.md) for details
 ### What's the development roadmap?
 
 See our detailed [ROADMAP.md](ROADMAP.md). Key upcoming features:
-- **v1.2.0**: Data structures (lists, dictionaries)
-- **v1.3.0**: Object-oriented programming
-- **v2.0.0**: Module system and standard library
+- **v1.6.0**: List/dictionary indexing and methods
+- **v2.0.0**: Object-oriented programming, module system
 
 ### How is Caesar implemented?
 

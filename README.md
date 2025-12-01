@@ -6,7 +6,7 @@
 <br>
 
 ![Build Status](https://img.shields.io/badge/build-passing-green)
-![Tests](https://img.shields.io/badge/tests-9%2F9%20passing-green)
+![Tests](https://img.shields.io/badge/tests-10%2F10%20passing-green)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 [![NPM Package](https://img.shields.io/npm/v/caesar-lang?label=NPM%20Package&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/caesar-lang)
@@ -840,14 +840,15 @@ Each debug tool provides detailed output for development and troubleshooting:
 ### Compiler Usage
 
 ```bash
-# Compile and analyze a Caesar program
-./src/caesar program.csr
+# Run a Caesar program (interpret)
+./src/caesar -i program.csr
+./src/caesar --interpret program.csr
 
 # Show detailed tokenization
 ./src/caesar --tokens program.csr
 
 # Display abstract syntax tree
-./src/caesar --ast program.csr
+./src/caesar --parse program.csr
 
 # Show help and options
 ./src/caesar --help
@@ -860,12 +861,12 @@ Each debug tool provides detailed output for development and troubleshooting:
 ./src/caesar_repl
 
 # Example REPL session:
-Caesar REPL v1.4.0
+Caesar REPL v1.5.1
 >>> def greet(name):
-...     return f"Hello, {name}!"
+...     print("Hello,", name)
 ...
 >>> greet("World")
-"Hello, World!"
+Hello, World
 >>> 
 ```
 
@@ -874,10 +875,10 @@ Caesar REPL v1.4.0
 See the `examples/` directory for sample Caesar programs:
 
 ```bash
-./src/caesar examples/hello_world.csr    # Basic hello world
-./src/caesar examples/fibonacci.csr      # Recursive fibonacci
-./src/caesar examples/control_flow.csr   # Control structures
-./src/caesar examples/functions.csr      # Function examples
+./src/caesar -i examples/hello_world.csr    # Basic hello world
+./src/caesar -i examples/fibonacci.csr      # Recursive fibonacci
+./src/caesar -i examples/control_flow.csr   # Control structures
+./src/caesar -i examples/functions.csr      # Function examples
 ```
 
 ## 📊 Development Status & Roadmap
@@ -889,8 +890,10 @@ See the `examples/` directory for sample Caesar programs:
 | **Lexical Analysis** | ✅ Complete | Full tokenization with Python-like syntax |
 | **Syntax Analysis** | ✅ Complete | Recursive descent parser with AST generation |
 | **Language Features** | ✅ Complete | Classes, functions, control flow, data structures |
+| **Intermediate Representation** | ✅ Complete | Three-address code IR with basic blocks |
+| **Code Generation** | ✅ Complete | Multi-target: Bytecode, x86-64 assembly, and C transpilation |
 | **Error Handling** | ✅ Complete | Detailed diagnostics with position tracking |
-| **Test Framework** | ✅ Complete | Comprehensive test suite (9/9 passing) |
+| **Test Framework** | ✅ Complete | Comprehensive test suite (10/10 passing) |
 | **Build System** | ✅ Complete | Cross-platform CMake configuration |
 | **Documentation** | ✅ Complete | API documentation and user guides |
 | **VS Code Extension** | ✅ Complete | Published to marketplace with syntax highlighting and LSP integration |
@@ -909,7 +912,7 @@ See the `examples/` directory for sample Caesar programs:
 | **Cross-Platform Distribution** | High | Create cross-platform builds (macOS, Linux) and automated distribution system |
 | **Multi-Editor Support** | Medium | Create editor plugins for IntelliJ, Sublime Text, Vim, etc. using existing LSP server |
 | **Semantic Analysis** | High | Type checking and symbol table management |
-| **LLVM IR Generation** | High | Intermediate representation for optimization |
+| **LLVM Integration** | Medium | LLVM backend for advanced optimizations |
 | **Code Optimization** | Medium | Performance optimizations and dead code elimination |
 | **Native Compilation** | High | Machine code generation and linking |
 | **Runtime System** | Medium | Memory management and garbage collection |

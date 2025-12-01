@@ -15,7 +15,7 @@ def test_loops():
         print("Count:", i)
         i = i + 1
     
-    # For loop (conceptual - iteration not fully implemented yet)
+    # For loop with range
     for j in range(3):
         print("Iteration:", j)
 

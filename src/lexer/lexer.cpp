@@ -239,8 +239,8 @@ std::vector<Token> Lexer::handleIndentation() {
         advance();
     }
     
-    // Skip empty lines and comments
-    if (isAtEnd() || peek() == '\n' || peek() == '#') {
+    // Skip empty lines but process indentation for all other lines including comments
+    if (isAtEnd() || peek() == '\n') {
         return tokens;
     }
     

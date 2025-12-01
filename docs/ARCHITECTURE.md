@@ -43,12 +43,25 @@ Caesar is implemented as a **tree-walking interpreter** using modern C++17. The 
 │    Execution    │◀───│   Interpreter   │◀───│     Parser      │
 │   (side effects)│    │  (tree walker)  │    │ (AST builder)   │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
-                                ▲                       │
-                                │                       ▼
+                                                       │
+                                                       ▼
                        ┌─────────────────┐    ┌─────────────────┐
                        │   Environment   │    │       AST       │
                        │   (variables)   │    │  (syntax tree)  │
                        └─────────────────┘    └─────────────────┘
+                                                       │
+                                                       ▼
+                       ┌─────────────────┐    ┌─────────────────┐
+                       │  Code Generator │◀───│  IR Generator   │
+                       │  (multi-target) │    │ (3-address code)│
+                       └─────────────────┘    └─────────────────┘
+                              │
+              ┌───────────────┼───────────────┐
+              ▼               ▼               ▼
+       ┌───────────┐   ┌───────────┐   ┌───────────┐
+       │ Bytecode  │   │  x86-64   │   │ C Source  │
+       │   (.bc)   │   │   (.asm)  │   │   (.c)    │
+       └───────────┘   └───────────┘   └───────────┘
 ```
 
 ### Components Overview
@@ -58,6 +71,8 @@ Caesar is implemented as a **tree-walking interpreter** using modern C++17. The 
 | **Lexer** | Tokenization | `lexer.h`, `lexer.cpp`, `token.h`, `token.cpp` |
 | **Parser** | AST Construction | `parser.h`, `parser.cpp`, `ast.h`, `ast.cpp` |
 | **Interpreter** | Execution | `interpreter.h`, `interpreter.cpp` |
+| **IR Generator** | Three-address code | `ir.h`, `ir.cpp` |
+| **Code Generator** | Multi-target output | `codegen.h`, `codegen.cpp` |
 | **Environment** | Variable Storage | Part of `interpreter.cpp` |
 | **Main/REPL** | User Interface | `main.cpp`, `repl.cpp` |
 
@@ -207,12 +222,14 @@ Caesar uses `std::variant` for dynamic typing:
 
 ```cpp
 using Value = std::variant<
-    std::nullptr_t,              // None
-    bool,                        // Boolean
-    int64_t,                     // Integer
-    double,                      // Float
-    std::string,                 // String
-    std::shared_ptr<CallableFunction>  // Function
+    std::nullptr_t,                          // None/null
+    bool,                                    // Boolean
+    int64_t,                                 // Integer
+    double,                                  // Float
+    std::string,                             // String
+    std::shared_ptr<CallableFunction>,       // User-defined functions
+    std::shared_ptr<ValueList>,              // Lists [1, 2, 3]
+    std::shared_ptr<ValueDict>               // Dictionaries {"key": "value"}
 >;
 ```
 
@@ -269,6 +286,132 @@ class ParseError : public std::runtime_error {
 - **Lexer**: Reports invalid characters but continues
 - **Parser**: Synchronizes after errors to find next statement
 - **Interpreter**: Throws exceptions with meaningful messages
+
+### 5. Intermediate Representation (IR)
+
+**Location**: `src/ir/`
+
+The IR Generator converts AST to three-address code for optimization and code generation.
+
+#### IR Opcodes
+
+```cpp
+enum class IROpcode {
+    // Arithmetic
+    ADD, SUB, MUL, DIV, MOD, NEG,
+    
+    // Comparison
+    EQ, NE, LT, LE, GT, GE,
+    
+    // Logical
+    AND, OR, NOT,
+    
+    // Memory operations
+    LOAD, STORE, LOAD_CONST, ALLOC,
+    
+    // Control flow
+    LABEL, JUMP, JUMP_IF_TRUE, JUMP_IF_FALSE, CALL, RETURN,
+    
+    // Variables
+    DECLARE, ASSIGN, GET_VAR, SET_VAR,
+    
+    // Special
+    PRINT, PARAM, NOP
+};
+```
+
+#### IR Structure
+
+```cpp
+struct IROperand {
+    IROperandType type;  // REGISTER, CONSTANT, LABEL, VARIABLE
+    std::string value;
+};
+
+struct IRInstruction {
+    IROpcode opcode;
+    IROperand dest;   // Destination
+    IROperand src1;   // First source
+    IROperand src2;   // Second source
+};
+
+struct BasicBlock {
+    std::string label;
+    std::vector<IRInstruction> instructions;
+};
+```
+
+#### Example IR Output
+
+```
+; Input: x = 5 + 3
+entry:
+    LOAD_CONST %r0, #5
+    LOAD_CONST %r1, #3
+    ADD %r2, %r0, %r1
+    SET_VAR $x, %r2
+```
+
+### 6. Code Generation
+
+**Location**: `src/codegen/`
+
+Caesar supports multiple code generation targets through a factory pattern.
+
+#### Target Architectures
+
+```cpp
+enum class TargetArch {
+    X86_64,     // x86-64 assembly
+    ARM64,      // ARM64 assembly (planned)
+    BYTECODE    // Stack-based virtual machine
+};
+```
+
+#### Code Generators
+
+| Generator | Output | Use Case |
+|-----------|--------|----------|
+| `BytecodeGenerator` | Stack-based bytecode | Virtual machine execution |
+| `X86_64Generator` | x86-64 assembly | Native Linux executables |
+| `CCodeGenerator` | C source code | Cross-platform transpilation |
+
+#### Example Outputs
+
+**Bytecode:**
+```
+; Caesar Bytecode
+entry:
+  LOAD_CONST %r0, #10
+  LOAD_CONST %r1, #5
+  ADD %r2, %r0, %r1
+```
+
+**x86-64 Assembly:**
+```asm
+section .text
+global _start
+
+_start:
+    push rbp
+    mov rbp, rsp
+    mov rax, 10
+    mov rbx, 5
+    mov rcx, rax
+    add rcx, rbx
+```
+
+**C Code:**
+```c
+#include <stdio.h>
+#include <stdint.h>
+
+int main() {
+    int64_t r0 = 10;
+    int64_t r1 = 5;
+    int64_t r2 = r0 + r1;
+}
+```
 
 ## Data Flow
 

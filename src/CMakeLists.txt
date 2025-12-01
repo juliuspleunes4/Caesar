@@ -11,11 +11,11 @@ set(CAESAR_SOURCES
     # Interpreter
     interpreter/interpreter.cpp
     
-    # IR Generation (to be added)
-    # ir/ir_generator.cpp
+    # IR Generation
+    ir/ir.cpp
     
-    # Code Generation (to be added)
-    # codegen/codegen.cpp
+    # Code Generation
+    codegen/codegen.cpp
     
     # Runtime (to be added)
     # runtime/runtime.cpp
