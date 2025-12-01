@@ -284,8 +284,6 @@ void Interpreter::visit(MemberExpression& node) {
             last_value = static_cast<int64_t>(list->size());
             return;
         }
-        // Note: Methods like append(), pop() would need CallExpression support
-        // which requires storing method references - this is a future enhancement
     }
     
     // Handle dict properties
@@ -504,13 +502,10 @@ void Interpreter::visit(FunctionDefinition& node) {
 }
 
 void Interpreter::visit(ClassDefinition& node) {
-    // Classes are parsed but not fully implemented yet
-    // Store class name in environment so it can be referenced
-    // Note: Classes cannot be instantiated - only the class name is available
+    // Partial class support: stores class name but instantiation not yet implemented
     environment->define(node.name, std::string("__class_" + node.name));
     
     // Process class body to define any nested functions/classes
-    // (This allows class methods to at least be parsed)
     if (node.body) {
         node.body->accept(*this);
     }

@@ -42,7 +42,7 @@ std::string valueToString(const caesar::Value& value) {
         } else if constexpr (std::is_same_v<T, bool>) {
             return v ? "True" : "False";
         } else if constexpr (std::is_same_v<T, std::string>) {
-            return "\"" + v + "\"";
+            return v;  // No quotes to match interpreter behavior
         } else if constexpr (std::is_same_v<T, int64_t>) {
             return std::to_string(v);
         } else if constexpr (std::is_same_v<T, double>) {
@@ -50,7 +50,7 @@ std::string valueToString(const caesar::Value& value) {
             oss << v;
             return oss.str();
         } else if constexpr (std::is_same_v<T, std::shared_ptr<caesar::CallableFunction>>) {
-            return "<function>";
+            return "<function " + v->getDeclaration()->name + ">";
         } else if constexpr (std::is_same_v<T, std::shared_ptr<caesar::ValueList>>) {
             std::string result = "[";
             bool first = true;
