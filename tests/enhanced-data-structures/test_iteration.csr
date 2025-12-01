@@ -1,0 +1,33 @@
+# Test iteration over lists, dictionaries, and strings
+
+# Test list iteration
+print("List iteration:")
+numbers = [1, 2, 3, 4, 5]
+for num in numbers:
+    print(num)
+
+print("")
+
+# Test dictionary iteration (keys)
+print("Dictionary iteration:")
+person = {"name": "Alice", "city": "NYC"}
+for key in person:
+    print(key)
+
+print("")
+
+# Test string iteration
+print("String iteration:")
+for char in "Hi":
+    print(char)
+
+print("")
+
+# Test member access
+print("Member access:")
+my_list = [10, 20, 30]
+print("List length:", my_list.length)
+my_str = "Hello"
+print("String length:", my_str.length)
+
+print("All tests passed!")

@@ -274,10 +274,48 @@ void Interpreter::visit(CallExpression& node) {
 }
 
 void Interpreter::visit(MemberExpression& node) {
-    (void)node;
-    // TODO: Implement member expression evaluation (e.g., object.property, object.method())
-    // Currently returns nullptr as member access is not yet supported
-    last_value = nullptr;
+    Value object_value = evaluate(node.object.get());
+    
+    // Handle list properties
+    if (std::holds_alternative<std::shared_ptr<ValueList>>(object_value)) {
+        auto list = std::get<std::shared_ptr<ValueList>>(object_value);
+        
+        if (node.member == "length" || node.member == "size") {
+            last_value = static_cast<int64_t>(list->size());
+            return;
+        }
+        // Note: Methods like append(), pop() would need CallExpression support
+        // which requires storing method references - this is a future enhancement
+    }
+    
+    // Handle dict properties
+    if (std::holds_alternative<std::shared_ptr<ValueDict>>(object_value)) {
+        auto dict = std::get<std::shared_ptr<ValueDict>>(object_value);
+        
+        if (node.member == "length" || node.member == "size") {
+            last_value = static_cast<int64_t>(dict->size());
+            return;
+        }
+        // Try to get the value with the member name as key
+        auto it = dict->find(node.member);
+        if (it != dict->end()) {
+            last_value = it->second;
+            return;
+        }
+    }
+    
+    // Handle string properties
+    if (std::holds_alternative<std::string>(object_value)) {
+        std::string str = std::get<std::string>(object_value);
+        
+        if (node.member == "length" || node.member == "size") {
+            last_value = static_cast<int64_t>(str.length());
+            return;
+        }
+    }
+    
+    // If we reach here, member access is not supported for this type
+    throw RuntimeError("Cannot access member '" + node.member + "' on this type");
 }
 
 void Interpreter::visit(AssignmentExpression& node) {
@@ -367,7 +405,7 @@ void Interpreter::visit(WhileStatement& node) {
 }
 
 void Interpreter::visit(ForStatement& node) {
-    // For now, implement simple for-in loop over ranges or iterables
+    // Evaluate the iterable expression
     Value iterable_value = evaluate(node.iterable.get());
     
     // Handle range() function calls for for-loops
@@ -398,10 +436,60 @@ void Interpreter::visit(ForStatement& node) {
                     throw; // Propagate return
                 }
             }
+        } else {
+            // Iterate over string characters
+            try {
+                for (size_t i = 0; i < str_val.size(); ++i) {
+                    environment->define(node.variable, std::string(1, str_val[i]));
+                    try {
+                        node.body->accept(*this);
+                    } catch (const ContinueException&) {
+                        continue;
+                    } catch (const BreakException&) {
+                        break;
+                    }
+                }
+            } catch (const ReturnException&) {
+                throw; // Propagate return
+            }
         }
     }
-    
-    // TODO: Add support for other iterables like lists
+    // Handle list iteration
+    else if (std::holds_alternative<std::shared_ptr<ValueList>>(iterable_value)) {
+        auto list = std::get<std::shared_ptr<ValueList>>(iterable_value);
+        try {
+            for (const auto& item : *list) {
+                environment->define(node.variable, item);
+                try {
+                    node.body->accept(*this);
+                } catch (const ContinueException&) {
+                    continue;
+                } catch (const BreakException&) {
+                    break;
+                }
+            }
+        } catch (const ReturnException&) {
+            throw; // Propagate return
+        }
+    }
+    // Handle dictionary iteration (iterates over keys)
+    else if (std::holds_alternative<std::shared_ptr<ValueDict>>(iterable_value)) {
+        auto dict = std::get<std::shared_ptr<ValueDict>>(iterable_value);
+        try {
+            for (const auto& pair : *dict) {
+                environment->define(node.variable, pair.first);
+                try {
+                    node.body->accept(*this);
+                } catch (const ContinueException&) {
+                    continue;
+                } catch (const BreakException&) {
+                    break;
+                }
+            }
+        } catch (const ReturnException&) {
+            throw; // Propagate return
+        }
+    }
 }
 
 void Interpreter::visit(FunctionDefinition& node) {
@@ -416,10 +504,16 @@ void Interpreter::visit(FunctionDefinition& node) {
 }
 
 void Interpreter::visit(ClassDefinition& node) {
-    (void)node;
-    // TODO: Implement full class support with methods, inheritance, and instantiation
-    // Currently only stores a placeholder string - classes cannot be instantiated yet
+    // Classes are parsed but not fully implemented yet
+    // Store class name in environment so it can be referenced
+    // Note: Classes cannot be instantiated - only the class name is available
     environment->define(node.name, std::string("__class_" + node.name));
+    
+    // Process class body to define any nested functions/classes
+    // (This allows class methods to at least be parsed)
+    if (node.body) {
+        node.body->accept(*this);
+    }
 }
 
 void Interpreter::visit(ReturnStatement& node) {
