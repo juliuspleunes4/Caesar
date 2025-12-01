@@ -21,14 +21,9 @@ def power(base, exponent):
     return result
 
 def main():
-    # Basic arithmetic
     sum_result = add(10, 20)
     product = multiply(6, 7)
-    
-    # Recursive function
     fact_5 = factorial(5)
-    
-    # Iterative function
     two_to_eighth = power(2, 8)
     
     print("10 + 20 =", sum_result)

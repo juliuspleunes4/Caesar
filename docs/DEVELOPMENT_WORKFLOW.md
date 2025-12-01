@@ -80,10 +80,10 @@ New tasks added:
 The `--version` flag now shows build timestamp:
 
 ```
-Caesar Programming Language v1.0.0
+Caesar Programming Language v1.5.1
 ...
 ✓ Enhanced data structures (lists and dictionaries)
-Build date: Sep 23 2025 21:09:24
+Build date: Dec 01 2025 09:43:31
 ```
 
 **Usage:** `bin\caesar.exe --version` to verify you have the latest build

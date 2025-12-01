@@ -31,7 +31,7 @@ def test_string_operations():
     """Test string operations and built-ins"""
     print("=== String Operations ===")
     name = "Caesar"
-    version = "1.1.0"
+    version = "1.5.1"
     
     print("Concatenation:", name + " v" + version)
     print("String length:", len(name))
@@ -93,7 +93,7 @@ def main():
     print("╔══════════════════════════════════════╗")
     print("║     Caesar Programming Language      ║")
     print("║         Feature Demonstration        ║")
-    print("║              v1.1.0                  ║")
+    print("║              v1.5.1                  ║")
     print("╚══════════════════════════════════════╝")
     print()
     

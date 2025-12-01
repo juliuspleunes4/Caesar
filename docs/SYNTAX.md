@@ -26,9 +26,11 @@ Caesar is a Python-like programming language with C++ performance. This document
 Caesar supports single-line comments using the `#` symbol:
 
 ```python
-# This is a comment
+# This is a comment at the top of the file
 print("Hello, World!")  # This is also a comment
 ```
+
+**Note**: Comments at the beginning of a function body (immediately after `def func():`) may cause parsing issues. Place comments on their own line outside of the indented block or after statements.
 
 ## Data Types
 
@@ -69,13 +71,14 @@ result = None
 
 ### String Literals
 
-Strings in Caesar are enclosed in double quotes:
+Strings in Caesar can be enclosed in either double quotes or single quotes:
 ```python
 greeting = "Hello, World!"
-multiword = "This is a longer string"
+multiword = 'This is a longer string'
+mixed = "You can use 'single' inside double quotes"
 ```
 
-**Note**: Single quotes are not currently supported for string literals.
+**Note**: Both single quotes (`'`) and double quotes (`"`) are supported for string literals.
 
 ### Boolean Literals
 
@@ -87,7 +90,7 @@ false_value = False
 
 ## Enhanced Data Structures
 
-Caesar v1.4.0 introduces enhanced data structures that provide powerful collection types with familiar syntax.
+Caesar v1.4.0+ includes enhanced data structures that provide powerful collection types with familiar syntax.
 
 ### Lists
 

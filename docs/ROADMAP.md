@@ -2,28 +2,31 @@
 
 This document outlines the planned development trajectory for Caesar Programming Language. Our goal is to create a production-ready language that combines Python's simplicity with C++'s performance.
 
-## Current Status: v1.1.0 ✅
+## Current Status: v1.5.1 ✅
 
 ### Completed Features
 - ✅ **Core Language**: Variables, expressions, operators
 - ✅ **Control Flow**: if/elif/else, while/for loops, break/continue
 - ✅ **Functions**: Definition, calls, parameters, default values, recursion
 - ✅ **Built-ins**: print(), range(), len(), str(), int(), float(), type(), abs()
+- ✅ **Data Structures**: Lists and dictionaries (creation and len())
 - ✅ **Error Handling**: Runtime error detection and reporting
 - ✅ **Development Tools**: Comprehensive test suite, build system
 - ✅ **Documentation**: Complete user guides and API reference
-- ✅ **Distribution**: Standalone release packaging
+- ✅ **Distribution**: NPM package, standalone release packaging
+- ✅ **VS Code Extension**: Marketplace extension with syntax highlighting
+- ✅ **Language Server**: LSP implementation for editor support
 
-## Short Term: v1.2.0 (Q4 2025) 🚧
+## Short Term: v1.6.0 (Q1 2026) 🚧
 
-### Data Structures
-- **Lists**: Full implementation with indexing, slicing, methods
-  - `my_list = [1, 2, 3]`
+### Data Structure Enhancements
+- **List Operations**: Full implementation with indexing, slicing, methods
+  - `my_list[0]` - element access
   - `my_list.append(4)`, `my_list.pop()`, `my_list.sort()`
   - List comprehensions: `[x*2 for x in range(10)]`
 
-- **Dictionaries**: Complete hash map implementation
-  - `my_dict = {"name": "Caesar", "version": 1.2}`
+- **Dictionary Operations**: Complete hash map implementation
+  - `my_dict["key"]` - value access
   - `my_dict.keys()`, `my_dict.values()`, `my_dict.items()`
 
 - **Strings**: Enhanced string operations
@@ -35,7 +38,7 @@ This document outlines the planned development trajectory for Caesar Programming
 - **Line Numbers**: Precise error location reporting
 - **Error Categories**: Syntax, runtime, type errors with suggestions
 
-## Medium Term: v1.3.0 (Q1 2026) 🔮
+## Medium Term: v2.0.0 (Q2 2026) 🔮
 
 ### Object-Oriented Programming
 - **Classes**: Full class implementation with methods

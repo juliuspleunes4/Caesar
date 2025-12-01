@@ -840,14 +840,15 @@ Each debug tool provides detailed output for development and troubleshooting:
 ### Compiler Usage
 
 ```bash
-# Compile and analyze a Caesar program
-./src/caesar program.csr
+# Run a Caesar program (interpret)
+./src/caesar -i program.csr
+./src/caesar --interpret program.csr
 
 # Show detailed tokenization
 ./src/caesar --tokens program.csr
 
 # Display abstract syntax tree
-./src/caesar --ast program.csr
+./src/caesar --parse program.csr
 
 # Show help and options
 ./src/caesar --help
@@ -860,12 +861,12 @@ Each debug tool provides detailed output for development and troubleshooting:
 ./src/caesar_repl
 
 # Example REPL session:
-Caesar REPL v1.4.0
+Caesar REPL v1.5.1
 >>> def greet(name):
-...     return f"Hello, {name}!"
+...     print("Hello,", name)
 ...
 >>> greet("World")
-"Hello, World!"
+Hello, World
 >>> 
 ```
 
@@ -874,10 +875,10 @@ Caesar REPL v1.4.0
 See the `examples/` directory for sample Caesar programs:
 
 ```bash
-./src/caesar examples/hello_world.csr    # Basic hello world
-./src/caesar examples/fibonacci.csr      # Recursive fibonacci
-./src/caesar examples/control_flow.csr   # Control structures
-./src/caesar examples/functions.csr      # Function examples
+./src/caesar -i examples/hello_world.csr    # Basic hello world
+./src/caesar -i examples/fibonacci.csr      # Recursive fibonacci
+./src/caesar -i examples/control_flow.csr   # Control structures
+./src/caesar -i examples/functions.csr      # Function examples
 ```
 
 ## 📊 Development Status & Roadmap

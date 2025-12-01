@@ -9,13 +9,11 @@ def test_conditionals(x):
         print("Zero")
 
 def test_loops():
-    # While loop
     i = 0
     while i < 5:
         print("Count:", i)
         i = i + 1
     
-    # For loop (conceptual - iteration not fully implemented yet)
     for j in range(3):
         print("Iteration:", j)
 

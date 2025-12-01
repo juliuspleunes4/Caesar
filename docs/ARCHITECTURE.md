@@ -207,12 +207,14 @@ Caesar uses `std::variant` for dynamic typing:
 
 ```cpp
 using Value = std::variant<
-    std::nullptr_t,              // None
-    bool,                        // Boolean
-    int64_t,                     // Integer
-    double,                      // Float
-    std::string,                 // String
-    std::shared_ptr<CallableFunction>  // Function
+    std::nullptr_t,                          // None/null
+    bool,                                    // Boolean
+    int64_t,                                 // Integer
+    double,                                  // Float
+    std::string,                             // String
+    std::shared_ptr<CallableFunction>,       // User-defined functions
+    std::shared_ptr<ValueList>,              // Lists [1, 2, 3]
+    std::shared_ptr<ValueDict>               // Dictionaries {"key": "value"}
 >;
 ```
 
