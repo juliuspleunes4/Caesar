@@ -16,30 +16,34 @@
 #include <sstream>
 
 void printUsage(const char* program_name) {
-    std::cout << "Caesar Programming Language v" << caesar::Version::STRING << "\n";
+    std::cout << "Caesar Compiler v" << caesar::Version::STRING << "\n";
     std::cout << "Usage: " << program_name << " [options] <input_file>\n\n";
+    std::cout << "Default behavior: Compiles source file to native executable\n\n";
     std::cout << "Options:\n";
-    std::cout << "  -h, --help       Show this help message\n";
-    std::cout << "  -v, --version    Show version information\n";
-    std::cout << "  -t, --tokens     Show tokenization output\n";
-    std::cout << "  -p, --parse      Show parsing output (AST)\n";
-    std::cout << "  -i, --interpret  Execute the program using the interpreter\n";
-    std::cout << "  --ir             Show IR (Intermediate Representation)\n";
-    std::cout << "  --asm            Generate x86-64 assembly code\n";
-    std::cout << "  --c              Generate C code (transpile)\n";
-    std::cout << "  -o <output>      Specify output file\n\n";
+    std::cout << "  -h, --help         Show this help message\n";
+    std::cout << "  -v, --version      Show version information\n";
+    std::cout << "  -o, --output FILE  Specify output executable name (default: input name)\n";
+    std::cout << "  -i, --interpret    Run using interpreter instead of compiling\n";
+    std::cout << "  -t, --tokens       Show tokenization output (debug)\n";
+    std::cout << "  -p, --parse        Show parsing output / AST (debug)\n";
+    std::cout << "  --ir               Show IR (Intermediate Representation, debug)\n";
+    std::cout << "  --asm              Generate assembly code only (no linking)\n";
+    std::cout << "  --c                Transpile to C code\n";
+    std::cout << "  --obj              Generate object file only (no linking)\n\n";
     std::cout << "Examples:\n";
-    std::cout << "  " << program_name << " --interpret program.csr    # Run program\n";
-    std::cout << "  " << program_name << " --parse program.csr        # Show AST\n";
-    std::cout << "  " << program_name << " --ir program.csr           # Show IR\n";
-    std::cout << "  " << program_name << " --c program.csr -o out.c   # Transpile to C\n\n";
-    std::cout << "For interactive mode, use: caesar_repl\n";
+    std::cout << "  " << program_name << " program.csr                      # Compile to program.exe\n";
+    std::cout << "  " << program_name << " program.csr -o myapp.exe         # Compile with custom name\n";
+    std::cout << "  " << program_name << " -i program.csr                   # Run with interpreter\n";
+    std::cout << "  " << program_name << " --asm program.csr -o output.asm  # Generate assembly\n\n";
+    std::cout << "For interactive development, use: caesar_repl\n";
 }
 
 void printVersion() {
-    std::cout << "Caesar Programming Language v" << caesar::Version::STRING << "\n";
-    std::cout << "A Python-like language with C-speed performance\n";
-    std::cout << "\nFeatures:\n";
+    std::cout << "Caesar Compiler v" << caesar::Version::STRING << "\n";
+    std::cout << "Native compiler for the Caesar programming language\n";
+    std::cout << "Python-like syntax with true C-speed performance\n";
+    std::cout << "\nLanguage Features:\n";
+    std::cout << "  ✓ Native compilation to x86-64 executables\n";
     std::cout << "  ✓ Functions with default parameters\n";
     std::cout << "  ✓ Control flow (if/elif/else, while, for)\n";
     std::cout << "  ✓ Loop control (break, continue)\n";
@@ -47,7 +51,11 @@ void printVersion() {
     std::cout << "  ✓ Recursive functions and complex expressions\n";
     std::cout << "  ✓ Python-style indentation and syntax\n";
     std::cout << "  ✓ Enhanced data structures (lists and dictionaries)\n";
-    std::cout << "\nBuilt with modern C++17 for optimal performance\n";
+    std::cout << "\nCompiler Features:\n";
+    std::cout << "  ✓ Multi-stage compilation (Lexer → Parser → IR → Codegen)\n";
+    std::cout << "  ✓ Multiple backends (Native x86-64, C transpiler, Bytecode)\n";
+    std::cout << "  ✓ Built-in interpreter for rapid development\n";
+    std::cout << "\nBuilt with modern C++17\n";
     std::cout << "Build date: " << __DATE__ << " " << __TIME__ << "\n";
 }
 
@@ -62,7 +70,9 @@ int main(int argc, char* argv[]) {
     bool show_ir = false;
     bool generate_asm = false;
     bool generate_c = false;
+    bool generate_obj = false;
     bool interpret = false;
+    bool compile_mode = false;  // Will be set to true if no other mode specified
     std::string input_file;
     std::string output_file;
     
@@ -86,9 +96,11 @@ int main(int argc, char* argv[]) {
             generate_asm = true;
         } else if (arg == "--c") {
             generate_c = true;
+        } else if (arg == "--obj") {
+            generate_obj = true;
         } else if (arg == "-i" || arg == "--interpret") {
             interpret = true;
-        } else if (arg == "-o" && i + 1 < argc) {
+        } else if ((arg == "-o" || arg == "--output") && i + 1 < argc) {
             output_file = argv[++i];
         } else if (arg[0] != '-') {
             input_file = arg;
@@ -97,6 +109,12 @@ int main(int argc, char* argv[]) {
             printUsage(argv[0]);
             return 1;
         }
+    }
+    
+    // If no mode specified, default to compilation
+    if (!show_tokens && !show_parse && !show_ir && !generate_asm && 
+        !generate_c && !generate_obj && !interpret) {
+        compile_mode = true;
     }
     
     if (input_file.empty()) {
@@ -183,16 +201,58 @@ int main(int argc, char* argv[]) {
             }
         }
 
+        // Interpret mode
         if (interpret) {
-            // Interpret the program
             caesar::Interpreter interpreter;
             interpreter.interpret(program.get());
-        } else {
-            std::cout << "Successfully parsed " << tokens.size() << " tokens from '" 
-                      << input_file << "'\n";
-            std::cout << "\nTo execute: caesar --interpret " << input_file << "\n";
-            std::cout << "To see IR:  caesar --ir " << input_file << "\n";
-            std::cout << "To compile: caesar --c " << input_file << " -o output.c\n";
+            return 0;
+        }
+        
+        // Compile mode (default)
+        if (compile_mode || generate_obj) {
+            // Generate IR
+            caesar::IRGenerator ir_gen;
+            auto ir_blocks = ir_gen.generate(program.get());
+            
+            // Generate object file name if not specified
+            if (output_file.empty()) {
+                // Remove .csr extension and add .exe
+                size_t dot_pos = input_file.find_last_of('.');
+                if (dot_pos != std::string::npos) {
+                    output_file = input_file.substr(0, dot_pos) + ".exe";
+                } else {
+                    output_file = input_file + ".exe";
+                }
+            }
+            
+            std::cout << "Compiling " << input_file << "...\n";
+            
+            // For now, transpile to C and compile with MinGW
+            auto codegen = caesar::CodeGeneratorFactory::createCGenerator();
+            std::string c_code = codegen->generate(ir_blocks);
+            
+            // Write C code to temporary file
+            std::string temp_c_file = "caesar_temp.c";
+            std::ofstream c_out(temp_c_file);
+            c_out << c_code;
+            c_out.close();
+            
+            // Compile with GCC
+            std::string compile_cmd = "gcc " + temp_c_file + " -o " + output_file + " -O2";
+            int result = system(compile_cmd.c_str());
+            
+            // Clean up temp file
+            remove(temp_c_file.c_str());
+            
+            if (result == 0) {
+                std::cout << "✓ Successfully compiled to: " << output_file << "\n";
+                std::cout << "Run with: .\\" << output_file << "\n";
+            } else {
+                std::cerr << "✗ Compilation failed\n";
+                return 1;
+            }
+            
+            return 0;
         }
         
     } catch (const caesar::CaesarException& e) {

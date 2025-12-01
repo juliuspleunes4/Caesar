@@ -6,8 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-### 🚀 Language Features & Documentation Improvements
-
 This release adds significant new language features including iteration support, member access, an interactive REPL, and a complete **IR generation and compilation pipeline** supporting multiple backends.
 
 ### ✨ New Features
