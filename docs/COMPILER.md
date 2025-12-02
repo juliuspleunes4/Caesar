@@ -103,7 +103,7 @@ Bytecode    x86-64 ASM    C Code      (Future: LLVM IR)
 ---
 
 ### 🔴 Code Generation
-**Status**: BASIC WORKING (35%)
+**Status**: PRODUCTION-READY CORE (50%)
 
 #### Backend: C Transpiler (Primary)
 
@@ -111,8 +111,8 @@ Bytecode    x86-64 ASM    C Code      (Future: LLVM IR)
 
 | Feature | Status | Implementation Details |
 |---------|--------|------------------------|
-| **Basic Types** | ✅ Complete | `int64_t` for numbers, `const char*` for strings |
-| **Type Tracking** | ✅ Complete | Register types and variable types tracked |
+| **Basic Types** | ✅ Complete | `int64_t` for integers, `double` for floats, `const char*` for strings |
+| **Type Tracking** | ✅ Complete | Register types and variable types tracked with automatic promotion |
 | **Variable Declarations** | ✅ Complete | Two-pass analysis for proper typing |
 | **Arithmetic** | ✅ Complete | +, -, *, /, % |
 | **Comparisons** | ✅ Complete | ==, !=, <, >, <=, >= |
@@ -133,10 +133,10 @@ Bytecode    x86-64 ASM    C Code      (Future: LLVM IR)
 | **Built-in: range()** | 🔥 Critical | ✅ **DONE** | Full iterator protocol with ITER_INIT/NEXT/DONE |
 | **Built-in: len()** | 🔥 Critical | ✅ **DONE** | String length implemented |
 | **For-in loops** | 🔥 Critical | ✅ **DONE** | Range-based iteration working |
+| **Function definitions** | 🔥 Critical | ✅ **DONE** | User-defined functions with recursion, forward declarations, C keyword escaping |
 | **String operations** | 🔥 Critical | 4h | String manipulation |
 | **List support** | 🔥 Critical | 8h | Data structures |
 | **Dictionary support** | 🔥 Critical | 8h | Data structures |
-| **Function definitions** | 🔥 Critical | 6h | Code organization |
 
 **Important (Required for advanced programs):**
 

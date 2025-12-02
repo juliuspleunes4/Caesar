@@ -1,0 +1,13 @@
+# Test string parameters with proper type inference
+
+def greet(name):
+    print("Hello")
+    print(name)
+
+def welcome(title, name):
+    print(title)
+    print(name)
+
+greet("Alice")
+greet("Bob")
+welcome("Dr.", "Smith")

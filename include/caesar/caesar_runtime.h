@@ -48,6 +48,13 @@ static inline void caesar_print_float(double val) {
 }
 
 /**
+ * Print a double value (alias for caesar_print_float)
+ */
+static inline void caesar_print_double(double val) {
+    printf("%g\n", val);
+}
+
+/**
  * Print a boolean value followed by newline
  */
 static inline void caesar_print_bool(bool val) {

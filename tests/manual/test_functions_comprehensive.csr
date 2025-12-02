@@ -1,0 +1,352 @@
+# Comprehensive User-Defined Functions Test Suite
+# Tests all possible use cases and edge cases
+
+# ============================================================================
+# Test 1: Basic Function Definition and Call
+# ============================================================================
+def simple_add(a, b):
+    return a + b
+
+def simple_multiply(x, y):
+    return x * y
+
+print(simple_add(3, 5))        # Expected: 8
+print(simple_multiply(4, 7))   # Expected: 28
+
+# ============================================================================
+# Test 2: Functions with No Parameters
+# ============================================================================
+def get_constant():
+    return 42
+
+def get_zero():
+    return 0
+
+print(get_constant())  # Expected: 42
+print(get_zero())      # Expected: 0
+
+# ============================================================================
+# Test 3: Functions with Single Parameter
+# ============================================================================
+def square(n):
+    return n * n
+
+def negate(x):
+    return -x
+
+print(square(5))   # Expected: 25
+print(negate(10))  # Expected: -10
+
+# ============================================================================
+# Test 4: Void Functions (No Return)
+# ============================================================================
+def print_message():
+    print("Hello World")
+
+def print_number(n):
+    print(n)
+
+print_message()    # Expected: Hello World
+print_number(99)   # Expected: 99
+
+# ============================================================================
+# Test 5: Functions with Multiple Returns
+# ============================================================================
+def abs_value(n):
+    if n < 0:
+        return -n
+    return n
+
+def max_of_two(a, b):
+    if a > b:
+        return a
+    return b
+
+print(abs_value(-15))   # Expected: 15
+print(abs_value(20))    # Expected: 20
+print(max_of_two(7, 3)) # Expected: 7
+print(max_of_two(2, 9)) # Expected: 9
+
+# ============================================================================
+# Test 6: Recursive Functions
+# ============================================================================
+def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+def countdown(n):
+    if n <= 0:
+        return 0
+    print(n)
+    return countdown(n - 1)
+
+print(factorial(0))   # Expected: 1
+print(factorial(1))   # Expected: 1
+print(factorial(5))   # Expected: 120
+print(factorial(6))   # Expected: 720
+
+print(fibonacci(0))   # Expected: 0
+print(fibonacci(1))   # Expected: 1
+print(fibonacci(5))   # Expected: 5
+print(fibonacci(8))   # Expected: 21
+
+countdown(5)          # Expected: 5 4 3 2 1
+
+# ============================================================================
+# Test 7: Nested Function Calls
+# ============================================================================
+def double(x):
+    return x + x
+
+def triple(x):
+    return x + x + x
+
+def quadruple(x):
+    return double(double(x))
+
+def times_six(x):
+    return double(triple(x))
+
+print(double(7))      # Expected: 14
+print(triple(5))      # Expected: 15
+print(quadruple(3))   # Expected: 12
+print(times_six(4))   # Expected: 24
+
+# ============================================================================
+# Test 8: Functions Calling Functions (Chain)
+# ============================================================================
+def add_one(n):
+    return n + 1
+
+def add_two(n):
+    return add_one(add_one(n))
+
+def add_five(n):
+    return add_two(add_two(add_one(n)))
+
+print(add_one(10))   # Expected: 11
+print(add_two(10))   # Expected: 12
+print(add_five(10))  # Expected: 15
+
+# ============================================================================
+# Test 9: Functions with Complex Logic
+# ============================================================================
+def is_even(n):
+    if n % 2 == 0:
+        return 1
+    return 0
+
+def sum_range(n):
+    if n <= 0:
+        return 0
+    return n + sum_range(n - 1)
+
+def power(base, exp):
+    if exp == 0:
+        return 1
+    if exp == 1:
+        return base
+    return base * power(base, exp - 1)
+
+print(is_even(4))     # Expected: 1
+print(is_even(7))     # Expected: 0
+print(sum_range(5))   # Expected: 15 (5+4+3+2+1)
+print(sum_range(10))  # Expected: 55
+print(power(2, 3))    # Expected: 8
+print(power(3, 4))    # Expected: 81
+print(power(5, 0))    # Expected: 1
+
+# ============================================================================
+# Test 10: C Reserved Keywords (Auto-Escaped)
+# ============================================================================
+def auto(x):
+    return x + 1
+
+def register(x):
+    return x - 1
+
+def static(x):
+    return x * 2
+
+def volatile(x):
+    return x * 3
+
+print(auto(10))      # Expected: 11 (caesar_auto internally)
+print(register(10))  # Expected: 9 (caesar_register internally)
+print(static(5))     # Expected: 10 (caesar_static internally)
+print(volatile(5))   # Expected: 15 (caesar_volatile internally)
+
+# ============================================================================
+# Test 11: Functions with Multiple Parameters (3+)
+# ============================================================================
+def add_three(a, b, c):
+    return a + b + c
+
+def multiply_three(x, y, z):
+    return x * y * z
+
+def sum_four(a, b, c, d):
+    return a + b + c + d
+
+print(add_three(1, 2, 3))        # Expected: 6
+print(multiply_three(2, 3, 4))   # Expected: 24
+print(sum_four(10, 20, 30, 40))  # Expected: 100
+
+# ============================================================================
+# Test 12: Functions with Arithmetic Operations
+# ============================================================================
+def complex_math(a, b):
+    return (a + b) * (a - b)
+
+def nested_ops(x):
+    return ((x + 5) * 2) - 5
+
+print(complex_math(10, 3))  # Expected: 91 ((10+3)*(10-3) = 13*7)
+print(nested_ops(10))       # Expected: 25 ((10+5)*2 - 5 = 30-5)
+
+# ============================================================================
+# Test 13: Functions with Comparison Operations
+# ============================================================================
+def compare_all(a, b):
+    if a == b:
+        return 0
+    if a != b:
+        if a < b:
+            return 1
+        if a > b:
+            return 2
+        if a <= b:
+            return 3
+        if a >= b:
+            return 4
+    return 5
+
+print(compare_all(5, 5))   # Expected: 0
+print(compare_all(3, 7))   # Expected: 1
+print(compare_all(9, 2))   # Expected: 2
+
+# ============================================================================
+# Test 14: Functions with String Parameters
+# ============================================================================
+def greet(name):
+    print("Hello")
+    print(name)
+
+def welcome(title, name):
+    print(title)
+    print(name)
+
+def echo(msg):
+    print(msg)
+
+greet("Alice")              # Expected: Hello\nAlice
+greet("Bob")                # Expected: Hello\nBob
+welcome("Dr.", "Smith")     # Expected: Dr.\nSmith
+echo("Test")                # Expected: Test
+
+# ============================================================================
+# Test 15: Functions Returning Zero and Negative Numbers
+# ============================================================================
+def always_zero():
+    return 0
+
+def negative_one():
+    return -1
+
+def subtract(a, b):
+    return a - b
+
+print(always_zero())      # Expected: 0
+print(negative_one())     # Expected: -1
+print(subtract(5, 10))    # Expected: -5
+print(subtract(10, 5))    # Expected: 5
+
+# ============================================================================
+# Test 16: Deeply Nested Recursion
+# ============================================================================
+def sum_to_n(n):
+    if n <= 0:
+        return 0
+    return n + sum_to_n(n - 1)
+
+print(sum_to_n(100))  # Expected: 5050
+
+# ============================================================================
+# Test 17: Multiple Functions with Same Parameter Names
+# ============================================================================
+def func_a(x):
+    return x + 10
+
+def func_b(x):
+    return x * 10
+
+def func_c(x):
+    return x - 10
+
+print(func_a(5))  # Expected: 15
+print(func_b(5))  # Expected: 50
+print(func_c(5))  # Expected: -5
+
+# ============================================================================
+# Test 18: Functions with Early Returns
+# ============================================================================
+def early_return(n):
+    if n < 0:
+        return 0
+    if n == 0:
+        return 1
+    if n == 1:
+        return 2
+    if n == 2:
+        return 3
+    return 999
+
+print(early_return(-5))  # Expected: 0
+print(early_return(0))   # Expected: 1
+print(early_return(1))   # Expected: 2
+print(early_return(2))   # Expected: 3
+print(early_return(10))  # Expected: 999
+
+# ============================================================================
+# Test 19: Mutual Recursion (Indirect Recursion)
+# ============================================================================
+def is_even_indirect(n):
+    if n == 0:
+        return 1
+    return is_odd_indirect(n - 1)
+
+def is_odd_indirect(n):
+    if n == 0:
+        return 0
+    return is_even_indirect(n - 1)
+
+print(is_even_indirect(0))   # Expected: 1
+print(is_even_indirect(4))   # Expected: 1
+print(is_even_indirect(7))   # Expected: 0
+print(is_odd_indirect(0))    # Expected: 0
+print(is_odd_indirect(3))    # Expected: 1
+print(is_odd_indirect(6))    # Expected: 0
+
+# ============================================================================
+# Test 20: Functions with Modulo Operations
+# ============================================================================
+def mod_test(a, b):
+    return a % b
+
+def is_divisible(n, d):
+    if n % d == 0:
+        return 1
+    return 0
+
+print(mod_test(17, 5))      # Expected: 2
+print(mod_test(20, 3))      # Expected: 2
+print(is_divisible(10, 2))  # Expected: 1
+print(is_divisible(10, 3))  # Expected: 0
+
+print("All function tests completed!")

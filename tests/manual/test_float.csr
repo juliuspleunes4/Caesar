@@ -1,0 +1,33 @@
+# Test float/double support
+
+# Test float literals
+print(3.14)
+print(2.718)
+print(0.5)
+
+# Test division (should always return double)
+print(10 / 3)
+print(15 / 2)
+print(100 / 7)
+
+# Test arithmetic with floats
+x = 5.5
+y = 2.5
+print(x + y)
+print(x - y)
+print(x * y)
+print(x / y)
+
+# Test mixed integer and float
+print(10 + 2.5)
+print(10 - 2.5)
+print(10 * 2.5)
+print(10 / 4)
+
+# Test function with float
+def average(a, b):
+    return (a + b) / 2
+
+print(average(10, 20))
+print(average(5, 8))
+print(average(100, 200))

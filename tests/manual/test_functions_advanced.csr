@@ -1,0 +1,32 @@
+# Comprehensive function test
+def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+def greet(name):
+    print("Hello")
+    print(name)
+
+# Test factorial
+print(factorial(5))
+
+# Test fibonacci  
+print(fibonacci(10))
+
+# Test void function
+greet("Caesar")
+
+# Test nested calls
+def double(x):
+    return x + x
+
+def quadruple(x):
+    return double(double(x))
+
+print(quadruple(7))

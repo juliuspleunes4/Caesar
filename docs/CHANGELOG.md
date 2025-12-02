@@ -93,6 +93,32 @@ This release adds significant new language features including iteration support,
   - Before: `continue` jumped to loop body, creating infinite loop without advancing iterator
   - After: `continue` jumps to check label, properly advancing iterator to next value
   - Changed loop context from `pushLoopContext(loop_label, end_label)` to `pushLoopContext(check_label, end_label)`
+- **User-Defined Functions**: Complete implementation with C keyword escaping
+  - **Block Ownership Tracking**: Each IR block assigned to owning function or main
+  - **Function Boundaries**: Detect function start (func_) and end (after_func) labels
+  - **Forward Declarations**: Generate C forward declarations for all user functions
+  - **Proper Scoping**: Function blocks separated from main, local variables scoped per function
+  - **C Reserved Keywords**: 30+ C keywords automatically prefixed with `caesar_` (e.g., `double` → `caesar_double`)
+  - **String Parameter Type Inference**: Parameters correctly typed as `const char*` when string literals passed
+  - **Comprehensive Test Suite**: 79+ assertions covering 53+ functions with perfect interpreter/compiler match
+    * Basic, recursive, nested, and chained function calls
+    * Multiple return paths and early returns
+    * Mutual recursion (indirect recursion)
+    * Deep recursion (100+ levels)
+    * All arithmetic and comparison operators
+    * 0 to 4+ parameter functions
+    * String parameters with proper type safety
+- **Float/Double Type Support**: Full floating-point arithmetic
+  - **Float Literals**: Detect and type float constants (3.14, 2.718, 1e-5)
+  - **True Division**: Division operator `/` always returns `double` for mathematical correctness
+  - **Type Promotion**: Automatic int→double promotion in mixed arithmetic
+  - **Type-Aware Operations**: All arithmetic operations (+, -, *, /, -) respect operand types
+  - **Float Parameters**: Functions correctly accept and propagate double types
+  - **Print Support**: `caesar_print_double()` for proper float formatting
+  - **C Reserved Keywords**: Automatically escape C keywords (e.g., `double` → `caesar_double`)
+  - **Recursion Support**: Recursive calls work correctly (factorial, fibonacci)
+  - **Nested Calls**: Functions can call other user-defined functions
+  - Tested with 8 function scenarios including recursion and nested calls
 
 #### **Parser Bug Fix**
 - **Comments in Function Bodies**: Fixed a bug where comments at the start of function bodies would cause parsing errors

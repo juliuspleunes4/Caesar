@@ -7,8 +7,30 @@
 
 #include "caesar/codegen.h"
 #include <iomanip>
+#include <unordered_set>
 
 namespace caesar {
+
+// C reserved keywords that cannot be used as function names
+static const std::unordered_set<std::string> c_reserved_words = {
+    "auto", "break", "case", "char", "const", "continue", "default", "do",
+    "double", "else", "enum", "extern", "float", "for", "goto", "if",
+    "int", "long", "register", "return", "short", "signed", "sizeof", "static",
+    "struct", "switch", "typedef", "union", "unsigned", "void", "volatile", "while",
+    "bool", "true", "false"  // Also C++ keywords commonly used
+};
+
+// Helper: Convert Caesar function name to safe C function name
+static std::string safe_function_name(const std::string& caesar_name) {
+    // Extract the actual name from "func_NAME"
+    std::string name = caesar_name.substr(5);  // Skip "func_"
+    
+    // Check if it's a reserved word
+    if (c_reserved_words.find(name) != c_reserved_words.end()) {
+        return "caesar_" + name;
+    }
+    return name;
+}
 
 // ============================================================================
 // Bytecode Generator
@@ -217,6 +239,12 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             if (!instr.src1.value.empty() && instr.src1.value[0] == '"') {
                 emitLine("const char* " + instr.dest.value + " = " + instr.src1.value + ";");
                 register_types[instr.dest.value] = "const char*";
+            } else if (instr.src1.value.find('.') != std::string::npos || 
+                       instr.src1.value.find('e') != std::string::npos ||
+                       instr.src1.value.find('E') != std::string::npos) {
+                // Float literal (contains . or scientific notation)
+                emitLine("double " + instr.dest.value + " = " + instr.src1.value + ";");
+                register_types[instr.dest.value] = "double";
             } else {
                 emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + ";");
                 register_types[instr.dest.value] = "int64_t";
@@ -242,28 +270,56 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             break;
         }
             
-        case IROpcode::ADD:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " + " + instr.src2.value + ";");
+        case IROpcode::ADD: {
+            // Determine result type: if either operand is double, result is double
+            std::string type1 = register_types.count(instr.src1.value) ? register_types[instr.src1.value] : "int64_t";
+            std::string type2 = register_types.count(instr.src2.value) ? register_types[instr.src2.value] : "int64_t";
+            std::string result_type = (type1 == "double" || type2 == "double") ? "double" : "int64_t";
+            emitLine(result_type + " " + instr.dest.value + " = " + instr.src1.value + " + " + instr.src2.value + ";");
+            register_types[instr.dest.value] = result_type;
             break;
+        }
             
-        case IROpcode::SUB:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " - " + instr.src2.value + ";");
+        case IROpcode::SUB: {
+            std::string type1 = register_types.count(instr.src1.value) ? register_types[instr.src1.value] : "int64_t";
+            std::string type2 = register_types.count(instr.src2.value) ? register_types[instr.src2.value] : "int64_t";
+            std::string result_type = (type1 == "double" || type2 == "double") ? "double" : "int64_t";
+            emitLine(result_type + " " + instr.dest.value + " = " + instr.src1.value + " - " + instr.src2.value + ";");
+            register_types[instr.dest.value] = result_type;
             break;
+        }
             
-        case IROpcode::MUL:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " * " + instr.src2.value + ";");
+        case IROpcode::MUL: {
+            std::string type1 = register_types.count(instr.src1.value) ? register_types[instr.src1.value] : "int64_t";
+            std::string type2 = register_types.count(instr.src2.value) ? register_types[instr.src2.value] : "int64_t";
+            std::string result_type = (type1 == "double" || type2 == "double") ? "double" : "int64_t";
+            emitLine(result_type + " " + instr.dest.value + " = " + instr.src1.value + " * " + instr.src2.value + ";");
+            register_types[instr.dest.value] = result_type;
             break;
+        }
             
-        case IROpcode::DIV:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " / " + instr.src2.value + ";");
+        case IROpcode::DIV: {
+            // Division always returns double for proper mathematical behavior
+            std::string type1 = register_types.count(instr.src1.value) ? register_types[instr.src1.value] : "int64_t";
+            std::string type2 = register_types.count(instr.src2.value) ? register_types[instr.src2.value] : "int64_t";
+            // Cast to double if necessary
+            std::string left = (type1 == "double") ? instr.src1.value : "(double)" + instr.src1.value;
+            std::string right = (type2 == "double") ? instr.src2.value : "(double)" + instr.src2.value;
+            emitLine("double " + instr.dest.value + " = " + left + " / " + right + ";");
+            register_types[instr.dest.value] = "double";
             break;
+        }
             
         case IROpcode::MOD:
             emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " % " + instr.src2.value + ";");
             break;
             
-        case IROpcode::NEG:
-            emitLine("int64_t " + instr.dest.value + " = -" + instr.src1.value + ";");
+        case IROpcode::NEG: {
+            std::string type1 = register_types.count(instr.src1.value) ? register_types[instr.src1.value] : "int64_t";
+            emitLine(type1 + " " + instr.dest.value + " = -" + instr.src1.value + ";");
+            register_types[instr.dest.value] = type1;
+            break;
+        }
             break;
             
         case IROpcode::EQ:
@@ -324,8 +380,14 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
                     std::string param = call_params[0];
                     // Check register type
                     auto it = register_types.find(param);
-                    if (it != register_types.end() && (it->second == "char*" || it->second == "const char*")) {
-                        emitLine("caesar_print_str(" + param + ");");
+                    if (it != register_types.end()) {
+                        if (it->second == "char*" || it->second == "const char*") {
+                            emitLine("caesar_print_str(" + param + ");");
+                        } else if (it->second == "double") {
+                            emitLine("caesar_print_double(" + param + ");");
+                        } else {
+                            emitLine("caesar_print_int(" + param + ");");
+                        }
                     } else {
                         emitLine("caesar_print_int(" + param + ");");
                     }
@@ -353,13 +415,18 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
                     register_types[instr.dest.value] = "int64_t";
                 }
             } else {
-                // User-defined function call
+                // User-defined function call - use safe name if it's a reserved word
+                std::string func_name = instr.src1.value;
+                if (c_reserved_words.find(func_name) != c_reserved_words.end()) {
+                    func_name = "caesar_" + func_name;
+                }
+                
                 std::string args;
                 for (size_t i = 0; i < call_params.size(); i++) {
                     if (i > 0) args += ", ";
                     args += call_params[i];
                 }
-                emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + "(" + args + ");");
+                emitLine("int64_t " + instr.dest.value + " = " + func_name + "(" + args + ");");
             }
             call_params.clear();  // Clear params after call
             break;
@@ -397,16 +464,59 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     variable_types.clear();
     register_types.clear();
     
-    // First pass: collect all variables and track types
+    // First pass: identify function blocks and which blocks belong to each function
     std::unordered_map<std::string, std::string> temp_register_types;
+    std::vector<std::string> function_names;
+    std::unordered_map<std::string, std::vector<std::string>> function_params;  // func_name -> params
+    std::unordered_map<std::string, std::vector<std::string>> function_param_types;  // func_name -> param types
+    std::unordered_map<std::string, std::string> block_owner;  // block_label -> func_label (or "main")
+    std::vector<std::string> pending_call_params;  // Track parameters for next CALL
+    std::vector<std::string> pending_call_param_types;  // Track parameter types for next CALL
+    
+    std::string current_function = "main";  // Track which function we're currently in
     for (const auto& block : blocks) {
+        // Detect function start
+        if (block.label.rfind("func_", 0) == 0 && block.label != "func_") {
+            function_names.push_back(block.label);
+            current_function = block.label;
+            
+            // Collect parameters from DECLARE instructions
+            std::vector<std::string> params;
+            for (const auto& instr : block.instructions) {
+                if (instr.opcode == IROpcode::DECLARE && instr.dest.type == IROperandType::VARIABLE) {
+                    params.push_back(instr.dest.value);
+                }
+            }
+            function_params[block.label] = params;
+        } 
+        // Detect function end (after_func labels)
+        else if (block.label.rfind("after_func", 0) == 0) {
+            current_function = "main";
+        }
+        
+        // Assign this block to current function
+        block_owner[block.label] = current_function;
+        
         for (const auto& instr : block.instructions) {
             // Track register types from LOAD_CONST
             if (instr.opcode == IROpcode::LOAD_CONST && instr.dest.type == IROperandType::REGISTER) {
                 if (!instr.src1.value.empty() && instr.src1.value[0] == '"') {
                     temp_register_types[instr.dest.value] = "const char*";
+                } else if (instr.src1.value.find('.') != std::string::npos || 
+                           instr.src1.value.find('e') != std::string::npos ||
+                           instr.src1.value.find('E') != std::string::npos) {
+                    temp_register_types[instr.dest.value] = "double";
                 } else {
                     temp_register_types[instr.dest.value] = "int64_t";
+                }
+            }
+            // Track GET_VAR to propagate variable types to registers
+            if (instr.opcode == IROpcode::GET_VAR && instr.src1.type == IROperandType::VARIABLE) {
+                auto vit = variable_types.find(instr.src1.value);
+                if (vit != variable_types.end()) {
+                    temp_register_types[instr.dest.value] = vit->second;
+                } else {
+                    variable_types[instr.src1.value] = "int64_t";  // Default
                 }
             }
             // Track variable types from SET_VAR
@@ -418,10 +528,31 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
                     variable_types[instr.dest.value] = "int64_t";  // Default
                 }
             }
-            if (instr.opcode == IROpcode::GET_VAR && instr.src1.type == IROperandType::VARIABLE) {
-                if (variable_types.find(instr.src1.value) == variable_types.end()) {
-                    variable_types[instr.src1.value] = "int64_t";  // Default
+            // Track PARAM instructions - collect parameter types
+            if (instr.opcode == IROpcode::PARAM) {
+                std::string param_reg = instr.dest.value;
+                auto it = temp_register_types.find(param_reg);
+                std::string param_type = (it != temp_register_types.end()) ? it->second : "int64_t";
+                pending_call_params.push_back(param_reg);
+                pending_call_param_types.push_back(param_type);
+            }
+            // Track CALL instructions - match parameters to function definition
+            if (instr.opcode == IROpcode::CALL && !pending_call_params.empty()) {
+                std::string func_name = instr.src1.value;
+                // Check if this is a user-defined function
+                bool is_user_func = false;
+                for (const auto& fn : function_names) {
+                    if (fn == "func_" + func_name) {
+                        is_user_func = true;
+                        // Store parameter types for this function if not already stored
+                        if (function_param_types.find(fn) == function_param_types.end()) {
+                            function_param_types[fn] = pending_call_param_types;
+                        }
+                        break;
+                    }
                 }
+                pending_call_params.clear();
+                pending_call_param_types.clear();
             }
         }
     }
@@ -430,21 +561,140 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     output << "// Generated by Caesar Compiler v1.5.1\n\n";
     output << "#include \"caesar/caesar_runtime.h\"\n\n";
     
-    output << "int main() {\n";
-    
-    indent_level = 1;
-    
-    // Declare all user variables at the top
-    if (!variable_types.empty()) {
-        emitLine("// User variables");
-        for (const auto& var : variable_types) {
-            emitLine(var.second + " " + var.first + " = 0;");
+    // Generate forward declarations for user functions
+    if (!function_names.empty()) {
+        output << "// Forward declarations\n";
+        for (const auto& func_label : function_names) {
+            std::string func_name = safe_function_name(func_label);
+            auto& params = function_params[func_label];
+            auto& param_types = function_param_types[func_label];
+            
+            output << "int64_t " << func_name << "(";
+            for (size_t i = 0; i < params.size(); i++) {
+                if (i > 0) output << ", ";
+                // Use tracked parameter type if available, otherwise default to int64_t
+                std::string param_type = (i < param_types.size()) ? param_types[i] : "int64_t";
+                output << param_type << " " << params[i];
+            }
+            output << ");\n";
         }
         output << "\n";
     }
     
+    // Generate user-defined functions
+    for (const auto& func_label : function_names) {
+        std::string func_name = safe_function_name(func_label);
+        auto& params = function_params[func_label];
+        auto& param_types = function_param_types[func_label];
+        
+        output << "int64_t " << func_name << "(";
+        for (size_t i = 0; i < params.size(); i++) {
+            if (i > 0) output << ", ";
+            // Use tracked parameter type if available, otherwise default to int64_t
+            std::string param_type = (i < param_types.size()) ? param_types[i] : "int64_t";
+            output << param_type << " " << params[i];
+        }
+        output << ") {\n";
+        
+        indent_level = 1;
+        
+        // Register parameter types in variable_types map for this function's scope
+        for (size_t i = 0; i < params.size(); i++) {
+            std::string param_type = (i < param_types.size()) ? param_types[i] : "int64_t";
+            variable_types[params[i]] = param_type;
+        }
+        
+        // Collect local variables for this function (non-param variables used in function)
+        std::unordered_set<std::string> func_local_vars;
+        for (const auto& block : blocks) {
+            // Check if block belongs to this function
+            auto owner_it = block_owner.find(block.label);
+            if (owner_it != block_owner.end() && owner_it->second == func_label) {
+                for (const auto& instr : block.instructions) {
+                    if (instr.opcode == IROpcode::SET_VAR && instr.dest.type == IROperandType::VARIABLE) {
+                        std::string var_name = instr.dest.value;
+                        // Check if it's not a parameter
+                        bool is_param = false;
+                        for (const auto& param : params) {
+                            if (param == var_name) {
+                                is_param = true;
+                                break;
+                            }
+                        }
+                        if (!is_param) {
+                            func_local_vars.insert(var_name);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Declare local variables
+        for (const auto& var : func_local_vars) {
+            auto it = variable_types.find(var);
+            std::string var_type = (it != variable_types.end()) ? it->second : "int64_t";
+            emitLine(var_type + " " + var + " = 0;");
+        }
+        if (!func_local_vars.empty()) output << "\n";
+        
+        // Emit all blocks belonging to this function
+        for (const auto& block : blocks) {
+            // Check if this block belongs to this function
+            auto owner_it = block_owner.find(block.label);
+            if (owner_it != block_owner.end() && owner_it->second == func_label) {
+                // Emit label if not the function start
+                if (block.label != func_label && !block.label.empty()) {
+                    indent_level = 0;
+                    output << block.label << ":\n";
+                    indent_level = 1;
+                }
+                
+                // Process instructions, skipping DECLARE (already in signature)
+                for (const auto& instr : block.instructions) {
+                    if (instr.opcode != IROpcode::DECLARE) {
+                        emitInstruction(instr);
+                    }
+                }
+            }
+        }
+        
+        indent_level = 0;
+        output << "}\n\n";
+    }
+    
+    // Generate main function
+    output << "int main() {\n";
+    indent_level = 1;
+    
+    // Declare all non-parameter user variables at the top
+    std::unordered_set<std::string> param_names;
+    for (const auto& pair : function_params) {
+        for (const auto& param : pair.second) {
+            param_names.insert(param);
+        }
+    }
+    
+    bool has_main_vars = false;
+    for (const auto& var : variable_types) {
+        if (param_names.find(var.first) == param_names.end()) {
+            if (!has_main_vars) {
+                emitLine("// User variables");
+                has_main_vars = true;
+            }
+            emitLine(var.second + " " + var.first + " = 0;");
+        }
+    }
+    if (has_main_vars) output << "\n";
+    
+    // Process main code (blocks owned by "main")
     for (const auto& block : blocks) {
-        if (!block.label.empty() && block.label != "entry") {
+        // Only include blocks owned by main
+        auto owner_it = block_owner.find(block.label);
+        if (owner_it == block_owner.end() || owner_it->second != "main") {
+            continue;
+        }
+        
+        if (!block.label.empty() && block.label != "entry" && !block.label.rfind("after_func", 0) == 0) {
             indent_level = 0;
             output << block.label << ":\n";
             indent_level = 1;

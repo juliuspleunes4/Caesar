@@ -1,0 +1,44 @@
+# Type System Showcase - All Features Working Together
+
+# 1. String parameter functions
+def greet(name):
+    print("Hello")
+    print(name)
+
+# 2. Float arithmetic function
+def circle_area(radius):
+    pi = 3.14159
+    return pi * radius * radius
+
+# 3. Mixed type arithmetic
+def calculate(x, y):
+    sum = x + y
+    diff = x - y
+    product = x * y
+    quotient = x / y
+    return quotient
+
+# Test string parameters
+greet("World")
+
+# Test float parameters and arithmetic
+print(circle_area(5.0))
+print(circle_area(10))
+
+# Test division (true division)
+print(calculate(10, 3))
+print(calculate(100, 7))
+
+# Test type promotion
+print(10 + 2.5)
+print(10 * 2.5)
+
+# Complex example: all types together
+def analyze(name, value, multiplier):
+    print(name)
+    result = value * multiplier
+    avg = result / 2
+    print(result)
+    print(avg)
+
+analyze("Test", 100, 3.5)
