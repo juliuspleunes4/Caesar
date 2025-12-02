@@ -471,17 +471,12 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     register_types.clear();
     function_return_types.clear();  // Clear member variable
     
-    // First pass: identify function blocks and which blocks belong to each function
-    std::unordered_map<std::string, std::string> temp_register_types;
+    // Pass 1a: Collect function names and parameters from DECLARE instructions
     std::vector<std::string> function_names;
     std::unordered_map<std::string, std::vector<std::string>> function_params;  // func_name -> params
-    std::unordered_map<std::string, std::vector<std::string>> function_param_types;  // func_name -> param types
-    std::unordered_map<std::string, std::string> local_function_return_types;  // func_name -> return type (local tracking)
     std::unordered_map<std::string, std::string> block_owner;  // block_label -> func_label (or "main")
-    std::vector<std::string> pending_call_params;  // Track parameters for next CALL
-    std::vector<std::string> pending_call_param_types;  // Track parameter types for next CALL
     
-    std::string current_function = "main";  // Track which function we're currently in
+    std::string current_function = "main";
     for (const auto& block : blocks) {
         // Detect function start
         if (block.label.rfind("func_", 0) == 0 && block.label != "func_") {
@@ -497,13 +492,82 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
             }
             function_params[block.label] = params;
         } 
-        // Detect function end (after_func labels)
+        // Detect function end
         else if (block.label.rfind("after_func", 0) == 0) {
             current_function = "main";
         }
-        
-        // Assign this block to current function
         block_owner[block.label] = current_function;
+    }
+    
+    // Pass 1b: Collect parameter types from all call sites
+    std::unordered_map<std::string, std::string> temp_register_types;
+    std::unordered_map<std::string, std::vector<std::string>> function_param_types;  // func_name -> param types
+    std::vector<std::string> pending_call_params;
+    std::vector<std::string> pending_call_param_types;
+    
+    for (const auto& block : blocks) {
+        for (const auto& instr : block.instructions) {
+            // Track LOAD_CONST to know register types
+            if (instr.opcode == IROpcode::LOAD_CONST && instr.dest.type == IROperandType::REGISTER) {
+                if (!instr.src1.value.empty() && instr.src1.value[0] == '"') {
+                    temp_register_types[instr.dest.value] = "const char*";
+                } else if (instr.src1.value.find('.') != std::string::npos || 
+                           instr.src1.value.find('e') != std::string::npos ||
+                           instr.src1.value.find('E') != std::string::npos) {
+                    temp_register_types[instr.dest.value] = "double";
+                } else {
+                    temp_register_types[instr.dest.value] = "int64_t";
+                }
+            }
+            // Track PARAM instructions to collect parameter types
+            if (instr.opcode == IROpcode::PARAM) {
+                std::string param_reg = instr.dest.value;
+                auto it = temp_register_types.find(param_reg);
+                std::string param_type = (it != temp_register_types.end()) ? it->second : "int64_t";
+                pending_call_params.push_back(param_reg);
+                pending_call_param_types.push_back(param_type);
+            }
+            // Track CALL to match parameters to functions
+            if (instr.opcode == IROpcode::CALL && !pending_call_params.empty()) {
+                std::string func_name = instr.src1.value;
+                for (const auto& fn : function_names) {
+                    if (fn == "func_" + func_name) {
+                        if (function_param_types.find(fn) == function_param_types.end()) {
+                            function_param_types[fn] = pending_call_param_types;
+                        }
+                        break;
+                    }
+                }
+                pending_call_params.clear();
+                pending_call_param_types.clear();
+            }
+        }
+    }
+    
+    // Pass 2: Infer return types now that we know parameter types
+    std::unordered_map<std::string, std::string> local_function_return_types;
+    temp_register_types.clear();  // Reset for second pass
+    current_function = "main";
+    
+    for (const auto& block : blocks) {
+        // Track which function we're in
+        auto owner_it = block_owner.find(block.label);
+        if (owner_it != block_owner.end()) {
+            current_function = owner_it->second;
+        }
+        
+        // If this is a function block, register its parameter types in temp_register_types AND variable_types
+        if (block.label.rfind("func_", 0) == 0 && block.label != "func_main") {
+            auto param_it = function_param_types.find(block.label);
+            if (param_it != function_param_types.end()) {
+                auto& params = function_params[block.label];
+                auto& param_types = param_it->second;
+                for (size_t i = 0; i < params.size() && i < param_types.size(); i++) {
+                    temp_register_types[params[i]] = param_types[i];
+                    variable_types[params[i]] = param_types[i];  // Also populate variable_types for GET_VAR tracking
+                }
+            }
+        }
         
         for (const auto& instr : block.instructions) {
             // Track register types from LOAD_CONST
@@ -570,47 +634,37 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
                     }
                 }
             }
-            // Track PARAM instructions - collect parameter types
-            if (instr.opcode == IROpcode::PARAM) {
-                std::string param_reg = instr.dest.value;
-                auto it = temp_register_types.find(param_reg);
-                std::string param_type = (it != temp_register_types.end()) ? it->second : "int64_t";
-                pending_call_params.push_back(param_reg);
-                pending_call_param_types.push_back(param_type);
-            }
-            // Track CALL instructions - match parameters to function definition
-            if (instr.opcode == IROpcode::CALL && !pending_call_params.empty()) {
-                std::string func_name = instr.src1.value;
-                // Check if this is a user-defined function
-                bool is_user_func = false;
-                for (const auto& fn : function_names) {
-                    if (fn == "func_" + func_name) {
-                        is_user_func = true;
-                        // Store parameter types for this function if not already stored
-                        if (function_param_types.find(fn) == function_param_types.end()) {
-                            function_param_types[fn] = pending_call_param_types;
-                        }
-                        break;
-                    }
-                }
-                pending_call_params.clear();
-                pending_call_param_types.clear();
-            }
-            // Track RETURN instructions - determine return type
+            // Track RETURN instructions - determine return type (parameter types already collected in Pass 1b)
             if (instr.opcode == IROpcode::RETURN && current_function != "main" && 
                 instr.dest.type != IROperandType::NONE) {
                 // Get the type of the return value
                 std::string return_type = "int64_t";  // default
-                if (instr.dest.type == IROperandType::REGISTER) {
+                if (instr.dest.type == IROperandType::REGISTER || instr.dest.type == IROperandType::VARIABLE) {
                     auto it = temp_register_types.find(instr.dest.value);
                     if (it != temp_register_types.end()) {
                         return_type = it->second;
+                    } else {
+                        // Check if it's a parameter of this function
+                        auto param_types_it = function_param_types.find(current_function);
+                        auto params_it = function_params.find(current_function);
+                        if (param_types_it != function_param_types.end() && params_it != function_params.end()) {
+                            auto& params = params_it->second;
+                            auto& param_types = param_types_it->second;
+                            for (size_t i = 0; i < params.size() && i < param_types.size(); i++) {
+                                if (params[i] == instr.dest.value) {
+                                    return_type = param_types[i];
+                                    break;
+                                }
+                            }
+                        }
                     }
                 } else if (instr.dest.type == IROperandType::CONSTANT) {
-                    // Check if constant is a float
-                    if (instr.dest.value.find('.') != std::string::npos || 
-                        instr.dest.value.find('e') != std::string::npos ||
-                        instr.dest.value.find('E') != std::string::npos) {
+                    // Check if constant is a float or string
+                    if (!instr.dest.value.empty() && instr.dest.value[0] == '"') {
+                        return_type = "const char*";
+                    } else if (instr.dest.value.find('.') != std::string::npos || 
+                               instr.dest.value.find('e') != std::string::npos ||
+                               instr.dest.value.find('E') != std::string::npos) {
                         return_type = "double";
                     }
                 }
@@ -689,6 +743,7 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
         for (size_t i = 0; i < params.size(); i++) {
             std::string param_type = (i < param_types.size()) ? param_types[i] : "int64_t";
             variable_types[params[i]] = param_type;
+            register_types[params[i]] = param_type;  // Also add to register_types for consistency
         }
         
         // Collect local variables for this function (non-param variables used in function)

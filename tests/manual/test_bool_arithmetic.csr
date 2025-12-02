@@ -1,0 +1,7 @@
+# Test: Can we add comparison results?
+def count_trues(a, b):
+    return (a > 0) + (b > 0)
+
+print(count_trues(5, 10))    # Expected: 2
+print(count_trues(-5, 10))   # Expected: 1
+print(count_trues(-5, -10))  # Expected: 0

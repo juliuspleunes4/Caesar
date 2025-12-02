@@ -644,6 +644,8 @@ done
 8. **WebAssembly backend** - Run in browsers
 9. **GPU acceleration** - CUDA/OpenCL backends
 10. **Ahead-of-time caching** - Cache compiled native code
+11. **Boolean arithmetic in interpreter** - Support `(a > 0) + (b > 0)` patterns (currently only works in compiler)
+12. **Modulo with floats** - Support `10.5 % 3.2` if mathematically sensible (currently integer-only)
 
 ---
 

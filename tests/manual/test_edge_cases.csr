@@ -1,0 +1,305 @@
+# ============================================================================
+# EDGE CASE TEST SUITE
+# Tests advanced features of the type system that aren't in comprehensive test
+# ============================================================================
+
+print("=== EDGE CASE TEST SUITE ===")
+print("")
+
+# ============================================================================
+# TEST 1: String Return Types
+# ============================================================================
+print("TEST 1: String Return Types")
+
+def get_greeting():
+    return "Hello"
+
+def get_name():
+    return "Alice"
+
+def get_empty():
+    return ""
+
+def get_long_string():
+    return "This is a very long string to test string return types"
+
+print(get_greeting())        # Expected: Hello
+print(get_name())            # Expected: Alice
+print(get_empty())           # Expected: (empty line)
+print(get_long_string())     # Expected: This is a very long string to test string return types
+
+# ============================================================================
+# TEST 2: Functions Returning Comparison Results Directly
+# ============================================================================
+print("TEST 2: Direct Comparison Returns")
+
+def is_equal(a, b):
+    return a == b
+
+def is_not_equal(a, b):
+    return a != b
+
+def is_less_than(a, b):
+    return a < b
+
+def is_greater_than(a, b):
+    return a > b
+
+def is_less_or_equal(a, b):
+    return a <= b
+
+def is_greater_or_equal(a, b):
+    return a >= b
+
+print(is_equal(5, 5))           # Expected: 1
+print(is_equal(5, 7))           # Expected: 0
+print(is_not_equal(5, 7))       # Expected: 1
+print(is_not_equal(5, 5))       # Expected: 0
+print(is_less_than(3, 7))       # Expected: 1
+print(is_less_than(7, 3))       # Expected: 0
+print(is_greater_than(7, 3))    # Expected: 1
+print(is_greater_than(3, 7))    # Expected: 0
+print(is_less_or_equal(5, 5))   # Expected: 1
+print(is_less_or_equal(7, 3))   # Expected: 0
+print(is_greater_or_equal(5, 5)) # Expected: 1
+print(is_greater_or_equal(3, 7)) # Expected: 0
+
+# ============================================================================
+# TEST 3: Functions with No Explicit Return (Implicit Return 0)
+# ============================================================================
+print("TEST 3: Implicit Return 0")
+
+def no_return():
+    x = 5
+
+def no_return_with_logic(n):
+    if n > 0:
+        x = 1
+    x = 2
+
+def only_print():
+    print("Side effect only")
+
+print(no_return())              # Expected: 0
+print(no_return_with_logic(10)) # Expected: 0
+print(no_return_with_logic(-5)) # Expected: 0
+print(only_print())             # Expected: Side effect only\n0
+
+# ============================================================================
+# TEST 4: Functions Returning Results of Other Functions Directly
+# ============================================================================
+print("TEST 4: Direct Function Result Returns")
+
+def double(n):
+    return n * 2
+
+def triple(n):
+    return n * 3
+
+def double_double(n):
+    return double(double(n))
+
+def triple_triple(n):
+    return triple(triple(n))
+
+def chain_operations(n):
+    return double(triple(n))
+
+def nested_chain(n):
+    return triple(double(double(n)))
+
+print(double_double(5))         # Expected: 20
+print(triple_triple(2))         # Expected: 18
+print(chain_operations(4))      # Expected: 24
+print(nested_chain(3))          # Expected: 36
+
+# ============================================================================
+# TEST 5: Scientific Notation Literals
+# ============================================================================
+print("TEST 5: Scientific Notation")
+
+def get_small_number():
+    return 1.5e-3
+
+def get_large_number():
+    return 1.5e10
+
+def get_negative_scientific():
+    return -2.5e-2
+
+def calculate_with_scientific(x):
+    return x * 1.0e2
+
+print(get_small_number())       # Expected: 0.0015
+print(get_large_number())       # Expected: 15000000000
+print(get_negative_scientific()) # Expected: -0.025
+print(calculate_with_scientific(3.5)) # Expected: 350
+
+# ============================================================================
+# TEST 6: Multiple Type Promotions in Single Expression
+# ============================================================================
+print("TEST 6: Multiple Type Promotions")
+
+def complex_promotion_1(a, b, c):
+    return a + b * 2.5 + c
+
+def complex_promotion_2(x, y, z):
+    return x / 2 + y * z
+
+def triple_promotion(a, b, c):
+    return a * 1.5 + b / 2 + c * 2.0
+
+def nested_promotion(x):
+    return (x + 1) * 2.5 / 3
+
+print(complex_promotion_1(10, 4, 5))     # Expected: 25
+print(complex_promotion_2(10, 3, 4))     # Expected: 17
+print(triple_promotion(2, 10, 3))        # Expected: 14
+print(nested_promotion(5))               # Expected: 5
+
+# ============================================================================
+# TEST 7: Empty String Parameters and Edge Cases
+# ============================================================================
+print("TEST 7: Empty and Edge String Cases")
+
+def print_empty(s):
+    print(s)
+
+def greet_anyone(name):
+    print(name)
+
+def concat_message(prefix, suffix):
+    print(prefix)
+    print(suffix)
+
+print_empty("")                 # Expected: (empty line)
+greet_anyone("")                # Expected: (empty line)
+concat_message("", "World")     # Expected: (empty line)\nWorld
+concat_message("Hello", "")     # Expected: Hello\n(empty line)
+
+# ============================================================================
+# TEST 8: Mixed Parameter Types (int, float, string in one function)
+# ============================================================================
+print("TEST 8: All Three Types as Parameters")
+
+def mixed_params_1(name, age, height):
+    print(name)
+    print(age)
+    print(height)
+    return age + height
+
+def mixed_params_2(label, count, ratio):
+    print(label)
+    return count * ratio
+
+def three_type_function(msg, x, y):
+    print(msg)
+    return x / y
+
+print(mixed_params_1("Bob", 30, 5.9))    # Expected: Bob\n30\n5.9\n35.9
+print(mixed_params_2("Total:", 10, 2.5)) # Expected: Total:\n25
+print(three_type_function("Result:", 100, 4)) # Expected: Result:\n25
+
+# ============================================================================
+# TEST 9: Negative Float Operations
+# ============================================================================
+print("TEST 9: Negative Float Operations")
+
+def negate_float(x):
+    return -x
+
+def multiply_negatives(a, b):
+    return a * b
+
+def subtract_negative(a, b):
+    return a - b
+
+def add_negative(a, b):
+    return a + b
+
+print(negate_float(5.5))           # Expected: -5.5
+print(negate_float(-3.2))          # Expected: 3.2
+print(multiply_negatives(-2.5, -4.0)) # Expected: 10
+print(subtract_negative(10.0, -5.0))  # Expected: 15
+print(add_negative(-3.5, -2.5))       # Expected: -6
+
+# ============================================================================
+# TEST 10: Division Edge Cases
+# ============================================================================
+print("TEST 10: Division Edge Cases")
+
+def divide_by_small(x):
+    return x / 0.0001
+
+def divide_negative(a, b):
+    return a / b
+
+def divide_mixed_signs(x, y):
+    return x / y
+
+print(divide_by_small(10))           # Expected: 100000
+print(divide_negative(-10.0, 2.0))   # Expected: -5
+print(divide_negative(10.0, -2.0))   # Expected: -5
+print(divide_mixed_signs(-15, -3))   # Expected: 5
+
+# ============================================================================
+# TEST 11: Comparison Results Used in Arithmetic
+# ============================================================================
+print("TEST 11: Comparisons in Calculations")
+
+def count_trues(a, b, c, d):
+    return (a > 0) + (b > 0) + (c > 0) + (d > 0)
+
+def bool_to_multiplier(x, y):
+    return x * (y > 0)
+
+def conditional_add(a, b, threshold):
+    return a + b * (a > threshold)
+
+print(count_trues(5, -3, 10, -1))     # Expected: 2
+print(count_trues(1, 2, 3, 4))        # Expected: 4
+print(bool_to_multiplier(10, 5))      # Expected: 10
+print(bool_to_multiplier(10, -5))     # Expected: 0
+print(conditional_add(10, 3, 5))      # Expected: 13
+print(conditional_add(3, 3, 5))       # Expected: 3
+
+# ============================================================================
+# TEST 12: Functions Returning String Parameters
+# ============================================================================
+print("TEST 12: String Parameter Pass-Through")
+
+def echo(msg):
+    return msg
+
+def identity_string(s):
+    return s
+
+def first_of_two(s1, s2):
+    return s1
+
+def second_of_two(s1, s2):
+    return s2
+
+print(echo("Testing"))              # Expected: Testing
+print(identity_string("Identity"))  # Expected: Identity
+print(first_of_two("First", "Second")) # Expected: First
+print(second_of_two("First", "Second")) # Expected: Second
+
+# ============================================================================
+# FINAL SUMMARY
+# ============================================================================
+print("")
+print("=== EDGE CASE TEST SUITE COMPLETE ===")
+print("Features tested:")
+print("- String return types (including empty strings)")
+print("- Direct comparison result returns (bool type)")
+print("- Implicit return 0 (no explicit return)")
+print("- Functions returning function call results")
+print("- Scientific notation literals (1.5e10, 2.5e-3)")
+print("- Multiple type promotions in single expression")
+print("- Empty string parameters")
+print("- Mixed parameter types (int, float, string)")
+print("- Negative float arithmetic")
+print("- Division edge cases (small divisors, negative signs)")
+print("- Comparison results in arithmetic expressions")
+print("- String parameter pass-through and return")

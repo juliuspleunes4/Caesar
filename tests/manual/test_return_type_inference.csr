@@ -1,0 +1,49 @@
+# Type System Comprehensive Test
+
+print("TEST 1: Integer Functions")
+fn add_ints(a, b) = a + b
+fn multiply_ints(x, y) = x * y
+print(add_ints(10, 20))
+print(multiply_ints(7, 8))
+
+print("TEST 2: Float Functions")
+fn circle_area(r) = 3.14159 * r * r
+print(circle_area(1.0))
+print(circle_area(5.0))
+
+print("TEST 3: Division Returns Double")
+fn divide_ints(a, b) = a / b
+print(divide_ints(10, 3))
+print(divide_ints(22, 7))
+
+print("TEST 4: Mixed Types")
+fn mix_add(i, f) = i + f
+print(mix_add(10, 5.5))
+
+print("TEST 5: Strings")
+fn echo(t) = t
+print(echo("Test"))
+
+print("TEST 6: Nested Calls")
+fn double_it(x) = x * 2
+fn compute(x, y) = double_it(x) + double_it(y)
+print(compute(5, 10))
+
+print("TEST 7: Recursion")
+fn factorial(n) = n * factorial(n - 1) if n > 1 else 1
+print(factorial(5))
+print(factorial(6))
+
+print("TEST 8: Chained Calls")
+fn inc(x) = x + 1
+print(inc(inc(inc(10))))
+
+print("TEST 9: Division in Chain")
+fn halve(x) = x / 2
+print(halve(100))
+
+print("TEST 10: Large Numbers")
+fn large_mult(a, b) = a * b
+print(large_mult(1000, 2000))
+
+print("=== COMPLETE ===")

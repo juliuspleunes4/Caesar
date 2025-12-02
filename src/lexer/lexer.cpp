@@ -319,6 +319,26 @@ Token Lexer::tokenizeNumber() {
         }
     }
     
+    // Check for scientific notation (e.g., 1.5e10, 2e-3)
+    if (!isAtEnd() && (peek() == 'e' || peek() == 'E')) {
+        char next = peekNext();
+        // Valid exponent must be followed by digit or sign+digit
+        if (isDigit(next) || ((next == '+' || next == '-') && current_ + 2 < source_.length() && isDigit(source_[current_ + 2]))) {
+            is_float = true;
+            value += advance(); // Consume 'e' or 'E'
+            
+            // Optional sign
+            if (peek() == '+' || peek() == '-') {
+                value += advance();
+            }
+            
+            // Exponent digits
+            while (!isAtEnd() && isDigit(peek())) {
+                value += advance();
+            }
+        }
+    }
+    
     TokenType type = is_float ? TokenType::FLOAT : TokenType::INTEGER;
     return makeToken(type, value);
 }
