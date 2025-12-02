@@ -1,0 +1,11 @@
+# Test for multiple continue statements
+print("Testing multiple continues:")
+for i in range(20):
+    if i == 1:
+        continue
+    if i == 3:
+        continue
+    if i >= 5:
+        break
+    print(i)
+print("Done")

@@ -296,7 +296,8 @@ void IRGenerator::visit(ForStatement& node) {
     std::string check_label = newLabel("forcheck");
     
     // Push loop context for break/continue handling
-    pushLoopContext(loop_label, end_label);
+    // Continue should jump to check (advance iterator), not loop body
+    pushLoopContext(check_label, end_label);
     
     // Evaluate iterable expression (e.g., range(10))
     node.iterable->accept(*this);

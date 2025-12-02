@@ -5,11 +5,6 @@
  * @version 1.5.0
  */
 
-// Define include directory path at compile time
-#ifndef CAESAR_INCLUDE_PATH
-#define CAESAR_INCLUDE_PATH "../include"
-#endif
-
 #include "caesar/caesar.h"
 #include "caesar/lexer.h"
 #include "caesar/parser.h"
@@ -19,6 +14,16 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <sys/stat.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#define PATH_SEP "\\\\"
+#else
+#include <unistd.h>
+#include <linux/limits.h>
+#define PATH_SEP "/"
+#endif
 
 void printUsage(const char* program_name) {
     std::cout << "Caesar Compiler v" << caesar::Version::STRING << "\n";
@@ -41,6 +46,121 @@ void printUsage(const char* program_name) {
     std::cout << "  " << program_name << " -i program.csr                   # Run with interpreter\n";
     std::cout << "  " << program_name << " --asm program.csr -o output.asm  # Generate assembly\n\n";
     std::cout << "For interactive development, use: caesar_repl\n";
+}
+
+/**
+ * @brief Check if a file exists
+ */
+inline bool fileExists(const std::string& path) {
+    struct stat buffer;
+    return (stat(path.c_str(), &buffer) == 0);
+}
+
+/**
+ * @brief Get executable directory
+ */
+std::string getExecutableDir() {
+#ifdef _WIN32
+    char path[MAX_PATH];
+    GetModuleFileNameA(NULL, path, MAX_PATH);
+    std::string fullPath(path);
+    size_t pos = fullPath.find_last_of("\\\\/");
+    return fullPath.substr(0, pos);
+#else
+    char result[PATH_MAX];
+    ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+    std::string fullPath(result, (count > 0) ? count : 0);
+    size_t pos = fullPath.find_last_of("/");
+    return fullPath.substr(0, pos);
+#endif
+}
+
+/**
+ * @brief Embedded Caesar runtime header
+ * This is embedded directly into generated C code when no external
+ * header file is found. Allows the compiler to work standalone.
+ */
+const char* EMBEDDED_CAESAR_RUNTIME = R"(
+/* Caesar Runtime Library - Embedded Version */
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
+/* Basic I/O */
+static inline void caesar_print_int(int64_t val) { printf("%lld\n", (long long)val); }
+static inline void caesar_print_str(const char* val) { printf("%s\n", val); }
+static inline void caesar_print_float(double val) { printf("%g\n", val); }
+static inline void caesar_print_bool(bool val) { printf("%s\n", val ? "true" : "false"); }
+
+/* Range Iterator */
+typedef struct { int64_t current; int64_t stop; int64_t step; bool done; } CaesarRange;
+
+static inline CaesarRange caesar_range_init(int64_t stop) {
+    CaesarRange r; r.current = 0; r.stop = stop; r.step = 1;
+    r.done = (0 >= stop); return r;
+}
+
+static inline CaesarRange caesar_range_init2(int64_t start, int64_t stop) {
+    CaesarRange r; r.current = start; r.stop = stop;
+    r.step = (start < stop) ? 1 : -1;
+    r.done = (start >= stop && r.step > 0) || (start <= stop && r.step < 0);
+    return r;
+}
+
+static inline CaesarRange caesar_range_init3(int64_t start, int64_t stop, int64_t step) {
+    CaesarRange r; r.current = start; r.stop = stop; r.step = step;
+    if (step == 0) { r.done = true; return r; }
+    r.done = (step > 0 && start >= stop) || (step < 0 && start <= stop);
+    return r;
+}
+
+static inline bool caesar_range_has_next(CaesarRange* r) {
+    if (r->done) return false;
+    if (r->step > 0) return r->current < r->stop;
+    else return r->current > r->stop;
+}
+
+static inline int64_t caesar_range_next(CaesarRange* r) {
+    int64_t val = r->current;
+    r->current += r->step;
+    return val;
+}
+
+/* String Functions */
+static inline int64_t caesar_len_str(const char* str) { return (int64_t)strlen(str); }
+
+/* Math Functions */
+static inline int64_t caesar_abs_int(int64_t val) { return val < 0 ? -val : val; }
+static inline double caesar_abs_float(double val) { return val < 0.0 ? -val : val; }
+
+)";
+
+/**
+ * @brief Find Caesar include directory
+ * Searches in order:
+ * 1. <exe_dir>/../include (development build)
+ * 2. <exe_dir>/include (npm/installed)
+ * 3. Returns empty string if not found (will use embedded runtime)
+ */
+std::string findCaesarIncludeDir() {
+    std::string exeDir = getExecutableDir();
+    
+    // Try development layout: bin/../include
+    std::string devPath = exeDir + PATH_SEP + ".." + PATH_SEP + "include" + PATH_SEP + "caesar" + PATH_SEP + "caesar_runtime.h";
+    if (fileExists(devPath)) {
+        return exeDir + PATH_SEP + ".." + PATH_SEP + "include";
+    }
+    
+    // Try npm/installed layout: bin/include  
+    std::string npmPath = exeDir + PATH_SEP + "include" + PATH_SEP + "caesar" + PATH_SEP + "caesar_runtime.h";
+    if (fileExists(npmPath)) {
+        return exeDir + PATH_SEP + "include";
+    }
+    
+    // Not found - will use embedded runtime (works standalone!)
+    return "";
 }
 
 void printVersion() {
@@ -236,15 +356,37 @@ int main(int argc, char* argv[]) {
             auto codegen = caesar::CodeGeneratorFactory::createCGenerator();
             std::string c_code = codegen->generate(ir_blocks);
             
+            // Find include directory (searches: dev build, npm, standalone)
+            std::string include_dir = findCaesarIncludeDir();
+            
+            // If no include directory found, embed runtime directly in C code
+            if (include_dir.empty()) {
+                // Replace #include directive with embedded runtime
+                size_t include_pos = c_code.find("#include \"caesar/caesar_runtime.h\"");
+                if (include_pos != std::string::npos) {
+                    // Remove the include line and replace with embedded runtime
+                    size_t include_end = c_code.find('\n', include_pos) + 1;
+                    c_code.erase(include_pos, include_end - include_pos);
+                    c_code.insert(include_pos, EMBEDDED_CAESAR_RUNTIME);
+                }
+            }
+            
             // Write C code to temporary file
             std::string temp_c_file = "caesar_temp.c";
             std::ofstream c_out(temp_c_file);
             c_out << c_code;
             c_out.close();
             
-            // Compile with GCC (include runtime header path)
-            std::string include_path = "-I\"" + std::string(CAESAR_INCLUDE_PATH) + "\"";
-            std::string compile_cmd = "gcc " + temp_c_file + " " + include_path + " -o " + output_file + " -O2";
+            // Compile with GCC
+            std::string compile_cmd;
+            if (!include_dir.empty()) {
+                // Use include directory if found
+                std::string include_path = "-I\"" + include_dir + "\"";
+                compile_cmd = "gcc " + temp_c_file + " " + include_path + " -o " + output_file + " -O2";
+            } else {
+                // Embedded mode - no include path needed
+                compile_cmd = "gcc " + temp_c_file + " -o " + output_file + " -O2";
+            }
             int result = system(compile_cmd.c_str());
             
             // Clean up temp file

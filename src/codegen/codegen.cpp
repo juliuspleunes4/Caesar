@@ -268,10 +268,32 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             
         case IROpcode::EQ:
             emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " == " + instr.src2.value + ";");
+            register_types[instr.dest.value] = "bool";
+            break;
+            
+        case IROpcode::NE:
+            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " != " + instr.src2.value + ";");
+            register_types[instr.dest.value] = "bool";
             break;
             
         case IROpcode::LT:
             emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " < " + instr.src2.value + ";");
+            register_types[instr.dest.value] = "bool";
+            break;
+            
+        case IROpcode::LE:
+            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " <= " + instr.src2.value + ";");
+            register_types[instr.dest.value] = "bool";
+            break;
+            
+        case IROpcode::GT:
+            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " > " + instr.src2.value + ";");
+            register_types[instr.dest.value] = "bool";
+            break;
+            
+        case IROpcode::GE:
+            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " >= " + instr.src2.value + ";");
+            register_types[instr.dest.value] = "bool";
             break;
             
         case IROpcode::JUMP:

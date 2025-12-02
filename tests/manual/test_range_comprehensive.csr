@@ -1,0 +1,260 @@
+# Comprehensive Range and For-Loop Test Suite
+# Tests every aspect of range() and for-loop functionality
+
+print("============================================================")
+print("CAESAR RANGE() COMPREHENSIVE TEST SUITE")
+print("============================================================")
+
+# ============================================================================
+# TEST 1: Basic range(stop)
+# ============================================================================
+print("")
+print("[TEST 1] Basic range(stop)")
+print("Expected: 0 1 2 3 4")
+for i in range(5):
+    print(i)
+
+# ============================================================================
+# TEST 2: range(start, stop)
+# ============================================================================
+print("")
+print("[TEST 2] range(start, stop)")
+print("Expected: 2 3 4 5 6 7")
+for i in range(2, 8):
+    print(i)
+
+# ============================================================================
+# TEST 3: range(start, stop, step) - Positive step
+# ============================================================================
+print("")
+print("[TEST 3] range(start, stop, step) - Positive step")
+print("Expected: 0 2 4 6 8")
+for i in range(0, 10, 2):
+    print(i)
+
+# ============================================================================
+# TEST 4: range() with negative step
+# ============================================================================
+print("")
+print("[TEST 4] range() with negative step")
+print("Expected: 10 8 6 4 2")
+for i in range(10, 0, -2):
+    print(i)
+
+# ============================================================================
+# TEST 5: range() with step of 3
+# ============================================================================
+print("")
+print("[TEST 5] range() with step of 3")
+print("Expected: 0 3 6 9")
+for i in range(0, 12, 3):
+    print(i)
+
+# ============================================================================
+# TEST 6: range() descending by 1
+# ============================================================================
+print("")
+print("[TEST 6] range() descending by 1")
+print("Expected: 5 4 3 2 1")
+for i in range(5, 0, -1):
+    print(i)
+
+# ============================================================================
+# TEST 7: range() with large step
+# ============================================================================
+print("")
+print("[TEST 7] range() with large step")
+print("Expected: 0 10 20 30 40")
+for i in range(0, 50, 10):
+    print(i)
+
+# ============================================================================
+# TEST 8: Empty range (start >= stop with positive step)
+# ============================================================================
+print("")
+print("[TEST 8] Empty range (start >= stop)")
+print("Expected: (no output)")
+for i in range(5, 5):
+    print(i)
+print("(test complete)")
+
+# ============================================================================
+# TEST 9: Empty range (start <= stop with negative step)
+# ============================================================================
+print("")
+print("[TEST 9] Empty range (start <= stop, negative step)")
+print("Expected: (no output)")
+for i in range(0, 10, -1):
+    print(i)
+print("(test complete)")
+
+# ============================================================================
+# TEST 10: Single iteration
+# ============================================================================
+print("")
+print("[TEST 10] Single iteration")
+print("Expected: 0")
+for i in range(1):
+    print(i)
+
+# ============================================================================
+# TEST 11: Break in for-loop
+# ============================================================================
+print("")
+print("[TEST 11] Break in for-loop")
+print("Expected: 0 1 2 3 4")
+for i in range(10):
+    if i == 5:
+        break
+    print(i)
+
+# ============================================================================
+# TEST 12: Continue in for-loop
+# ============================================================================
+print("")
+print("[TEST 12] Continue in for-loop")
+print("Expected: 0 1 2 4 5 6 7 8 9")
+for i in range(10):
+    if i == 3:
+        continue
+    print(i)
+
+# ============================================================================
+# TEST 13: Multiple breaks
+# ============================================================================
+print("")
+print("[TEST 13] Multiple break conditions")
+print("Expected: 0 2 4")
+for i in range(20):
+    if i == 1:
+        continue
+    if i == 3:
+        continue
+    if i >= 5:
+        break
+    print(i)
+
+# ============================================================================
+# TEST 14: Nested for-loops (simple)
+# ============================================================================
+print("")
+print("[TEST 14] Nested for-loops")
+print("Expected: 0 1 2 0 1 2 (on separate lines)")
+for i in range(2):
+    for j in range(3):
+        print(j)
+
+# ============================================================================
+# TEST 15: Accumulation in loop
+# ============================================================================
+print("")
+print("[TEST 15] Accumulation in loop")
+sum = 0
+for i in range(1, 11):
+    sum = sum + i
+print("Expected: 55 (sum of 1-10)")
+print(sum)
+
+# ============================================================================
+# TEST 16: Countdown
+# ============================================================================
+print("")
+print("[TEST 16] Countdown")
+print("Expected: 10 9 8 7 6 5 4 3 2 1")
+for i in range(10, 0, -1):
+    print(i)
+
+# ============================================================================
+# TEST 17: Large range
+# ============================================================================
+print("")
+print("[TEST 17] Large range")
+count = 0
+for i in range(1000):
+    count = count + 1
+print("Expected: 1000")
+print(count)
+
+# ============================================================================
+# TEST 18: Negative numbers
+# ============================================================================
+print("")
+print("[TEST 18] Negative start and stop")
+print("Expected: -5 -4 -3 -2 -1")
+for i in range(-5, 0):
+    print(i)
+
+# ============================================================================
+# TEST 19: Across zero
+# ============================================================================
+print("")
+print("[TEST 19] Range across zero")
+print("Expected: -3 -2 -1 0 1 2")
+for i in range(-3, 3):
+    print(i)
+
+# ============================================================================
+# TEST 20: Step larger than range
+# ============================================================================
+print("")
+print("[TEST 20] Step larger than range")
+print("Expected: 0")
+for i in range(0, 5, 10):
+    print(i)
+
+# ============================================================================
+# TEST 21: Negative range descending
+# ============================================================================
+print("")
+print("[TEST 21] Negative range descending")
+print("Expected: -1 -2 -3 -4 -5")
+for i in range(-1, -6, -1):
+    print(i)
+
+# ============================================================================
+# TEST 22: Very large step
+# ============================================================================
+print("")
+print("[TEST 22] Very large step")
+print("Expected: 0 100")
+for i in range(0, 200, 100):
+    print(i)
+
+# ============================================================================
+# TEST 23: Break on first iteration
+# ============================================================================
+print("")
+print("[TEST 23] Break on first iteration")
+print("Expected: (no output)")
+for i in range(10):
+    break
+    print(i)
+print("(test complete)")
+
+# ============================================================================
+# TEST 24: Continue on all iterations
+# ============================================================================
+print("")
+print("[TEST 24] Continue on all iterations")
+print("Expected: (no output)")
+for i in range(5):
+    continue
+    print(i)
+print("(test complete)")
+
+# ============================================================================
+# TEST 25: Nested break (outer only)
+# ============================================================================
+print("")
+print("[TEST 25] Nested break (outer only)")
+print("Expected: 0 1 2 0 1 2")
+for i in range(2):
+    if i >= 2:
+        break
+    for j in range(3):
+        print(j)
+
+print("")
+print("============================================================")
+print("ALL 25 TESTS COMPLETED")
+print("============================================================")

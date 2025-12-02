@@ -10,13 +10,23 @@ This release adds significant new language features including iteration support,
 
 ### ✨ New Features
 
+#### **Range-Based For-Loops** 🔄
+- **Complete range() Implementation**: Full iterator protocol with ITER_INIT/NEXT/DONE opcodes
+  - `range(stop)`: Iterates from 0 to stop-1
+  - `range(start, stop)`: Iterates from start to stop-1
+  - `range(start, stop, step)`: Iterates with custom step (supports negative steps)
+- **Negative Step Support**: Countdown loops work correctly (e.g., `range(10, 0, -2)`)
+- **Break and Continue**: Full support in for-loops with proper iterator advancement
+- **Nested Loops**: Multiple levels of for-loop nesting with correct break/continue behavior
+
 #### **IR Generation & Compilation Pipeline** 🎉
 - **Three-Address Code IR**: Complete intermediate representation with 30+ opcodes
   - Arithmetic operations (ADD, SUB, MUL, DIV, MOD, NEG)
-  - Comparison operations (EQ, NE, LT, LE, GT, GE)
+  - Comparison operations (EQ, NE, LT, LE, GT, GE) - **All operators now implemented in C backend**
   - Logical operations (AND, OR, NOT)
   - Memory operations (LOAD, STORE, LOAD_CONST, ALLOC)
   - Control flow (LABEL, JUMP, JUMP_IF_TRUE, JUMP_IF_FALSE, CALL, RETURN)
+  - Iterator operations (ITER_INIT, ITER_NEXT, ITER_DONE)
   - Variable operations (DECLARE, ASSIGN, GET_VAR, SET_VAR)
 - **Basic Block Structure**: Organized IR with labeled basic blocks for control flow
 - **Multiple Code Generation Backends**:
@@ -24,12 +34,21 @@ This release adds significant new language features including iteration support,
   - **x86-64 Assembly Generator**: Native assembly code with register allocation
   - **C Transpiler**: Generates compilable C code from Caesar source with full type safety
 - **C Code Generator Enhancements**:
-  - **Advanced Type Tracking**: Registers and variables tracked as `int64_t` or `const char*`
+  - **Advanced Type Tracking**: Registers and variables tracked as `int64_t`, `bool`, or `const char*`
   - **Two-Pass Type Analysis**: First pass detects variable types from initial assignments
   - **Type Propagation**: Types flow from constants → registers → variables
   - **Type-Aware Built-in Functions**: `caesar_print_str()` for strings, `caesar_print_int()` for integers
   - **Parameter Tracking**: PARAM instructions collected and passed to CALL instructions
+  - **Complete Comparison Operators**: All six comparison operators (==, !=, <, <=, >, >=) generate correct C code
   - **Clean C Output**: Generated C code compiles without warnings
+- **Production-Ready Standalone Compiler**:
+  - **Smart Include Path Detection**: Three-tier search strategy for caesar_runtime.h
+    1. Development layout: `<exe_dir>/../include/caesar/` (for git clone users)
+    2. Installed layout: `<exe_dir>/include/caesar/` (for npm/system installs)
+    3. Embedded fallback: Runtime inlined directly in generated C code
+  - **Cross-Platform Path Resolution**: Uses GetModuleFileName (Windows) and /proc/self/exe (Linux)
+  - **Embedded Runtime**: Complete caesar_runtime.h embedded as string literal for standalone distribution
+  - **No External Dependencies**: Compiler works immediately after download without configuration
 - **Compilation as Default**: `caesar code.csr` now compiles to executable (interpretation requires `-i` flag)
 - **New CLI Options**:
   - `--ir`: Display intermediate representation
@@ -59,6 +78,22 @@ This release adds significant new language features including iteration support,
 
 ### 🐛 Bug Fixes
 
+#### **Critical Interpreter Fixes**
+- **Negative Range Step**: Fixed infinite loop bug in `range()` with negative steps
+  - Before: `range(10, 0, -2)` caused infinite loop
+  - After: Correctly outputs 10, 8, 6, 4, 2
+  - Fixed by checking step direction: positive uses `i < end`, negative uses `i > end`
+
+#### **Critical Compiler Fixes**
+- **Missing Comparison Operators**: Added all comparison operators to C code generator
+  - Implemented: `!=` (NE), `<=` (LE), `>` (GT), `>=` (GE)
+  - Previously only `==` (EQ) and `<` (LT) were implemented
+  - Fixed register type tracking for boolean results (`bool` instead of `int64_t`)
+- **Continue Statement in For-Loops**: Fixed infinite loop when using `continue` in range-based loops
+  - Before: `continue` jumped to loop body, creating infinite loop without advancing iterator
+  - After: `continue` jumps to check label, properly advancing iterator to next value
+  - Changed loop context from `pushLoopContext(loop_label, end_label)` to `pushLoopContext(check_label, end_label)`
+
 #### **Parser Bug Fix**
 - **Comments in Function Bodies**: Fixed a bug where comments at the start of function bodies would cause parsing errors
   - Fixed lexer to process indentation for comment lines
@@ -84,6 +119,12 @@ This release adds significant new language features including iteration support,
 
 - **New Test File**: Added `tests/enhanced-data-structures/test_iteration.csr` for iteration features
 - **IR/Codegen Tests**: Added `tests/test_ir.cpp` with comprehensive IR and code generation tests
+- **Comprehensive Range Test Suite**: Added `tests/manual/test_range_comprehensive.csr` with 25 test scenarios
+  - Tests all range() variants: 1, 2, and 3 arguments
+  - Tests positive and negative steps
+  - Tests empty ranges, break, continue, nested loops
+  - Tests edge cases: negative numbers, crossing zero, large steps
+  - All 25 tests pass in both interpreter and compiler
 - **Example Files Fixed**: Restored inline comments in `functions.csr` and `control_flow.csr`
 - **Version Updates**: Updated version display in `complete_demo.csr`
 - **All Tests Passing**: 10/10 test suites pass (100% success rate)
