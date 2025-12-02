@@ -64,6 +64,13 @@ This release adds significant new language features including iteration support,
   - Fixed lexer to process indentation for comment lines
   - Fixed parser to handle newlines after INDENT tokens
 
+#### **IR Generator Bug Fix**
+- **Loop Context Tracking for Break/Continue**: Implemented proper loop context tracking for `break` and `continue` statements in IR generation
+  - Added `LoopContext` struct to track continue and break labels for nested loops
+  - `break` now correctly generates JUMP instruction to the loop's end label
+  - `continue` now correctly generates JUMP instruction to the loop's start label
+  - Supports proper break/continue in nested loops
+
 ### 📝 Documentation Fixes
 
 - **SYNTAX.md**: Corrected documentation - single quotes ARE supported for string literals

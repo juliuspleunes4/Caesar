@@ -481,17 +481,58 @@ public:
 - **Exception Handling**: Custom runtime exceptions for errors, returns, breaks, continues
 - **Memory Management**: Efficient value storage and scope management
 
-### 4. **Distribution System** (`create_release.ps1`)
+### 4. **IR Generation** (`src/ir/`)
+```cpp
+// Three-address code intermediate representation
+class IRGenerator : public ASTVisitor {
+private:
+    std::vector<BasicBlock> blocks;
+    int next_register;
+    int next_label;
+    std::vector<LoopContext> loop_stack;  // For break/continue tracking
+    
+public:
+    std::vector<BasicBlock> generate(Program* program);
+    std::string toString() const;
+};
+```
+
+**Key Features:**
+- **Three-Address Code**: Complete IR with 30+ opcodes for all operations
+- **Basic Block Structure**: Organized IR with labeled basic blocks for control flow
+- **Loop Context Tracking**: Proper break/continue handling in nested loops
+- **Expression Lowering**: Converts complex expressions to simple register operations
+
+### 5. **Code Generation** (`src/codegen/`)
+```cpp
+// Multi-target code generator
+class CodeGenerator {
+public:
+    virtual std::string generate(const std::vector<BasicBlock>& blocks) = 0;
+};
+
+class BytecodeGenerator : public CodeGenerator;
+class X86_64Generator : public CodeGenerator;
+class CCodeGenerator : public CodeGenerator;
+```
+
+**Key Features:**
+- **Bytecode Generator**: Stack-based virtual machine bytecode
+- **x86-64 Assembly**: Native assembly with register allocation
+- **C Transpiler**: Generates compilable C code with type tracking
+- **Factory Pattern**: Easy to add new target architectures
+
+### 6. **Distribution System** (`scripts/create_release.ps1`)
 - **Automated Release Packaging**: One-click distribution creation
 - **Standalone Executables**: Pre-compiled binaries requiring no local compilation
 - **Complete Documentation**: Bundled user and developer guides
 - **Cross-Platform Support**: Windows executable compatibility
 
-### 5. **Future Enhancements** (Planned)
+### 7. **Future Enhancements** (Planned)
 - **Semantic Analysis**: Type checking and symbol table management
-- **IR Generation**: LLVM intermediate representation
-- **Optimization**: Performance optimizations and dead code elimination
-- **Code Generation**: Native machine code compilation
+- **LLVM Integration**: LLVM backend for advanced optimizations
+- **Code Optimization**: Performance optimizations and dead code elimination
+- **Native Compilation**: Direct machine code generation and linking
 - **Runtime System**: Enhanced memory management and expanded standard library
 
 ## 🧪 Comprehensive Testing Framework
