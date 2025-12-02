@@ -526,54 +526,78 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
         block_owner[block.label] = current_function;
     }
     
-    // Pass 1b: Collect parameter types from all call sites
-    std::unordered_map<std::string, std::string> temp_register_types;
+    // Pass 1b: Collect parameter types from all call sites (iterative until stable)
     std::unordered_map<std::string, std::vector<std::string>> function_param_types;  // func_name -> param types
-    std::vector<std::string> pending_call_params;
-    std::vector<std::string> pending_call_param_types;
+    std::unordered_map<std::string, std::string> temp_register_types;  // Reused across iterations
     
-    for (const auto& block : blocks) {
-        for (const auto& instr : block.instructions) {
-            // Track LOAD_CONST to know register types
-            if (instr.opcode == IROpcode::LOAD_CONST && instr.dest.type == IROperandType::REGISTER) {
-                if (!instr.src1.value.empty() && instr.src1.value[0] == '"') {
-                    temp_register_types[instr.dest.value] = "const char*";
-                } else if (instr.src1.value.find('.') != std::string::npos || 
-                           instr.src1.value.find('e') != std::string::npos ||
-                           instr.src1.value.find('E') != std::string::npos) {
-                    temp_register_types[instr.dest.value] = "double";
-                } else {
-                    temp_register_types[instr.dest.value] = "int64_t";
+    // Iterate until types stabilize (max 10 iterations to prevent infinite loops)
+    for (int iteration = 0; iteration < 10; iteration++) {
+        bool types_changed = false;
+        temp_register_types.clear();  // Reset each iteration
+        std::vector<std::string> pending_call_params;
+        std::vector<std::string> pending_call_param_types;
+        
+        // Also track function return types from previous iteration for GET_VAR of function calls
+        std::unordered_map<std::string, std::string> temp_function_return_types;
+        
+        for (const auto& block : blocks) {
+            for (const auto& instr : block.instructions) {
+                // Track LOAD_CONST to know register types
+                if (instr.opcode == IROpcode::LOAD_CONST && instr.dest.type == IROperandType::REGISTER) {
+                    if (!instr.src1.value.empty() && instr.src1.value[0] == '"') {
+                        temp_register_types[instr.dest.value] = "const char*";
+                    } else if (instr.src1.value.find('.') != std::string::npos || 
+                               instr.src1.value.find('e') != std::string::npos ||
+                               instr.src1.value.find('E') != std::string::npos) {
+                        temp_register_types[instr.dest.value] = "double";
+                    } else {
+                        temp_register_types[instr.dest.value] = "int64_t";
+                    }
                 }
-            }
-            // Track PARAM instructions to collect parameter types
-            if (instr.opcode == IROpcode::PARAM) {
-                std::string param_reg = instr.dest.value;
-                auto it = temp_register_types.find(param_reg);
-                std::string param_type = (it != temp_register_types.end()) ? it->second : "int64_t";
-                pending_call_params.push_back(param_reg);
-                pending_call_param_types.push_back(param_type);
-            }
-            // Track CALL to match parameters to functions
-            if (instr.opcode == IROpcode::CALL && !pending_call_params.empty()) {
-                std::string func_name = instr.src1.value;
-                for (const auto& fn : function_names) {
-                    if (fn == "func_" + func_name) {
-                        if (function_param_types.find(fn) == function_param_types.end()) {
+                
+                // Track GET_VAR to propagate parameter types from current iteration
+                if (instr.opcode == IROpcode::GET_VAR && instr.dest.type == IROperandType::REGISTER) {
+                    std::string var_name = instr.src1.value;
+                    // Check if this variable is a parameter with a known type from previous iteration
+                    for (const auto& [func_label, param_names] : function_params) {
+                        for (size_t i = 0; i < param_names.size(); i++) {
+                            if (param_names[i] == var_name && function_param_types.find(func_label) != function_param_types.end()) {
+                                const auto& param_types = function_param_types[func_label];
+                                if (i < param_types.size()) {
+                                    temp_register_types[instr.dest.value] = param_types[i];
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Track PARAM instructions to collect parameter types
+                if (instr.opcode == IROpcode::PARAM) {
+                    std::string param_reg = instr.dest.value;
+                    auto it = temp_register_types.find(param_reg);
+                    std::string param_type = (it != temp_register_types.end()) ? it->second : "int64_t";
+                    pending_call_params.push_back(param_reg);
+                    pending_call_param_types.push_back(param_type);
+                }
+                
+                // Track CALL to match parameters to functions
+                if (instr.opcode == IROpcode::CALL && !pending_call_params.empty()) {
+                    std::string func_name = instr.src1.value;
+                    for (const auto& fn : function_names) {
+                        if (fn == "func_" + func_name) {
                             // Determine how many parameters this function expects
                             auto params_it = function_params.find(fn);
                             size_t expected_param_count = (params_it != function_params.end()) 
                                 ? params_it->second.size() 
                                 : pending_call_param_types.size();
                             
-                            // Only take the LAST N parameters from pending list (most recent params for this call)
+                            // Only take the LAST N parameters from pending list
                             std::vector<std::string> this_call_types;
                             if (pending_call_param_types.size() >= expected_param_count) {
                                 this_call_types.assign(
                                     pending_call_param_types.end() - expected_param_count,
                                     pending_call_param_types.end()
                                 );
-                                // Remove consumed parameters
                                 pending_call_params.erase(
                                     pending_call_params.end() - expected_param_count,
                                     pending_call_params.end()
@@ -583,40 +607,49 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
                                     pending_call_param_types.end()
                                 );
                             } else {
-                                // Fallback: use all pending params
                                 this_call_types = pending_call_param_types;
                                 pending_call_params.clear();
                                 pending_call_param_types.clear();
                             }
                             
-                            function_param_types[fn] = this_call_types;
-                        } else {
-                            // Function already has types, still need to consume params from pending list
-                            auto params_it = function_params.find(fn);
-                            size_t expected_param_count = (params_it != function_params.end()) 
-                                ? params_it->second.size() 
-                                : 0;
-                            
-                            if (expected_param_count > 0 && pending_call_param_types.size() >= expected_param_count) {
-                                // Remove consumed parameters
-                                pending_call_params.erase(
-                                    pending_call_params.end() - expected_param_count,
-                                    pending_call_params.end()
-                                );
-                                pending_call_param_types.erase(
-                                    pending_call_param_types.end() - expected_param_count,
-                                    pending_call_param_types.end()
-                                );
+                            // Update parameter types: prioritize specific types over generic int64_t
+                            if (function_param_types.find(fn) == function_param_types.end()) {
+                                function_param_types[fn] = this_call_types;
+                                types_changed = true;
                             } else {
-                                // Fallback: clear all
-                                pending_call_params.clear();
-                                pending_call_param_types.clear();
+                                // Merge types: prefer string/float over int64_t
+                                auto& existing_types = function_param_types[fn];
+                                for (size_t i = 0; i < this_call_types.size() && i < existing_types.size(); i++) {
+                                    if (existing_types[i] == "int64_t" && this_call_types[i] != "int64_t") {
+                                        existing_types[i] = this_call_types[i];
+                                        types_changed = true;
+                                    }
+                                }
                             }
+                            break;
                         }
-                        break;
+                    }
+                    
+                    // Handle built-in functions
+                    if (func_name == "print" || func_name == "len") {
+                        if (!pending_call_param_types.empty()) {
+                            pending_call_params.pop_back();
+                            pending_call_param_types.pop_back();
+                        }
+                    } else if (func_name == "range") {
+                        size_t range_params = std::min<size_t>(3, pending_call_param_types.size());
+                        if (range_params > 0) {
+                            pending_call_params.erase(pending_call_params.end() - range_params, pending_call_params.end());
+                            pending_call_param_types.erase(pending_call_param_types.end() - range_params, pending_call_param_types.end());
+                        }
                     }
                 }
             }
+        }
+        
+        // If no types changed this iteration, we've reached stability
+        if (!types_changed) {
+            break;
         }
     }
     

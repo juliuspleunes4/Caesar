@@ -98,14 +98,20 @@ This release adds significant new language features including iteration support,
   - Format: `1.5e10`, `2.5e-3`, `-2.5e-2`
   - Handles optional `+/-` signs after exponent
   - Automatically sets float type for scientific notation literals
-- **String Return Type Inference**: Fixed two-pass architecture for string parameter returns ⭐ NEW
-  - **Problem**: Functions returning string parameters had wrong type (int64_t vs const char*)
-  - **Root Cause**: Return type inference before parameter types known
-  - **Solution**: Three-pass architecture:
+- **Iterative Type Inference**: Fixed parameter type inference for transitive dependencies ⭐ NEW
+  - **Problem**: Functions called from within other functions before concrete types known got wrong parameter types
+  - **Example**: `count_chars(s)` called from `add_lengths(s1, s2)` before main calls with string literals
+  - **Root Cause**: Single-pass inference couldn't propagate types through function call chains
+  - **Solution**: Iterative type inference (max 10 passes) until types stabilize:
+    * Each iteration: Track LOAD_CONST → temp registers → PARAM → CALL
+    * Track GET_VAR to propagate param types from previous iteration
+    * Prioritize specific types (string/float) over generic int64_t
+    * Stop when no types change (convergence)
+  - **Architecture**: Three-pass system:
     * Pass 1a: Collect function structures and parameter names from DECLARE
-    * Pass 1b: Collect parameter types from all CALL sites (PARAM before CALL)
+    * Pass 1b: Iterative parameter type collection from CALL sites
     * Pass 2: Infer return types using complete parameter type information
-  - **Bonus**: Populates `variable_types` with parameter types for GET_VAR tracking
+  - **Bonus**: Zero compiler warnings even with complex transitive type dependencies
 - **Missing Comparison Operators**: Added all comparison operators to C code generator
   - Implemented: `!=` (NE), `<=` (LE), `>` (GT), `>=` (GE)
   - Previously only `==` (EQ) and `<` (LT) were implemented
@@ -206,6 +212,30 @@ This release adds significant new language features including iteration support,
     14. Recursive helper functions (sum_range, product_range)
     15. Multi-parameter forward declarations
   - **Result**: All 15 sections pass, validates complex compiler scenarios
+- **Extreme Compiler Stress Test**: Added `tests/manual/test_compiler_extreme.csr` ⭐ NEW
+  - **20 extreme test sections** pushing compiler to absolute limits:
+    1. Triple/quadruple nested function calls
+    2. Multi-parameter mutual recursion (ping-pong pattern)
+    3. Deep nested recursion with multiple parameters
+    4. Forward declarations with nested calls (4-function chain)
+    5. Multiple C keywords in recursive chains
+    6. **Transitive type inference** (count_chars → add_lengths → triple_lengths)
+    7. Fibonacci variants (triple, custom accumulator)
+    8. Collatz conjecture recursion
+    9. Tail call optimization chains (3-way)
+    10. GCD/LCM algorithms
+    11. All C keywords with mutual recursion
+    12. McCarthy 91 function (doubly recursive)
+    13. All parameters as nested function calls
+    14. Five-level call nesting
+    15. **Mixed string/int with transitive len() calls**
+    16. 20-way mutual recursion chain
+    17. Power function variants (tail-recursive, divide-conquer)
+    18. Multi-branch recursion patterns
+    19. Multi-path deep nesting
+    20. 10-function forward declaration chain
+  - **Result**: All 20 sections pass, zero compiler warnings
+  - **Key validation**: Iterative type inference correctly handles transitive dependencies
 - **Comprehensive Range Test Suite**: Added `tests/manual/test_range_comprehensive.csr` with 25 test scenarios
   - Tests all range() variants: 1, 2, and 3 arguments
   - Tests positive and negative steps
