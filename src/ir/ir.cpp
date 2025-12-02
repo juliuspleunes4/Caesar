@@ -261,6 +261,9 @@ void IRGenerator::visit(WhileStatement& node) {
     std::string loop_label = newLabel("loop");
     std::string end_label = newLabel("endloop");
     
+    // Push loop context for break/continue handling
+    pushLoopContext(loop_label, end_label);
+    
     // Loop start
     newBlock(loop_label);
     
@@ -279,14 +282,19 @@ void IRGenerator::visit(WhileStatement& node) {
     // Jump back to loop start
     emit(IRInstruction(IROpcode::JUMP, IROperand::Lab(loop_label)));
     
+    // Pop loop context
+    popLoopContext();
+    
     // End label
     newBlock(end_label);
 }
 
 void IRGenerator::visit(ForStatement& node) {
-    // Simplified for loop - evaluate as while loop
     std::string loop_label = newLabel("forloop");
     std::string end_label = newLabel("endfor");
+    
+    // Push loop context for break/continue handling
+    pushLoopContext(loop_label, end_label);
     
     // Initialize iterator (simplified)
     node.iterable->accept(*this);
@@ -299,6 +307,9 @@ void IRGenerator::visit(ForStatement& node) {
     
     // Jump back to loop start (simplified - no proper iterator check)
     emit(IRInstruction(IROpcode::JUMP, IROperand::Lab(loop_label)));
+    
+    // Pop loop context
+    popLoopContext();
     
     // End label
     newBlock(end_label);
@@ -337,14 +348,24 @@ void IRGenerator::visit(ReturnStatement& node) {
 
 void IRGenerator::visit(BreakStatement& node) {
     (void)node;
-    // Break statements need loop context tracking (TODO)
-    emit(IRInstruction(IROpcode::NOP));
+    std::string break_label = getBreakLabel();
+    if (!break_label.empty()) {
+        emit(IRInstruction(IROpcode::JUMP, IROperand::Lab(break_label)));
+    } else {
+        // Break outside of loop - emit NOP (should be a semantic error in a full implementation)
+        emit(IRInstruction(IROpcode::NOP));
+    }
 }
 
 void IRGenerator::visit(ContinueStatement& node) {
     (void)node;
-    // Continue statements need loop context tracking (TODO)
-    emit(IRInstruction(IROpcode::NOP));
+    std::string continue_label = getContinueLabel();
+    if (!continue_label.empty()) {
+        emit(IRInstruction(IROpcode::JUMP, IROperand::Lab(continue_label)));
+    } else {
+        // Continue outside of loop - emit NOP (should be a semantic error in a full implementation)
+        emit(IRInstruction(IROpcode::NOP));
+    }
 }
 
 void IRGenerator::visit(PassStatement& node) {

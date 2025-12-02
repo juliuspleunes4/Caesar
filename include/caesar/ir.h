@@ -191,6 +191,13 @@ private:
     int next_label;
     std::string last_register;  // Last generated register for expressions
     
+    // Loop context tracking for break/continue statements
+    struct LoopContext {
+        std::string continue_label;  // Label to jump to for continue
+        std::string break_label;     // Label to jump to for break
+    };
+    std::vector<LoopContext> loop_stack;
+    
     // Generate unique register name
     std::string newRegister() {
         return "r" + std::to_string(next_register++);
@@ -213,6 +220,28 @@ private:
         blocks.emplace_back(label);
         current_block = &blocks.back();
         return current_block;
+    }
+    
+    // Push loop context for break/continue handling
+    void pushLoopContext(const std::string& continue_label, const std::string& break_label) {
+        loop_stack.push_back({continue_label, break_label});
+    }
+    
+    // Pop loop context
+    void popLoopContext() {
+        if (!loop_stack.empty()) {
+            loop_stack.pop_back();
+        }
+    }
+    
+    // Get current loop's continue label
+    std::string getContinueLabel() const {
+        return loop_stack.empty() ? "" : loop_stack.back().continue_label;
+    }
+    
+    // Get current loop's break label
+    std::string getBreakLabel() const {
+        return loop_stack.empty() ? "" : loop_stack.back().break_label;
     }
 
 public:
