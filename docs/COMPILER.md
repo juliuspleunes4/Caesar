@@ -80,7 +80,7 @@ Bytecode    x86-64 ASM    C Code      (Future: LLVM IR)
 | **Constants** | ✅ Complete | LOAD_CONST (int, float, string, bool) |
 | **Control Flow - If/Else** | ✅ Complete | LABEL, JUMP, JUMP_IF_FALSE |
 | **Control Flow - While** | ✅ Complete | LABEL, JUMP, JUMP_IF_FALSE |
-| **Control Flow - For** | ✅ Partial | LABEL, JUMP (simplified) |
+| **Control Flow - For** | ✅ Complete | ITER_INIT, ITER_NEXT, ITER_DONE, LABEL, JUMP |
 | **Loop Control** | ✅ Complete | break → JUMP @endloop, continue → JUMP @loop |
 | **Loop Context Tracking** | ✅ Complete | LoopContext stack for nested loops |
 | **Function Calls** | ✅ Complete | PARAM, CALL, RETURN |
@@ -93,7 +93,7 @@ Bytecode    x86-64 ASM    C Code      (Future: LLVM IR)
 |---------|--------|---------------|
 | **List Operations** | ❌ Missing | Need INDEX, APPEND, POP, INSERT opcodes |
 | **Dict Operations** | ❌ Missing | Need DICT_GET, DICT_SET, DICT_HAS opcodes |
-| **Iterator Protocol** | ❌ Missing | Need ITER_CREATE, ITER_NEXT, ITER_DONE |
+| **Iterator Protocol** | ✅ Complete | ITER_INIT, ITER_NEXT, ITER_DONE (range-based) |
 | **Member Access** | ❌ Missing | Need LOAD_MEMBER, STORE_MEMBER opcodes |
 | **Class/Object Ops** | ❌ Missing | Need NEW_OBJECT, LOAD_METHOD opcodes |
 | **Exception Handling** | ❌ Missing | Need TRY, CATCH, THROW opcodes |
@@ -347,7 +347,7 @@ void caesar_decref(Value* val);
 
 | Feature | IR | C Codegen | x86-64 | Bytecode | Interpreter |
 |---------|----|-----------| -------|----------|-------------|
-| For loops | 🟡 | 🔴 | 🔴 | 🟡 | ✅ |
+| For loops (range) | ✅ | ✅ | 🔴 | 🟡 | ✅ |
 | If-elif-else | ✅ | 🔴 | 🔴 | 🟡 | ✅ |
 | Function definitions | ✅ | 🔴 | 🔴 | 🟡 | ✅ |
 | Function calls (built-in) | ✅ | 🔴 | 🔴 | 🟡 | ✅ |
@@ -365,8 +365,8 @@ void caesar_decref(Value* val);
 | Dict indexing `dict["key"]` | 🔴 | 🔴 | 🔴 | 🔴 | ✅ |
 | List slicing `list[1:3]` | 🔴 | 🔴 | 🔴 | 🔴 | ✅ |
 | Member access `.length` | 🔴 | 🔴 | 🔴 | 🔴 | ✅ |
-| Built-in: range() | 🔴 | 🔴 | 🔴 | 🔴 | ✅ |
-| Built-in: len() | 🔴 | 🔴 | 🔴 | 🔴 | ✅ |
+| Built-in: range() | ✅ | ✅ | 🔴 | 🔴 | ✅ |
+| Built-in: len() (strings) | ✅ | ✅ | 🔴 | 🔴 | ✅ |
 | Built-in: str() | 🔴 | 🔴 | 🔴 | 🔴 | ✅ |
 | Built-in: int() | 🔴 | 🔴 | 🔴 | 🔴 | ✅ |
 | Built-in: float() | 🔴 | 🔴 | 🔴 | 🔴 | ✅ |
@@ -662,7 +662,7 @@ done
 **Goal**: All example programs compile
 - 🔴 User-defined functions
 - 🔴 Nested functions
-- ✅ **For-loops with iteration** (range-based loops done)
+- ✅ **For-loops with iteration** (range-based loops done - break/continue working)
 - 🔴 If-elif-else chains
 - 🔴 List/dict comprehensions
 - 🔴 String operations
