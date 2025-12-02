@@ -1,0 +1,103 @@
+IR (Intermediate Representation):
+entry:
+    LOAD_CONST %r0, #3.14
+    PARAM %r0
+    CALL %r1, $print
+    LOAD_CONST %r2, #2.718
+    PARAM %r2
+    CALL %r3, $print
+    LOAD_CONST %r4, #0.5
+    PARAM %r4
+    CALL %r5, $print
+    LOAD_CONST %r6, #10
+    LOAD_CONST %r7, #3
+    DIV %r8, %r6, %r7
+    PARAM %r8
+    CALL %r9, $print
+    LOAD_CONST %r10, #15
+    LOAD_CONST %r11, #2
+    DIV %r12, %r10, %r11
+    PARAM %r12
+    CALL %r13, $print
+    LOAD_CONST %r14, #100
+    LOAD_CONST %r15, #7
+    DIV %r16, %r14, %r15
+    PARAM %r16
+    CALL %r17, $print
+    LOAD_CONST %r18, #5.5
+    SET_VAR $x, %r18
+    LOAD_CONST %r19, #2.5
+    SET_VAR $y, %r19
+    GET_VAR %r20, $x
+    GET_VAR %r21, $y
+    ADD %r22, %r20, %r21
+    PARAM %r22
+    CALL %r23, $print
+    GET_VAR %r24, $x
+    GET_VAR %r25, $y
+    SUB %r26, %r24, %r25
+    PARAM %r26
+    CALL %r27, $print
+    GET_VAR %r28, $x
+    GET_VAR %r29, $y
+    MUL %r30, %r28, %r29
+    PARAM %r30
+    CALL %r31, $print
+    GET_VAR %r32, $x
+    GET_VAR %r33, $y
+    DIV %r34, %r32, %r33
+    PARAM %r34
+    CALL %r35, $print
+    LOAD_CONST %r36, #10
+    LOAD_CONST %r37, #2.5
+    ADD %r38, %r36, %r37
+    PARAM %r38
+    CALL %r39, $print
+    LOAD_CONST %r40, #10
+    LOAD_CONST %r41, #2.5
+    SUB %r42, %r40, %r41
+    PARAM %r42
+    CALL %r43, $print
+    LOAD_CONST %r44, #10
+    LOAD_CONST %r45, #2.5
+    MUL %r46, %r44, %r45
+    PARAM %r46
+    CALL %r47, $print
+    LOAD_CONST %r48, #10
+    LOAD_CONST %r49, #4
+    DIV %r50, %r48, %r49
+    PARAM %r50
+    CALL %r51, $print
+func_average:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r52, $a
+    GET_VAR %r53, $b
+    ADD %r54, %r52, %r53
+    LOAD_CONST %r55, #2
+    DIV %r56, %r54, %r55
+    RETURN %r56
+    RETURN
+after_func0:
+    LOAD_CONST %r57, #10
+    PARAM %r57
+    LOAD_CONST %r58, #20
+    PARAM %r58
+    CALL %r59, $average
+    PARAM %r59
+    CALL %r60, $print
+    LOAD_CONST %r61, #5
+    PARAM %r61
+    LOAD_CONST %r62, #8
+    PARAM %r62
+    CALL %r63, $average
+    PARAM %r63
+    CALL %r64, $print
+    LOAD_CONST %r65, #100
+    PARAM %r65
+    LOAD_CONST %r66, #200
+    PARAM %r66
+    CALL %r67, $average
+    PARAM %r67
+    CALL %r68, $print
+

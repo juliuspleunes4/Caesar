@@ -11,15 +11,15 @@ Dr.
 John
 Smith
 TEST 3: Float Literals and Arithmetic
-78
-62
-113
+78.5397
+62.8318
+113.097
 TEST 4: True Division
-3
-14
-3
+3.33333
+14.2857
+3.14286
 15
-6
+6.5
 10
 TEST 5: Mixed Type Arithmetic
 12
@@ -61,7 +61,7 @@ TEST 10: Multiple Return Paths
 1
 0
 TEST 11: Zero and Single Parameter Functions
-3
+3.14159
 0
 25
 49
@@ -121,10 +121,10 @@ TEST 18: All Arithmetic with Types
 12
 8
 20
-2
+2.5
 12
 10
-7
+7.5
 TEST 19: String Functions with Multiple Params
 First
 Second

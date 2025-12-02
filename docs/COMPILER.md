@@ -103,7 +103,7 @@ Bytecode    x86-64 ASM    C Code      (Future: LLVM IR)
 ---
 
 ### 🔴 Code Generation
-**Status**: PRODUCTION-READY CORE (50%)
+**Status**: PRODUCTION-READY CORE (55%)
 
 #### Backend: C Transpiler (Primary)
 
@@ -124,6 +124,8 @@ Bytecode    x86-64 ASM    C Code      (Future: LLVM IR)
 | **Conditional Jumps** | ✅ Complete | if (!condition) goto label |
 | **While Loops** | ✅ Complete | Loop labels with break/continue |
 | **Parameter Tracking** | ✅ Complete | PARAM instructions collected for CALL |
+| **Parameter Type Inference** | ✅ Complete | String/float/int parameters correctly typed from call sites |
+| **Return Type Inference** | ✅ Complete | Function return types inferred from RETURN values (double/int64_t/const char*) |
 
 ##### 🔴 Missing C Generator Features
 
@@ -143,9 +145,9 @@ Bytecode    x86-64 ASM    C Code      (Future: LLVM IR)
 
 | Limitation | Severity | Impact | Workaround | ETA to Fix |
 |------------|----------|--------|------------|------------|
-| **Function return types always `int64_t`** | Medium | Functions returning floats lose precision when assigned | Cast result: `x = (double)my_func()` | 4h |
 | **Top-level variable assignment without declaration** | Low | Variables used before declaration fail to compile | Use explicit assignments in functions | 2h |
 | **No type annotations** | Low | Cannot explicitly specify types | Rely on type inference | Future |
+| **Floating-point formatting differences** | Cosmetic | Compiler output has slightly different precision formatting than interpreter | N/A - values are mathematically identical | N/A |
 
 **Important (Required for advanced programs):**
 
@@ -214,6 +216,8 @@ The C generator needs a comprehensive runtime library to support Caesar semantic
 // Basic I/O (COMPLETED)
 void caesar_print_int(int64_t val);
 void caesar_print_str(const char* val);
+void caesar_print_double(double val);  // Float/double printing
+void caesar_print_float(double val);   // Alias for double
 ```
 
 #### 🔴 Required Runtime Library

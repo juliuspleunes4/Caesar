@@ -100,14 +100,29 @@ This release adds significant new language features including iteration support,
   - **Proper Scoping**: Function blocks separated from main, local variables scoped per function
   - **C Reserved Keywords**: 30+ C keywords automatically prefixed with `caesar_` (e.g., `double` → `caesar_double`)
   - **String Parameter Type Inference**: Parameters correctly typed as `const char*` when string literals passed
-  - **Comprehensive Test Suite**: 79+ assertions covering 53+ functions with perfect interpreter/compiler match
+  - **Return Type Inference**: Function return types automatically inferred from RETURN values
+    * Functions returning doubles have `double` return type
+    * Functions returning integers have `int64_t` return type
+    * Functions returning strings have `const char*` return type
+    * Type promotion: if any return path returns double, function returns double
+    * Eliminates truncation of float results when assigned to variables
+  - **Float/Double Type Support**: Complete support for floating-point arithmetic
+    * Float literal detection (contains '.', 'e', or 'E')
+    * Division always returns `double` for mathematical correctness (10/3 = 3.33333)
+    * Type-aware arithmetic: ADD, SUB, MUL, DIV, NEG preserve and promote types
+    * Automatic type promotion: int→double in mixed arithmetic (10 + 2.5 = 12.5)
+    * caesar_print_double() for proper float output
+    * First-pass type tracking for arithmetic operation results
+  - **Comprehensive Test Suite**: 162 assertions covering 73+ functions with mathematically correct output
     * Basic, recursive, nested, and chained function calls
     * Multiple return paths and early returns
     * Mutual recursion (indirect recursion)
     * Deep recursion (100+ levels)
     * All arithmetic and comparison operators
-    * 0 to 4+ parameter functions
+    * 0 to 5+ parameter functions
     * String parameters with proper type safety
+    * Float arithmetic and true division
+    * Mixed-type operations with promotion
 - **Float/Double Type Support**: Full floating-point arithmetic
   - **Float Literals**: Detect and type float constants (3.14, 2.718, 1e-5)
   - **True Division**: Division operator `/` always returns `double` for mathematical correctness

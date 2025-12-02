@@ -1,0 +1,1749 @@
+IR (Intermediate Representation):
+entry:
+    LOAD_CONST %r0, #"=== COMPREHENSIVE TEST SUITE START ==="
+    PARAM %r0
+    CALL %r1, $print
+    LOAD_CONST %r2, #"TEST 1: Integer Functions"
+    PARAM %r2
+    CALL %r3, $print
+func_add_int:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r4, $a
+    GET_VAR %r5, $b
+    ADD %r6, %r4, %r5
+    RETURN %r6
+    RETURN
+after_func0:
+func_multiply_int:
+    DECLARE $x
+    DECLARE $y
+    GET_VAR %r7, $x
+    GET_VAR %r8, $y
+    MUL %r9, %r7, %r8
+    RETURN %r9
+    RETURN
+after_func1:
+func_subtract_int:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r10, $a
+    GET_VAR %r11, $b
+    SUB %r12, %r10, %r11
+    RETURN %r12
+    RETURN
+after_func2:
+    LOAD_CONST %r13, #5
+    PARAM %r13
+    LOAD_CONST %r14, #3
+    PARAM %r14
+    CALL %r15, $add_int
+    PARAM %r15
+    CALL %r16, $print
+    LOAD_CONST %r17, #4
+    PARAM %r17
+    LOAD_CONST %r18, #7
+    PARAM %r18
+    CALL %r19, $multiply_int
+    PARAM %r19
+    CALL %r20, $print
+    LOAD_CONST %r21, #10
+    PARAM %r21
+    LOAD_CONST %r22, #3
+    PARAM %r22
+    CALL %r23, $subtract_int
+    PARAM %r23
+    CALL %r24, $print
+    LOAD_CONST %r25, #"TEST 2: String Parameters"
+    PARAM %r25
+    CALL %r26, $print
+func_greet:
+    DECLARE $name
+    LOAD_CONST %r27, #"Hello"
+    PARAM %r27
+    CALL %r28, $print
+    GET_VAR %r29, $name
+    PARAM %r29
+    CALL %r30, $print
+    RETURN
+after_func3:
+func_print_message:
+    DECLARE $msg
+    GET_VAR %r31, $msg
+    PARAM %r31
+    CALL %r32, $print
+    RETURN
+after_func4:
+func_welcome:
+    DECLARE $title
+    DECLARE $firstname
+    DECLARE $lastname
+    GET_VAR %r33, $title
+    PARAM %r33
+    CALL %r34, $print
+    GET_VAR %r35, $firstname
+    PARAM %r35
+    CALL %r36, $print
+    GET_VAR %r37, $lastname
+    PARAM %r37
+    CALL %r38, $print
+    RETURN
+after_func5:
+    LOAD_CONST %r39, #"Alice"
+    PARAM %r39
+    CALL %r40, $greet
+    LOAD_CONST %r41, #"Test Message"
+    PARAM %r41
+    CALL %r42, $print_message
+    LOAD_CONST %r43, #"Dr."
+    PARAM %r43
+    LOAD_CONST %r44, #"John"
+    PARAM %r44
+    LOAD_CONST %r45, #"Smith"
+    PARAM %r45
+    CALL %r46, $welcome
+    LOAD_CONST %r47, #"TEST 3: Float Literals and Arithmetic"
+    PARAM %r47
+    CALL %r48, $print
+func_circle_area:
+    DECLARE $radius
+    LOAD_CONST %r49, #3.14159
+    SET_VAR $pi, %r49
+    GET_VAR %r50, $pi
+    GET_VAR %r51, $radius
+    MUL %r52, %r50, %r51
+    GET_VAR %r53, $radius
+    MUL %r54, %r52, %r53
+    RETURN %r54
+    RETURN
+after_func6:
+func_circle_circumference:
+    DECLARE $radius
+    LOAD_CONST %r55, #3.14159
+    SET_VAR $pi, %r55
+    LOAD_CONST %r56, #2
+    GET_VAR %r57, $pi
+    MUL %r58, %r56, %r57
+    GET_VAR %r59, $radius
+    MUL %r60, %r58, %r59
+    RETURN %r60
+    RETURN
+after_func7:
+func_sphere_volume:
+    DECLARE $radius
+    LOAD_CONST %r61, #3.14159
+    SET_VAR $pi, %r61
+    LOAD_CONST %r62, #4
+    GET_VAR %r63, $pi
+    MUL %r64, %r62, %r63
+    GET_VAR %r65, $radius
+    MUL %r66, %r64, %r65
+    GET_VAR %r67, $radius
+    MUL %r68, %r66, %r67
+    GET_VAR %r69, $radius
+    MUL %r70, %r68, %r69
+    LOAD_CONST %r71, #3
+    DIV %r72, %r70, %r71
+    RETURN %r72
+    RETURN
+after_func8:
+    LOAD_CONST %r73, #5.0
+    PARAM %r73
+    CALL %r74, $circle_area
+    PARAM %r74
+    CALL %r75, $print
+    LOAD_CONST %r76, #10.0
+    PARAM %r76
+    CALL %r77, $circle_circumference
+    PARAM %r77
+    CALL %r78, $print
+    LOAD_CONST %r79, #3.0
+    PARAM %r79
+    CALL %r80, $sphere_volume
+    PARAM %r80
+    CALL %r81, $print
+    LOAD_CONST %r82, #"TEST 4: True Division"
+    PARAM %r82
+    CALL %r83, $print
+func_divide:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r84, $a
+    GET_VAR %r85, $b
+    DIV %r86, %r84, %r85
+    RETURN %r86
+    RETURN
+after_func9:
+func_average_two:
+    DECLARE $x
+    DECLARE $y
+    GET_VAR %r87, $x
+    GET_VAR %r88, $y
+    ADD %r89, %r87, %r88
+    LOAD_CONST %r90, #2
+    DIV %r91, %r89, %r90
+    RETURN %r91
+    RETURN
+after_func10:
+func_average_three:
+    DECLARE $a
+    DECLARE $b
+    DECLARE $c
+    GET_VAR %r92, $a
+    GET_VAR %r93, $b
+    ADD %r94, %r92, %r93
+    GET_VAR %r95, $c
+    ADD %r96, %r94, %r95
+    LOAD_CONST %r97, #3
+    DIV %r98, %r96, %r97
+    RETURN %r98
+    RETURN
+after_func11:
+    LOAD_CONST %r99, #10
+    PARAM %r99
+    LOAD_CONST %r100, #3
+    PARAM %r100
+    CALL %r101, $divide
+    PARAM %r101
+    CALL %r102, $print
+    LOAD_CONST %r103, #100
+    PARAM %r103
+    LOAD_CONST %r104, #7
+    PARAM %r104
+    CALL %r105, $divide
+    PARAM %r105
+    CALL %r106, $print
+    LOAD_CONST %r107, #22
+    PARAM %r107
+    LOAD_CONST %r108, #7
+    PARAM %r108
+    CALL %r109, $divide
+    PARAM %r109
+    CALL %r110, $print
+    LOAD_CONST %r111, #10
+    PARAM %r111
+    LOAD_CONST %r112, #20
+    PARAM %r112
+    CALL %r113, $average_two
+    PARAM %r113
+    CALL %r114, $print
+    LOAD_CONST %r115, #5
+    PARAM %r115
+    LOAD_CONST %r116, #8
+    PARAM %r116
+    CALL %r117, $average_two
+    PARAM %r117
+    CALL %r118, $print
+    LOAD_CONST %r119, #5
+    PARAM %r119
+    LOAD_CONST %r120, #10
+    PARAM %r120
+    LOAD_CONST %r121, #15
+    PARAM %r121
+    CALL %r122, $average_three
+    PARAM %r122
+    CALL %r123, $print
+    LOAD_CONST %r124, #"TEST 5: Mixed Type Arithmetic"
+    PARAM %r124
+    CALL %r125, $print
+func_add_mixed:
+    DECLARE $int_val
+    DECLARE $float_val
+    GET_VAR %r126, $int_val
+    GET_VAR %r127, $float_val
+    ADD %r128, %r126, %r127
+    RETURN %r128
+    RETURN
+after_func12:
+func_multiply_mixed:
+    DECLARE $int_val
+    DECLARE $float_val
+    GET_VAR %r129, $int_val
+    GET_VAR %r130, $float_val
+    MUL %r131, %r129, %r130
+    RETURN %r131
+    RETURN
+after_func13:
+func_complex_mixed:
+    DECLARE $a
+    DECLARE $b
+    DECLARE $c
+    GET_VAR %r132, $a
+    GET_VAR %r133, $b
+    ADD %r134, %r132, %r133
+    SET_VAR $result1, %r134
+    GET_VAR %r135, $result1
+    GET_VAR %r136, $c
+    MUL %r137, %r135, %r136
+    SET_VAR $result2, %r137
+    GET_VAR %r138, $result2
+    LOAD_CONST %r139, #2
+    DIV %r140, %r138, %r139
+    SET_VAR $result3, %r140
+    GET_VAR %r141, $result3
+    RETURN %r141
+    RETURN
+after_func14:
+    LOAD_CONST %r142, #10
+    PARAM %r142
+    LOAD_CONST %r143, #2.5
+    PARAM %r143
+    CALL %r144, $add_mixed
+    PARAM %r144
+    CALL %r145, $print
+    LOAD_CONST %r146, #8
+    PARAM %r146
+    LOAD_CONST %r147, #1.5
+    PARAM %r147
+    CALL %r148, $multiply_mixed
+    PARAM %r148
+    CALL %r149, $print
+    LOAD_CONST %r150, #5
+    PARAM %r150
+    LOAD_CONST %r151, #3
+    PARAM %r151
+    LOAD_CONST %r152, #2.0
+    PARAM %r152
+    CALL %r153, $complex_mixed
+    PARAM %r153
+    CALL %r154, $print
+    LOAD_CONST %r155, #"TEST 6: Recursive Functions"
+    PARAM %r155
+    CALL %r156, $print
+func_factorial:
+    DECLARE $n
+    GET_VAR %r157, $n
+    LOAD_CONST %r158, #1
+    LE %r159, %r157, %r158
+    JUMP_IF_FALSE @else15, %r159
+    LOAD_CONST %r160, #1
+    RETURN %r160
+    JUMP @endif16
+else15:
+endif16:
+    GET_VAR %r161, $n
+    GET_VAR %r162, $n
+    LOAD_CONST %r163, #1
+    SUB %r164, %r162, %r163
+    PARAM %r164
+    CALL %r165, $factorial
+    MUL %r166, %r161, %r165
+    RETURN %r166
+    RETURN
+after_func17:
+func_fibonacci:
+    DECLARE $n
+    GET_VAR %r167, $n
+    LOAD_CONST %r168, #1
+    LE %r169, %r167, %r168
+    JUMP_IF_FALSE @else18, %r169
+    GET_VAR %r170, $n
+    RETURN %r170
+    JUMP @endif19
+else18:
+endif19:
+    GET_VAR %r171, $n
+    LOAD_CONST %r172, #1
+    SUB %r173, %r171, %r172
+    PARAM %r173
+    CALL %r174, $fibonacci
+    GET_VAR %r175, $n
+    LOAD_CONST %r176, #2
+    SUB %r177, %r175, %r176
+    PARAM %r177
+    CALL %r178, $fibonacci
+    ADD %r179, %r174, %r178
+    RETURN %r179
+    RETURN
+after_func20:
+func_sum_to_n:
+    DECLARE $n
+    GET_VAR %r180, $n
+    LOAD_CONST %r181, #0
+    LE %r182, %r180, %r181
+    JUMP_IF_FALSE @else21, %r182
+    LOAD_CONST %r183, #0
+    RETURN %r183
+    JUMP @endif22
+else21:
+endif22:
+    GET_VAR %r184, $n
+    GET_VAR %r185, $n
+    LOAD_CONST %r186, #1
+    SUB %r187, %r185, %r186
+    PARAM %r187
+    CALL %r188, $sum_to_n
+    ADD %r189, %r184, %r188
+    RETURN %r189
+    RETURN
+after_func23:
+func_power:
+    DECLARE $base
+    DECLARE $exp
+    GET_VAR %r190, $exp
+    LOAD_CONST %r191, #0
+    EQ %r192, %r190, %r191
+    JUMP_IF_FALSE @else24, %r192
+    LOAD_CONST %r193, #1
+    RETURN %r193
+    JUMP @endif25
+else24:
+endif25:
+    GET_VAR %r194, $exp
+    LOAD_CONST %r195, #1
+    EQ %r196, %r194, %r195
+    JUMP_IF_FALSE @else26, %r196
+    GET_VAR %r197, $base
+    RETURN %r197
+    JUMP @endif27
+else26:
+endif27:
+    GET_VAR %r198, $base
+    GET_VAR %r199, $base
+    PARAM %r199
+    GET_VAR %r200, $exp
+    LOAD_CONST %r201, #1
+    SUB %r202, %r200, %r201
+    PARAM %r202
+    CALL %r203, $power
+    MUL %r204, %r198, %r203
+    RETURN %r204
+    RETURN
+after_func28:
+    LOAD_CONST %r205, #5
+    PARAM %r205
+    CALL %r206, $factorial
+    PARAM %r206
+    CALL %r207, $print
+    LOAD_CONST %r208, #6
+    PARAM %r208
+    CALL %r209, $factorial
+    PARAM %r209
+    CALL %r210, $print
+    LOAD_CONST %r211, #7
+    PARAM %r211
+    CALL %r212, $fibonacci
+    PARAM %r212
+    CALL %r213, $print
+    LOAD_CONST %r214, #8
+    PARAM %r214
+    CALL %r215, $fibonacci
+    PARAM %r215
+    CALL %r216, $print
+    LOAD_CONST %r217, #10
+    PARAM %r217
+    CALL %r218, $sum_to_n
+    PARAM %r218
+    CALL %r219, $print
+    LOAD_CONST %r220, #20
+    PARAM %r220
+    CALL %r221, $sum_to_n
+    PARAM %r221
+    CALL %r222, $print
+    LOAD_CONST %r223, #2
+    PARAM %r223
+    LOAD_CONST %r224, #5
+    PARAM %r224
+    CALL %r225, $power
+    PARAM %r225
+    CALL %r226, $print
+    LOAD_CONST %r227, #3
+    PARAM %r227
+    LOAD_CONST %r228, #4
+    PARAM %r228
+    CALL %r229, $power
+    PARAM %r229
+    CALL %r230, $print
+    LOAD_CONST %r231, #"TEST 7: C Reserved Keywords"
+    PARAM %r231
+    CALL %r232, $print
+func_auto:
+    DECLARE $x
+    GET_VAR %r233, $x
+    LOAD_CONST %r234, #1
+    ADD %r235, %r233, %r234
+    RETURN %r235
+    RETURN
+after_func29:
+func_register:
+    DECLARE $x
+    GET_VAR %r236, $x
+    LOAD_CONST %r237, #1
+    SUB %r238, %r236, %r237
+    RETURN %r238
+    RETURN
+after_func30:
+func_static:
+    DECLARE $x
+    GET_VAR %r239, $x
+    LOAD_CONST %r240, #2
+    MUL %r241, %r239, %r240
+    RETURN %r241
+    RETURN
+after_func31:
+func_volatile:
+    DECLARE $x
+    GET_VAR %r242, $x
+    LOAD_CONST %r243, #3
+    MUL %r244, %r242, %r243
+    RETURN %r244
+    RETURN
+after_func32:
+func_const:
+    DECLARE $x
+    GET_VAR %r245, $x
+    LOAD_CONST %r246, #10
+    ADD %r247, %r245, %r246
+    RETURN %r247
+    RETURN
+after_func33:
+    LOAD_CONST %r248, #10
+    PARAM %r248
+    CALL %r249, $auto
+    PARAM %r249
+    CALL %r250, $print
+    LOAD_CONST %r251, #10
+    PARAM %r251
+    CALL %r252, $register
+    PARAM %r252
+    CALL %r253, $print
+    LOAD_CONST %r254, #5
+    PARAM %r254
+    CALL %r255, $static
+    PARAM %r255
+    CALL %r256, $print
+    LOAD_CONST %r257, #7
+    PARAM %r257
+    CALL %r258, $volatile
+    PARAM %r258
+    CALL %r259, $print
+    LOAD_CONST %r260, #5
+    PARAM %r260
+    CALL %r261, $const
+    PARAM %r261
+    CALL %r262, $print
+    LOAD_CONST %r263, #"TEST 8: Nested Function Calls"
+    PARAM %r263
+    CALL %r264, $print
+func_double:
+    DECLARE $x
+    GET_VAR %r265, $x
+    GET_VAR %r266, $x
+    ADD %r267, %r265, %r266
+    RETURN %r267
+    RETURN
+after_func34:
+func_triple:
+    DECLARE $x
+    GET_VAR %r268, $x
+    GET_VAR %r269, $x
+    ADD %r270, %r268, %r269
+    GET_VAR %r271, $x
+    ADD %r272, %r270, %r271
+    RETURN %r272
+    RETURN
+after_func35:
+func_quadruple:
+    DECLARE $x
+    GET_VAR %r273, $x
+    PARAM %r273
+    CALL %r274, $double
+    PARAM %r274
+    CALL %r275, $double
+    RETURN %r275
+    RETURN
+after_func36:
+func_times_twelve:
+    DECLARE $x
+    GET_VAR %r276, $x
+    PARAM %r276
+    CALL %r277, $quadruple
+    PARAM %r277
+    CALL %r278, $triple
+    RETURN %r278
+    RETURN
+after_func37:
+    LOAD_CONST %r279, #7
+    PARAM %r279
+    CALL %r280, $double
+    PARAM %r280
+    CALL %r281, $print
+    LOAD_CONST %r282, #5
+    PARAM %r282
+    CALL %r283, $triple
+    PARAM %r283
+    CALL %r284, $print
+    LOAD_CONST %r285, #4
+    PARAM %r285
+    CALL %r286, $quadruple
+    PARAM %r286
+    CALL %r287, $print
+    LOAD_CONST %r288, #2
+    PARAM %r288
+    CALL %r289, $times_twelve
+    PARAM %r289
+    CALL %r290, $print
+    LOAD_CONST %r291, #"TEST 9: Chained Function Calls"
+    PARAM %r291
+    CALL %r292, $print
+func_increment:
+    DECLARE $n
+    GET_VAR %r293, $n
+    LOAD_CONST %r294, #1
+    ADD %r295, %r293, %r294
+    RETURN %r295
+    RETURN
+after_func38:
+func_add_two:
+    DECLARE $n
+    GET_VAR %r296, $n
+    PARAM %r296
+    CALL %r297, $increment
+    PARAM %r297
+    CALL %r298, $increment
+    RETURN %r298
+    RETURN
+after_func39:
+func_add_five:
+    DECLARE $n
+    GET_VAR %r299, $n
+    PARAM %r299
+    CALL %r300, $increment
+    PARAM %r300
+    CALL %r301, $add_two
+    PARAM %r301
+    CALL %r302, $add_two
+    RETURN %r302
+    RETURN
+after_func40:
+func_add_ten:
+    DECLARE $n
+    GET_VAR %r303, $n
+    PARAM %r303
+    CALL %r304, $add_five
+    PARAM %r304
+    CALL %r305, $add_five
+    RETURN %r305
+    RETURN
+after_func41:
+    LOAD_CONST %r306, #10
+    PARAM %r306
+    CALL %r307, $increment
+    PARAM %r307
+    CALL %r308, $print
+    LOAD_CONST %r309, #10
+    PARAM %r309
+    CALL %r310, $add_two
+    PARAM %r310
+    CALL %r311, $print
+    LOAD_CONST %r312, #10
+    PARAM %r312
+    CALL %r313, $add_five
+    PARAM %r313
+    CALL %r314, $print
+    LOAD_CONST %r315, #10
+    PARAM %r315
+    CALL %r316, $add_ten
+    PARAM %r316
+    CALL %r317, $print
+    LOAD_CONST %r318, #"TEST 10: Multiple Return Paths"
+    PARAM %r318
+    CALL %r319, $print
+func_abs_value:
+    DECLARE $n
+    GET_VAR %r320, $n
+    LOAD_CONST %r321, #0
+    LT %r322, %r320, %r321
+    JUMP_IF_FALSE @else42, %r322
+    GET_VAR %r323, $n
+    NEG %r324, %r323
+    RETURN %r324
+    JUMP @endif43
+else42:
+endif43:
+    GET_VAR %r325, $n
+    RETURN %r325
+    RETURN
+after_func44:
+func_max_two:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r326, $a
+    GET_VAR %r327, $b
+    GT %r328, %r326, %r327
+    JUMP_IF_FALSE @else45, %r328
+    GET_VAR %r329, $a
+    RETURN %r329
+    JUMP @endif46
+else45:
+endif46:
+    GET_VAR %r330, $b
+    RETURN %r330
+    RETURN
+after_func47:
+func_min_two:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r331, $a
+    GET_VAR %r332, $b
+    LT %r333, %r331, %r332
+    JUMP_IF_FALSE @else48, %r333
+    GET_VAR %r334, $a
+    RETURN %r334
+    JUMP @endif49
+else48:
+endif49:
+    GET_VAR %r335, $b
+    RETURN %r335
+    RETURN
+after_func50:
+func_sign:
+    DECLARE $n
+    GET_VAR %r336, $n
+    LOAD_CONST %r337, #0
+    LT %r338, %r336, %r337
+    JUMP_IF_FALSE @else51, %r338
+    LOAD_CONST %r339, #1
+    NEG %r340, %r339
+    RETURN %r340
+    JUMP @endif52
+else51:
+endif52:
+    GET_VAR %r341, $n
+    LOAD_CONST %r342, #0
+    GT %r343, %r341, %r342
+    JUMP_IF_FALSE @else53, %r343
+    LOAD_CONST %r344, #1
+    RETURN %r344
+    JUMP @endif54
+else53:
+endif54:
+    LOAD_CONST %r345, #0
+    RETURN %r345
+    RETURN
+after_func55:
+    LOAD_CONST %r346, #15
+    NEG %r347, %r346
+    PARAM %r347
+    CALL %r348, $abs_value
+    PARAM %r348
+    CALL %r349, $print
+    LOAD_CONST %r350, #20
+    PARAM %r350
+    CALL %r351, $abs_value
+    PARAM %r351
+    CALL %r352, $print
+    LOAD_CONST %r353, #7
+    PARAM %r353
+    LOAD_CONST %r354, #12
+    PARAM %r354
+    CALL %r355, $max_two
+    PARAM %r355
+    CALL %r356, $print
+    LOAD_CONST %r357, #25
+    PARAM %r357
+    LOAD_CONST %r358, #10
+    PARAM %r358
+    CALL %r359, $max_two
+    PARAM %r359
+    CALL %r360, $print
+    LOAD_CONST %r361, #7
+    PARAM %r361
+    LOAD_CONST %r362, #12
+    PARAM %r362
+    CALL %r363, $min_two
+    PARAM %r363
+    CALL %r364, $print
+    LOAD_CONST %r365, #25
+    PARAM %r365
+    LOAD_CONST %r366, #10
+    PARAM %r366
+    CALL %r367, $min_two
+    PARAM %r367
+    CALL %r368, $print
+    LOAD_CONST %r369, #5
+    NEG %r370, %r369
+    PARAM %r370
+    CALL %r371, $sign
+    PARAM %r371
+    CALL %r372, $print
+    LOAD_CONST %r373, #10
+    PARAM %r373
+    CALL %r374, $sign
+    PARAM %r374
+    CALL %r375, $print
+    LOAD_CONST %r376, #0
+    PARAM %r376
+    CALL %r377, $sign
+    PARAM %r377
+    CALL %r378, $print
+    LOAD_CONST %r379, #"TEST 11: Zero and Single Parameter Functions"
+    PARAM %r379
+    CALL %r380, $print
+func_get_pi:
+    LOAD_CONST %r381, #3.14159
+    RETURN %r381
+    RETURN
+after_func56:
+func_get_zero:
+    LOAD_CONST %r382, #0
+    RETURN %r382
+    RETURN
+after_func57:
+func_square:
+    DECLARE $n
+    GET_VAR %r383, $n
+    GET_VAR %r384, $n
+    MUL %r385, %r383, %r384
+    RETURN %r385
+    RETURN
+after_func58:
+func_cube:
+    DECLARE $n
+    GET_VAR %r386, $n
+    GET_VAR %r387, $n
+    MUL %r388, %r386, %r387
+    GET_VAR %r389, $n
+    MUL %r390, %r388, %r389
+    RETURN %r390
+    RETURN
+after_func59:
+func_negate:
+    DECLARE $x
+    GET_VAR %r391, $x
+    NEG %r392, %r391
+    RETURN %r392
+    RETURN
+after_func60:
+    CALL %r393, $get_pi
+    PARAM %r393
+    CALL %r394, $print
+    CALL %r395, $get_zero
+    PARAM %r395
+    CALL %r396, $print
+    LOAD_CONST %r397, #5
+    PARAM %r397
+    CALL %r398, $square
+    PARAM %r398
+    CALL %r399, $print
+    LOAD_CONST %r400, #7
+    PARAM %r400
+    CALL %r401, $square
+    PARAM %r401
+    CALL %r402, $print
+    LOAD_CONST %r403, #3
+    PARAM %r403
+    CALL %r404, $cube
+    PARAM %r404
+    CALL %r405, $print
+    LOAD_CONST %r406, #4
+    PARAM %r406
+    CALL %r407, $cube
+    PARAM %r407
+    CALL %r408, $print
+    LOAD_CONST %r409, #10
+    PARAM %r409
+    CALL %r410, $negate
+    PARAM %r410
+    CALL %r411, $print
+    LOAD_CONST %r412, #5
+    NEG %r413, %r412
+    PARAM %r413
+    CALL %r414, $negate
+    PARAM %r414
+    CALL %r415, $print
+    LOAD_CONST %r416, #"TEST 12: Many Parameters"
+    PARAM %r416
+    CALL %r417, $print
+func_sum_four:
+    DECLARE $a
+    DECLARE $b
+    DECLARE $c
+    DECLARE $d
+    GET_VAR %r418, $a
+    GET_VAR %r419, $b
+    ADD %r420, %r418, %r419
+    GET_VAR %r421, $c
+    ADD %r422, %r420, %r421
+    GET_VAR %r423, $d
+    ADD %r424, %r422, %r423
+    RETURN %r424
+    RETURN
+after_func61:
+func_product_five:
+    DECLARE $a
+    DECLARE $b
+    DECLARE $c
+    DECLARE $d
+    DECLARE $e
+    GET_VAR %r425, $a
+    GET_VAR %r426, $b
+    MUL %r427, %r425, %r426
+    GET_VAR %r428, $c
+    MUL %r429, %r427, %r428
+    GET_VAR %r430, $d
+    MUL %r431, %r429, %r430
+    GET_VAR %r432, $e
+    MUL %r433, %r431, %r432
+    RETURN %r433
+    RETURN
+after_func62:
+func_weighted_average:
+    DECLARE $v1
+    DECLARE $w1
+    DECLARE $v2
+    DECLARE $w2
+    GET_VAR %r434, $v1
+    GET_VAR %r435, $w1
+    MUL %r436, %r434, %r435
+    GET_VAR %r437, $v2
+    GET_VAR %r438, $w2
+    MUL %r439, %r437, %r438
+    ADD %r440, %r436, %r439
+    GET_VAR %r441, $w1
+    GET_VAR %r442, $w2
+    ADD %r443, %r441, %r442
+    DIV %r444, %r440, %r443
+    RETURN %r444
+    RETURN
+after_func63:
+    LOAD_CONST %r445, #1
+    PARAM %r445
+    LOAD_CONST %r446, #2
+    PARAM %r446
+    LOAD_CONST %r447, #3
+    PARAM %r447
+    LOAD_CONST %r448, #4
+    PARAM %r448
+    CALL %r449, $sum_four
+    PARAM %r449
+    CALL %r450, $print
+    LOAD_CONST %r451, #5
+    PARAM %r451
+    LOAD_CONST %r452, #10
+    PARAM %r452
+    LOAD_CONST %r453, #15
+    PARAM %r453
+    LOAD_CONST %r454, #20
+    PARAM %r454
+    CALL %r455, $sum_four
+    PARAM %r455
+    CALL %r456, $print
+    LOAD_CONST %r457, #1
+    PARAM %r457
+    LOAD_CONST %r458, #2
+    PARAM %r458
+    LOAD_CONST %r459, #3
+    PARAM %r459
+    LOAD_CONST %r460, #4
+    PARAM %r460
+    LOAD_CONST %r461, #5
+    PARAM %r461
+    CALL %r462, $product_five
+    PARAM %r462
+    CALL %r463, $print
+    LOAD_CONST %r464, #10
+    PARAM %r464
+    LOAD_CONST %r465, #3
+    PARAM %r465
+    LOAD_CONST %r466, #20
+    PARAM %r466
+    LOAD_CONST %r467, #7
+    PARAM %r467
+    CALL %r468, $weighted_average
+    PARAM %r468
+    CALL %r469, $print
+    LOAD_CONST %r470, #"TEST 13: Complex Logic"
+    PARAM %r470
+    CALL %r471, $print
+func_is_even:
+    DECLARE $n
+    GET_VAR %r472, $n
+    LOAD_CONST %r473, #2
+    MOD %r474, %r472, %r473
+    LOAD_CONST %r475, #0
+    EQ %r476, %r474, %r475
+    JUMP_IF_FALSE @else64, %r476
+    LOAD_CONST %r477, #1
+    RETURN %r477
+    JUMP @endif65
+else64:
+endif65:
+    LOAD_CONST %r478, #0
+    RETURN %r478
+    RETURN
+after_func66:
+func_is_positive:
+    DECLARE $n
+    GET_VAR %r479, $n
+    LOAD_CONST %r480, #0
+    GT %r481, %r479, %r480
+    JUMP_IF_FALSE @else67, %r481
+    LOAD_CONST %r482, #1
+    RETURN %r482
+    JUMP @endif68
+else67:
+endif68:
+    LOAD_CONST %r483, #0
+    RETURN %r483
+    RETURN
+after_func69:
+func_is_in_range:
+    DECLARE $n
+    DECLARE $low
+    DECLARE $high
+    GET_VAR %r484, $n
+    GET_VAR %r485, $low
+    GE %r486, %r484, %r485
+    JUMP_IF_FALSE @else70, %r486
+    GET_VAR %r487, $n
+    GET_VAR %r488, $high
+    LE %r489, %r487, %r488
+    JUMP_IF_FALSE @else72, %r489
+    LOAD_CONST %r490, #1
+    RETURN %r490
+    JUMP @endif73
+else72:
+endif73:
+    JUMP @endif71
+else70:
+endif71:
+    LOAD_CONST %r491, #0
+    RETURN %r491
+    RETURN
+after_func74:
+func_all_different:
+    DECLARE $a
+    DECLARE $b
+    DECLARE $c
+    GET_VAR %r492, $a
+    GET_VAR %r493, $b
+    NE %r494, %r492, %r493
+    JUMP_IF_FALSE @else75, %r494
+    GET_VAR %r495, $b
+    GET_VAR %r496, $c
+    NE %r497, %r495, %r496
+    JUMP_IF_FALSE @else77, %r497
+    GET_VAR %r498, $a
+    GET_VAR %r499, $c
+    NE %r500, %r498, %r499
+    JUMP_IF_FALSE @else79, %r500
+    LOAD_CONST %r501, #1
+    RETURN %r501
+    JUMP @endif80
+else79:
+endif80:
+    JUMP @endif78
+else77:
+endif78:
+    JUMP @endif76
+else75:
+endif76:
+    LOAD_CONST %r502, #0
+    RETURN %r502
+    RETURN
+after_func81:
+    LOAD_CONST %r503, #4
+    PARAM %r503
+    CALL %r504, $is_even
+    PARAM %r504
+    CALL %r505, $print
+    LOAD_CONST %r506, #7
+    PARAM %r506
+    CALL %r507, $is_even
+    PARAM %r507
+    CALL %r508, $print
+    LOAD_CONST %r509, #10
+    PARAM %r509
+    CALL %r510, $is_positive
+    PARAM %r510
+    CALL %r511, $print
+    LOAD_CONST %r512, #5
+    NEG %r513, %r512
+    PARAM %r513
+    CALL %r514, $is_positive
+    PARAM %r514
+    CALL %r515, $print
+    LOAD_CONST %r516, #5
+    PARAM %r516
+    LOAD_CONST %r517, #1
+    PARAM %r517
+    LOAD_CONST %r518, #10
+    PARAM %r518
+    CALL %r519, $is_in_range
+    PARAM %r519
+    CALL %r520, $print
+    LOAD_CONST %r521, #15
+    PARAM %r521
+    LOAD_CONST %r522, #1
+    PARAM %r522
+    LOAD_CONST %r523, #10
+    PARAM %r523
+    CALL %r524, $is_in_range
+    PARAM %r524
+    CALL %r525, $print
+    LOAD_CONST %r526, #1
+    PARAM %r526
+    LOAD_CONST %r527, #2
+    PARAM %r527
+    LOAD_CONST %r528, #3
+    PARAM %r528
+    CALL %r529, $all_different
+    PARAM %r529
+    CALL %r530, $print
+    LOAD_CONST %r531, #1
+    PARAM %r531
+    LOAD_CONST %r532, #1
+    PARAM %r532
+    LOAD_CONST %r533, #3
+    PARAM %r533
+    CALL %r534, $all_different
+    PARAM %r534
+    CALL %r535, $print
+    LOAD_CONST %r536, #"TEST 14: Mutual Recursion"
+    PARAM %r536
+    CALL %r537, $print
+func_is_even_indirect:
+    DECLARE $n
+    GET_VAR %r538, $n
+    LOAD_CONST %r539, #0
+    EQ %r540, %r538, %r539
+    JUMP_IF_FALSE @else82, %r540
+    LOAD_CONST %r541, #1
+    RETURN %r541
+    JUMP @endif83
+else82:
+endif83:
+    GET_VAR %r542, $n
+    LOAD_CONST %r543, #1
+    SUB %r544, %r542, %r543
+    PARAM %r544
+    CALL %r545, $is_odd_indirect
+    RETURN %r545
+    RETURN
+after_func84:
+func_is_odd_indirect:
+    DECLARE $n
+    GET_VAR %r546, $n
+    LOAD_CONST %r547, #0
+    EQ %r548, %r546, %r547
+    JUMP_IF_FALSE @else85, %r548
+    LOAD_CONST %r549, #0
+    RETURN %r549
+    JUMP @endif86
+else85:
+endif86:
+    GET_VAR %r550, $n
+    LOAD_CONST %r551, #1
+    SUB %r552, %r550, %r551
+    PARAM %r552
+    CALL %r553, $is_even_indirect
+    RETURN %r553
+    RETURN
+after_func87:
+    LOAD_CONST %r554, #0
+    PARAM %r554
+    CALL %r555, $is_even_indirect
+    PARAM %r555
+    CALL %r556, $print
+    LOAD_CONST %r557, #4
+    PARAM %r557
+    CALL %r558, $is_even_indirect
+    PARAM %r558
+    CALL %r559, $print
+    LOAD_CONST %r560, #7
+    PARAM %r560
+    CALL %r561, $is_even_indirect
+    PARAM %r561
+    CALL %r562, $print
+    LOAD_CONST %r563, #0
+    PARAM %r563
+    CALL %r564, $is_odd_indirect
+    PARAM %r564
+    CALL %r565, $print
+    LOAD_CONST %r566, #3
+    PARAM %r566
+    CALL %r567, $is_odd_indirect
+    PARAM %r567
+    CALL %r568, $print
+    LOAD_CONST %r569, #6
+    PARAM %r569
+    CALL %r570, $is_odd_indirect
+    PARAM %r570
+    CALL %r571, $print
+    LOAD_CONST %r572, #"TEST 15: Void Functions"
+    PARAM %r572
+    CALL %r573, $print
+func_print_header:
+    LOAD_CONST %r574, #"=== HEADER ==="
+    PARAM %r574
+    CALL %r575, $print
+    RETURN
+after_func88:
+func_print_footer:
+    LOAD_CONST %r576, #"=== FOOTER ==="
+    PARAM %r576
+    CALL %r577, $print
+    RETURN
+after_func89:
+func_print_nums:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r578, $a
+    PARAM %r578
+    CALL %r579, $print
+    GET_VAR %r580, $b
+    PARAM %r580
+    CALL %r581, $print
+    RETURN
+after_func90:
+    CALL %r582, $print_header
+    CALL %r583, $print_footer
+    LOAD_CONST %r584, #42
+    PARAM %r584
+    LOAD_CONST %r585, #99
+    PARAM %r585
+    CALL %r586, $print_nums
+    LOAD_CONST %r587, #"TEST 16: Deep Recursion"
+    PARAM %r587
+    CALL %r588, $print
+func_sum_range:
+    DECLARE $n
+    GET_VAR %r589, $n
+    LOAD_CONST %r590, #0
+    LE %r591, %r589, %r590
+    JUMP_IF_FALSE @else91, %r591
+    LOAD_CONST %r592, #0
+    RETURN %r592
+    JUMP @endif92
+else91:
+endif92:
+    GET_VAR %r593, $n
+    GET_VAR %r594, $n
+    LOAD_CONST %r595, #1
+    SUB %r596, %r594, %r595
+    PARAM %r596
+    CALL %r597, $sum_range
+    ADD %r598, %r593, %r597
+    RETURN %r598
+    RETURN
+after_func93:
+    LOAD_CONST %r599, #50
+    PARAM %r599
+    CALL %r600, $sum_range
+    PARAM %r600
+    CALL %r601, $print
+    LOAD_CONST %r602, #100
+    PARAM %r602
+    CALL %r603, $sum_range
+    PARAM %r603
+    CALL %r604, $print
+    LOAD_CONST %r605, #"TEST 17: All Comparison Operators"
+    PARAM %r605
+    CALL %r606, $print
+func_test_eq:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r607, $a
+    GET_VAR %r608, $b
+    EQ %r609, %r607, %r608
+    JUMP_IF_FALSE @else94, %r609
+    LOAD_CONST %r610, #1
+    RETURN %r610
+    JUMP @endif95
+else94:
+endif95:
+    LOAD_CONST %r611, #0
+    RETURN %r611
+    RETURN
+after_func96:
+func_test_ne:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r612, $a
+    GET_VAR %r613, $b
+    NE %r614, %r612, %r613
+    JUMP_IF_FALSE @else97, %r614
+    LOAD_CONST %r615, #1
+    RETURN %r615
+    JUMP @endif98
+else97:
+endif98:
+    LOAD_CONST %r616, #0
+    RETURN %r616
+    RETURN
+after_func99:
+func_test_lt:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r617, $a
+    GET_VAR %r618, $b
+    LT %r619, %r617, %r618
+    JUMP_IF_FALSE @else100, %r619
+    LOAD_CONST %r620, #1
+    RETURN %r620
+    JUMP @endif101
+else100:
+endif101:
+    LOAD_CONST %r621, #0
+    RETURN %r621
+    RETURN
+after_func102:
+func_test_le:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r622, $a
+    GET_VAR %r623, $b
+    LE %r624, %r622, %r623
+    JUMP_IF_FALSE @else103, %r624
+    LOAD_CONST %r625, #1
+    RETURN %r625
+    JUMP @endif104
+else103:
+endif104:
+    LOAD_CONST %r626, #0
+    RETURN %r626
+    RETURN
+after_func105:
+func_test_gt:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r627, $a
+    GET_VAR %r628, $b
+    GT %r629, %r627, %r628
+    JUMP_IF_FALSE @else106, %r629
+    LOAD_CONST %r630, #1
+    RETURN %r630
+    JUMP @endif107
+else106:
+endif107:
+    LOAD_CONST %r631, #0
+    RETURN %r631
+    RETURN
+after_func108:
+func_test_ge:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r632, $a
+    GET_VAR %r633, $b
+    GE %r634, %r632, %r633
+    JUMP_IF_FALSE @else109, %r634
+    LOAD_CONST %r635, #1
+    RETURN %r635
+    JUMP @endif110
+else109:
+endif110:
+    LOAD_CONST %r636, #0
+    RETURN %r636
+    RETURN
+after_func111:
+    LOAD_CONST %r637, #5
+    PARAM %r637
+    LOAD_CONST %r638, #5
+    PARAM %r638
+    CALL %r639, $test_eq
+    PARAM %r639
+    CALL %r640, $print
+    LOAD_CONST %r641, #5
+    PARAM %r641
+    LOAD_CONST %r642, #7
+    PARAM %r642
+    CALL %r643, $test_eq
+    PARAM %r643
+    CALL %r644, $print
+    LOAD_CONST %r645, #5
+    PARAM %r645
+    LOAD_CONST %r646, #7
+    PARAM %r646
+    CALL %r647, $test_ne
+    PARAM %r647
+    CALL %r648, $print
+    LOAD_CONST %r649, #5
+    PARAM %r649
+    LOAD_CONST %r650, #5
+    PARAM %r650
+    CALL %r651, $test_ne
+    PARAM %r651
+    CALL %r652, $print
+    LOAD_CONST %r653, #3
+    PARAM %r653
+    LOAD_CONST %r654, #7
+    PARAM %r654
+    CALL %r655, $test_lt
+    PARAM %r655
+    CALL %r656, $print
+    LOAD_CONST %r657, #7
+    PARAM %r657
+    LOAD_CONST %r658, #3
+    PARAM %r658
+    CALL %r659, $test_lt
+    PARAM %r659
+    CALL %r660, $print
+    LOAD_CONST %r661, #5
+    PARAM %r661
+    LOAD_CONST %r662, #5
+    PARAM %r662
+    CALL %r663, $test_le
+    PARAM %r663
+    CALL %r664, $print
+    LOAD_CONST %r665, #7
+    PARAM %r665
+    LOAD_CONST %r666, #3
+    PARAM %r666
+    CALL %r667, $test_le
+    PARAM %r667
+    CALL %r668, $print
+    LOAD_CONST %r669, #7
+    PARAM %r669
+    LOAD_CONST %r670, #3
+    PARAM %r670
+    CALL %r671, $test_gt
+    PARAM %r671
+    CALL %r672, $print
+    LOAD_CONST %r673, #3
+    PARAM %r673
+    LOAD_CONST %r674, #7
+    PARAM %r674
+    CALL %r675, $test_gt
+    PARAM %r675
+    CALL %r676, $print
+    LOAD_CONST %r677, #5
+    PARAM %r677
+    LOAD_CONST %r678, #5
+    PARAM %r678
+    CALL %r679, $test_ge
+    PARAM %r679
+    CALL %r680, $print
+    LOAD_CONST %r681, #3
+    PARAM %r681
+    LOAD_CONST %r682, #7
+    PARAM %r682
+    CALL %r683, $test_ge
+    PARAM %r683
+    CALL %r684, $print
+    LOAD_CONST %r685, #"TEST 18: All Arithmetic with Types"
+    PARAM %r685
+    CALL %r686, $print
+func_test_add:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r687, $a
+    GET_VAR %r688, $b
+    ADD %r689, %r687, %r688
+    RETURN %r689
+    RETURN
+after_func112:
+func_test_sub:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r690, $a
+    GET_VAR %r691, $b
+    SUB %r692, %r690, %r691
+    RETURN %r692
+    RETURN
+after_func113:
+func_test_mul:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r693, $a
+    GET_VAR %r694, $b
+    MUL %r695, %r693, %r694
+    RETURN %r695
+    RETURN
+after_func114:
+func_test_div:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r696, $a
+    GET_VAR %r697, $b
+    DIV %r698, %r696, %r697
+    RETURN %r698
+    RETURN
+after_func115:
+func_test_mod:
+    DECLARE $a
+    DECLARE $b
+    GET_VAR %r699, $a
+    GET_VAR %r700, $b
+    MOD %r701, %r699, %r700
+    RETURN %r701
+    RETURN
+after_func116:
+func_test_neg:
+    DECLARE $a
+    GET_VAR %r702, $a
+    NEG %r703, %r702
+    RETURN %r703
+    RETURN
+after_func117:
+    LOAD_CONST %r704, #10
+    PARAM %r704
+    LOAD_CONST %r705, #5
+    PARAM %r705
+    CALL %r706, $test_add
+    PARAM %r706
+    CALL %r707, $print
+    LOAD_CONST %r708, #10
+    PARAM %r708
+    LOAD_CONST %r709, #5
+    PARAM %r709
+    CALL %r710, $test_sub
+    PARAM %r710
+    CALL %r711, $print
+    LOAD_CONST %r712, #10
+    PARAM %r712
+    LOAD_CONST %r713, #5
+    PARAM %r713
+    CALL %r714, $test_mul
+    PARAM %r714
+    CALL %r715, $print
+    LOAD_CONST %r716, #10
+    PARAM %r716
+    LOAD_CONST %r717, #5
+    PARAM %r717
+    CALL %r718, $test_div
+    PARAM %r718
+    CALL %r719, $print
+    LOAD_CONST %r720, #10
+    PARAM %r720
+    LOAD_CONST %r721, #3
+    PARAM %r721
+    CALL %r722, $test_mod
+    PARAM %r722
+    CALL %r723, $print
+    LOAD_CONST %r724, #10
+    PARAM %r724
+    CALL %r725, $test_neg
+    PARAM %r725
+    CALL %r726, $print
+    LOAD_CONST %r727, #10.5
+    PARAM %r727
+    LOAD_CONST %r728, #2.5
+    PARAM %r728
+    CALL %r729, $test_add
+    PARAM %r729
+    CALL %r730, $print
+    LOAD_CONST %r731, #10.5
+    PARAM %r731
+    LOAD_CONST %r732, #2.5
+    PARAM %r732
+    CALL %r733, $test_sub
+    PARAM %r733
+    CALL %r734, $print
+    LOAD_CONST %r735, #10.5
+    PARAM %r735
+    LOAD_CONST %r736, #2.0
+    PARAM %r736
+    CALL %r737, $test_mul
+    PARAM %r737
+    CALL %r738, $print
+    LOAD_CONST %r739, #10.0
+    PARAM %r739
+    LOAD_CONST %r740, #4.0
+    PARAM %r740
+    CALL %r741, $test_div
+    PARAM %r741
+    CALL %r742, $print
+    LOAD_CONST %r743, #10
+    PARAM %r743
+    LOAD_CONST %r744, #2.5
+    PARAM %r744
+    CALL %r745, $test_add
+    PARAM %r745
+    CALL %r746, $print
+    LOAD_CONST %r747, #5
+    PARAM %r747
+    LOAD_CONST %r748, #2.5
+    PARAM %r748
+    CALL %r749, $test_mul
+    PARAM %r749
+    CALL %r750, $print
+    LOAD_CONST %r751, #15
+    PARAM %r751
+    LOAD_CONST %r752, #2
+    PARAM %r752
+    CALL %r753, $test_div
+    PARAM %r753
+    CALL %r754, $print
+    LOAD_CONST %r755, #"TEST 19: String Functions with Multiple Params"
+    PARAM %r755
+    CALL %r756, $print
+func_print_three_strings:
+    DECLARE $s1
+    DECLARE $s2
+    DECLARE $s3
+    GET_VAR %r757, $s1
+    PARAM %r757
+    CALL %r758, $print
+    GET_VAR %r759, $s2
+    PARAM %r759
+    CALL %r760, $print
+    GET_VAR %r761, $s3
+    PARAM %r761
+    CALL %r762, $print
+    RETURN
+after_func118:
+func_print_labeled:
+    DECLARE $label
+    DECLARE $value
+    GET_VAR %r763, $label
+    PARAM %r763
+    CALL %r764, $print
+    GET_VAR %r765, $value
+    PARAM %r765
+    CALL %r766, $print
+    RETURN
+after_func119:
+    LOAD_CONST %r767, #"First"
+    PARAM %r767
+    LOAD_CONST %r768, #"Second"
+    PARAM %r768
+    LOAD_CONST %r769, #"Third"
+    PARAM %r769
+    CALL %r770, $print_three_strings
+    LOAD_CONST %r771, #"Name:"
+    PARAM %r771
+    LOAD_CONST %r772, #"Alice"
+    PARAM %r772
+    CALL %r773, $print_labeled
+    LOAD_CONST %r774, #"Age:"
+    PARAM %r774
+    LOAD_CONST %r775, #"30"
+    PARAM %r775
+    CALL %r776, $print_labeled
+    LOAD_CONST %r777, #"TEST 20: Early Returns"
+    PARAM %r777
+    CALL %r778, $print
+func_early_return_test:
+    DECLARE $n
+    GET_VAR %r779, $n
+    LOAD_CONST %r780, #0
+    LT %r781, %r779, %r780
+    JUMP_IF_FALSE @else120, %r781
+    LOAD_CONST %r782, #999
+    NEG %r783, %r782
+    RETURN %r783
+    JUMP @endif121
+else120:
+endif121:
+    GET_VAR %r784, $n
+    LOAD_CONST %r785, #0
+    EQ %r786, %r784, %r785
+    JUMP_IF_FALSE @else122, %r786
+    LOAD_CONST %r787, #0
+    RETURN %r787
+    JUMP @endif123
+else122:
+endif123:
+    GET_VAR %r788, $n
+    LOAD_CONST %r789, #1
+    EQ %r790, %r788, %r789
+    JUMP_IF_FALSE @else124, %r790
+    LOAD_CONST %r791, #100
+    RETURN %r791
+    JUMP @endif125
+else124:
+endif125:
+    GET_VAR %r792, $n
+    LOAD_CONST %r793, #2
+    EQ %r794, %r792, %r793
+    JUMP_IF_FALSE @else126, %r794
+    LOAD_CONST %r795, #200
+    RETURN %r795
+    JUMP @endif127
+else126:
+endif127:
+    LOAD_CONST %r796, #999
+    RETURN %r796
+    RETURN
+after_func128:
+    LOAD_CONST %r797, #5
+    NEG %r798, %r797
+    PARAM %r798
+    CALL %r799, $early_return_test
+    PARAM %r799
+    CALL %r800, $print
+    LOAD_CONST %r801, #0
+    PARAM %r801
+    CALL %r802, $early_return_test
+    PARAM %r802
+    CALL %r803, $print
+    LOAD_CONST %r804, #1
+    PARAM %r804
+    CALL %r805, $early_return_test
+    PARAM %r805
+    CALL %r806, $print
+    LOAD_CONST %r807, #2
+    PARAM %r807
+    CALL %r808, $early_return_test
+    PARAM %r808
+    CALL %r809, $print
+    LOAD_CONST %r810, #10
+    PARAM %r810
+    CALL %r811, $early_return_test
+    PARAM %r811
+    CALL %r812, $print
+    LOAD_CONST %r813, #"=== COMPREHENSIVE TEST SUITE COMPLETE ==="
+    PARAM %r813
+    CALL %r814, $print
+    LOAD_CONST %r815, #"All 20 test sections passed!"
+    PARAM %r815
+    CALL %r816, $print
+    LOAD_CONST %r817, #"Features tested:"
+    PARAM %r817
+    CALL %r818, $print
+    LOAD_CONST %r819, #"- Integer functions"
+    PARAM %r819
+    CALL %r820, $print
+    LOAD_CONST %r821, #"- String parameter type inference"
+    PARAM %r821
+    CALL %r822, $print
+    LOAD_CONST %r823, #"- Float literals and arithmetic"
+    PARAM %r823
+    CALL %r824, $print
+    LOAD_CONST %r825, #"- True division (float results)"
+    PARAM %r825
+    CALL %r826, $print
+    LOAD_CONST %r827, #"- Mixed type arithmetic with promotion"
+    PARAM %r827
+    CALL %r828, $print
+    LOAD_CONST %r829, #"- Recursive functions"
+    PARAM %r829
+    CALL %r830, $print
+    LOAD_CONST %r831, #"- C reserved keyword escaping"
+    PARAM %r831
+    CALL %r832, $print
+    LOAD_CONST %r833, #"- Nested and chained calls"
+    PARAM %r833
+    CALL %r834, $print
+    LOAD_CONST %r835, #"- Multiple return paths"
+    PARAM %r835
+    CALL %r836, $print
+    LOAD_CONST %r837, #"- Zero to many parameters"
+    PARAM %r837
+    CALL %r838, $print
+    LOAD_CONST %r839, #"- Complex logic and comparisons"
+    PARAM %r839
+    CALL %r840, $print
+    LOAD_CONST %r841, #"- Mutual recursion"
+    PARAM %r841
+    CALL %r842, $print
+    LOAD_CONST %r843, #"- Void functions"
+    PARAM %r843
+    CALL %r844, $print
+    LOAD_CONST %r845, #"- Deep recursion"
+    PARAM %r845
+    CALL %r846, $print
+    LOAD_CONST %r847, #"- All comparison operators"
+    PARAM %r847
+    CALL %r848, $print
+    LOAD_CONST %r849, #"- All arithmetic operators"
+    PARAM %r849
+    CALL %r850, $print
+    LOAD_CONST %r851, #"- String functions"
+    PARAM %r851
+    CALL %r852, $print
+    LOAD_CONST %r853, #"- Early returns"
+    PARAM %r853
+    CALL %r854, $print
+

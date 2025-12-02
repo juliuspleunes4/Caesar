@@ -417,16 +417,22 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             } else {
                 // User-defined function call - use safe name if it's a reserved word
                 std::string func_name = instr.src1.value;
+                std::string func_label = "func_" + instr.src1.value;
                 if (c_reserved_words.find(func_name) != c_reserved_words.end()) {
                     func_name = "caesar_" + func_name;
                 }
+                
+                // Look up return type from function_return_types
+                auto ret_it = function_return_types.find(func_label);
+                std::string return_type = (ret_it != function_return_types.end()) ? ret_it->second : "int64_t";
                 
                 std::string args;
                 for (size_t i = 0; i < call_params.size(); i++) {
                     if (i > 0) args += ", ";
                     args += call_params[i];
                 }
-                emitLine("int64_t " + instr.dest.value + " = " + func_name + "(" + args + ");");
+                emitLine(return_type + " " + instr.dest.value + " = " + func_name + "(" + args + ");");
+                register_types[instr.dest.value] = return_type;  // Track register type for future uses
             }
             call_params.clear();  // Clear params after call
             break;
@@ -463,12 +469,14 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     output.str("");
     variable_types.clear();
     register_types.clear();
+    function_return_types.clear();  // Clear member variable
     
     // First pass: identify function blocks and which blocks belong to each function
     std::unordered_map<std::string, std::string> temp_register_types;
     std::vector<std::string> function_names;
     std::unordered_map<std::string, std::vector<std::string>> function_params;  // func_name -> params
     std::unordered_map<std::string, std::vector<std::string>> function_param_types;  // func_name -> param types
+    std::unordered_map<std::string, std::string> local_function_return_types;  // func_name -> return type (local tracking)
     std::unordered_map<std::string, std::string> block_owner;  // block_label -> func_label (or "main")
     std::vector<std::string> pending_call_params;  // Track parameters for next CALL
     std::vector<std::string> pending_call_param_types;  // Track parameter types for next CALL
@@ -528,6 +536,40 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
                     variable_types[instr.dest.value] = "int64_t";  // Default
                 }
             }
+            // Track arithmetic operations - determine result types
+            if (instr.opcode == IROpcode::DIV) {
+                // Division always returns double
+                temp_register_types[instr.dest.value] = "double";
+            } else if (instr.opcode == IROpcode::ADD || instr.opcode == IROpcode::SUB || 
+                       instr.opcode == IROpcode::MUL || instr.opcode == IROpcode::MOD) {
+                // Check operand types - if either is double, result is double
+                std::string type1 = "int64_t";
+                std::string type2 = "int64_t";
+                
+                if (instr.src1.type == IROperandType::REGISTER) {
+                    auto it = temp_register_types.find(instr.src1.value);
+                    if (it != temp_register_types.end()) type1 = it->second;
+                }
+                if (instr.src2.type == IROperandType::REGISTER) {
+                    auto it = temp_register_types.find(instr.src2.value);
+                    if (it != temp_register_types.end()) type2 = it->second;
+                }
+                
+                // Promote to double if either operand is double
+                if (type1 == "double" || type2 == "double") {
+                    temp_register_types[instr.dest.value] = "double";
+                } else {
+                    temp_register_types[instr.dest.value] = "int64_t";
+                }
+            } else if (instr.opcode == IROpcode::NEG) {
+                // Negation preserves operand type
+                if (instr.src1.type == IROperandType::REGISTER) {
+                    auto it = temp_register_types.find(instr.src1.value);
+                    if (it != temp_register_types.end()) {
+                        temp_register_types[instr.dest.value] = it->second;
+                    }
+                }
+            }
             // Track PARAM instructions - collect parameter types
             if (instr.opcode == IROpcode::PARAM) {
                 std::string param_reg = instr.dest.value;
@@ -554,8 +596,45 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
                 pending_call_params.clear();
                 pending_call_param_types.clear();
             }
+            // Track RETURN instructions - determine return type
+            if (instr.opcode == IROpcode::RETURN && current_function != "main" && 
+                instr.dest.type != IROperandType::NONE) {
+                // Get the type of the return value
+                std::string return_type = "int64_t";  // default
+                if (instr.dest.type == IROperandType::REGISTER) {
+                    auto it = temp_register_types.find(instr.dest.value);
+                    if (it != temp_register_types.end()) {
+                        return_type = it->second;
+                    }
+                } else if (instr.dest.type == IROperandType::CONSTANT) {
+                    // Check if constant is a float
+                    if (instr.dest.value.find('.') != std::string::npos || 
+                        instr.dest.value.find('e') != std::string::npos ||
+                        instr.dest.value.find('E') != std::string::npos) {
+                        return_type = "double";
+                    }
+                }
+                
+                // Update function return type (promote to double if any return is double)
+                auto ret_it = local_function_return_types.find(current_function);
+                if (ret_it == local_function_return_types.end()) {
+                    local_function_return_types[current_function] = return_type;
+                } else if (ret_it->second == "int64_t" && return_type == "double") {
+                    // Promote to double if any return path returns double
+                    local_function_return_types[current_function] = "double";
+                } else if (ret_it->second == "double" || return_type == "double") {
+                    // Keep as double if either is double
+                    local_function_return_types[current_function] = "double";
+                } else if (ret_it->second == "const char*" || return_type == "const char*") {
+                    // Keep as const char* if either is string
+                    local_function_return_types[current_function] = "const char*";
+                }
+            }
         }
     }
+    
+    // Copy local tracking to member variable for use in emitInstruction
+    function_return_types = local_function_return_types;
     
     output << "// Caesar C Code\n";
     output << "// Generated by Caesar Compiler v1.5.1\n\n";
@@ -569,7 +648,11 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
             auto& params = function_params[func_label];
             auto& param_types = function_param_types[func_label];
             
-            output << "int64_t " << func_name << "(";
+            // Get return type (default to int64_t if not tracked)
+            auto ret_it = local_function_return_types.find(func_label);
+            std::string return_type = (ret_it != local_function_return_types.end()) ? ret_it->second : "int64_t";
+            
+            output << return_type << " " << func_name << "(";
             for (size_t i = 0; i < params.size(); i++) {
                 if (i > 0) output << ", ";
                 // Use tracked parameter type if available, otherwise default to int64_t
@@ -587,7 +670,11 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
         auto& params = function_params[func_label];
         auto& param_types = function_param_types[func_label];
         
-        output << "int64_t " << func_name << "(";
+        // Get return type (default to int64_t if not tracked)
+        auto ret_it = local_function_return_types.find(func_label);
+        std::string return_type = (ret_it != local_function_return_types.end()) ? ret_it->second : "int64_t";
+        
+        output << return_type << " " << func_name << "(";
         for (size_t i = 0; i < params.size(); i++) {
             if (i > 0) output << ", ";
             // Use tracked parameter type if available, otherwise default to int64_t

@@ -1,0 +1,4 @@
+fn test_double() {
+    return 3.14
+}
+print(test_double())
