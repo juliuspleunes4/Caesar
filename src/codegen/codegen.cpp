@@ -377,7 +377,7 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             // Handle built-in functions
             if (instr.src1.value == "print") {
                 if (!call_params.empty()) {
-                    std::string param = call_params[0];
+                    std::string param = call_params.back();  // Take last parameter
                     // Check register type
                     auto it = register_types.find(param);
                     if (it != register_types.end()) {
@@ -391,21 +391,30 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
                     } else {
                         emitLine("caesar_print_int(" + param + ");");
                     }
+                    call_params.pop_back();  // Remove used parameter
                 }
             } else if (instr.src1.value == "range") {
                 // range() returns a CaesarRange iterator
-                if (call_params.size() == 1) {
-                    emitLine("CaesarRange " + instr.dest.value + " = caesar_range_init(" + call_params[0] + ");");
-                } else if (call_params.size() == 2) {
-                    emitLine("CaesarRange " + instr.dest.value + " = caesar_range_init2(" + call_params[0] + ", " + call_params[1] + ");");
-                } else if (call_params.size() == 3) {
-                    emitLine("CaesarRange " + instr.dest.value + " = caesar_range_init3(" + call_params[0] + ", " + call_params[1] + ", " + call_params[2] + ");");
+                size_t num_params = call_params.size();
+                if (num_params >= 3) {
+                    size_t start_idx = num_params - 3;
+                    emitLine("CaesarRange " + instr.dest.value + " = caesar_range_init3(" + 
+                            call_params[start_idx] + ", " + call_params[start_idx+1] + ", " + call_params[start_idx+2] + ");");
+                    call_params.erase(call_params.end() - 3, call_params.end());
+                } else if (num_params >= 2) {
+                    size_t start_idx = num_params - 2;
+                    emitLine("CaesarRange " + instr.dest.value + " = caesar_range_init2(" + 
+                            call_params[start_idx] + ", " + call_params[start_idx+1] + ");");
+                    call_params.erase(call_params.end() - 2, call_params.end());
+                } else if (num_params >= 1) {
+                    emitLine("CaesarRange " + instr.dest.value + " = caesar_range_init(" + call_params.back() + ");");
+                    call_params.pop_back();
                 }
                 register_types[instr.dest.value] = "CaesarRange";
             } else if (instr.src1.value == "len") {
                 // len() function - check type of argument
                 if (!call_params.empty()) {
-                    std::string param = call_params[0];
+                    std::string param = call_params.back();  // Take last parameter
                     auto it = register_types.find(param);
                     if (it != register_types.end() && (it->second == "char*" || it->second == "const char*")) {
                         emitLine("int64_t " + instr.dest.value + " = caesar_len_str(" + param + ");");
@@ -413,6 +422,7 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
                         emitLine("int64_t " + instr.dest.value + " = 0;  // TODO: len() for non-string types");
                     }
                     register_types[instr.dest.value] = "int64_t";
+                    call_params.pop_back();  // Remove used parameter
                 }
             } else {
                 // User-defined function call - use safe name if it's a reserved word
@@ -426,15 +436,32 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
                 auto ret_it = function_return_types.find(func_label);
                 std::string return_type = (ret_it != function_return_types.end()) ? ret_it->second : "int64_t";
                 
+                // Determine how many parameters this function expects (from function definition)
+                size_t expected_param_count = call_params.size();  // default to all
+                auto params_it = function_params.find(func_label);
+                if (params_it != function_params.end()) {
+                    expected_param_count = params_it->second.size();
+                }
+                
+                // Only consume the LAST N parameters from call_params (for nested calls)
+                size_t params_to_use = std::min(expected_param_count, call_params.size());
+                size_t start_idx = call_params.size() - params_to_use;
+                
                 std::string args;
-                for (size_t i = 0; i < call_params.size(); i++) {
+                for (size_t i = 0; i < params_to_use; i++) {
                     if (i > 0) args += ", ";
-                    args += call_params[i];
+                    args += call_params[start_idx + i];  // Use correct index from end of list
                 }
                 emitLine(return_type + " " + instr.dest.value + " = " + func_name + "(" + args + ");");
                 register_types[instr.dest.value] = return_type;  // Track register type for future uses
+                
+                // Remove consumed parameters from the end
+                call_params.erase(call_params.end() - params_to_use, call_params.end());
             }
-            call_params.clear();  // Clear params after call
+            // Don't clear all - nested calls need remaining params
+            if (call_params.empty()) {
+                call_params.clear();
+            }
             break;
         }
             
@@ -473,7 +500,7 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     
     // Pass 1a: Collect function names and parameters from DECLARE instructions
     std::vector<std::string> function_names;
-    std::unordered_map<std::string, std::vector<std::string>> function_params;  // func_name -> params
+    function_params.clear();  // Clear member variable before use
     std::unordered_map<std::string, std::string> block_owner;  // block_label -> func_label (or "main")
     
     std::string current_function = "main";
@@ -533,13 +560,62 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
                 for (const auto& fn : function_names) {
                     if (fn == "func_" + func_name) {
                         if (function_param_types.find(fn) == function_param_types.end()) {
-                            function_param_types[fn] = pending_call_param_types;
+                            // Determine how many parameters this function expects
+                            auto params_it = function_params.find(fn);
+                            size_t expected_param_count = (params_it != function_params.end()) 
+                                ? params_it->second.size() 
+                                : pending_call_param_types.size();
+                            
+                            // Only take the LAST N parameters from pending list (most recent params for this call)
+                            std::vector<std::string> this_call_types;
+                            if (pending_call_param_types.size() >= expected_param_count) {
+                                this_call_types.assign(
+                                    pending_call_param_types.end() - expected_param_count,
+                                    pending_call_param_types.end()
+                                );
+                                // Remove consumed parameters
+                                pending_call_params.erase(
+                                    pending_call_params.end() - expected_param_count,
+                                    pending_call_params.end()
+                                );
+                                pending_call_param_types.erase(
+                                    pending_call_param_types.end() - expected_param_count,
+                                    pending_call_param_types.end()
+                                );
+                            } else {
+                                // Fallback: use all pending params
+                                this_call_types = pending_call_param_types;
+                                pending_call_params.clear();
+                                pending_call_param_types.clear();
+                            }
+                            
+                            function_param_types[fn] = this_call_types;
+                        } else {
+                            // Function already has types, still need to consume params from pending list
+                            auto params_it = function_params.find(fn);
+                            size_t expected_param_count = (params_it != function_params.end()) 
+                                ? params_it->second.size() 
+                                : 0;
+                            
+                            if (expected_param_count > 0 && pending_call_param_types.size() >= expected_param_count) {
+                                // Remove consumed parameters
+                                pending_call_params.erase(
+                                    pending_call_params.end() - expected_param_count,
+                                    pending_call_params.end()
+                                );
+                                pending_call_param_types.erase(
+                                    pending_call_param_types.end() - expected_param_count,
+                                    pending_call_param_types.end()
+                                );
+                            } else {
+                                // Fallback: clear all
+                                pending_call_params.clear();
+                                pending_call_param_types.clear();
+                            }
                         }
                         break;
                     }
                 }
-                pending_call_params.clear();
-                pending_call_param_types.clear();
             }
         }
     }

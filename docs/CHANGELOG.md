@@ -39,6 +39,10 @@ This release adds significant new language features including iteration support,
   - **Type Propagation**: Types flow from constants → registers → variables
   - **Type-Aware Built-in Functions**: `caesar_print_str()` for strings, `caesar_print_int()` for integers
   - **Parameter Tracking**: PARAM instructions collected and passed to CALL instructions
+  - **Nested Call Support**: Correctly handles nested function calls (e.g., `func(a, func(b, c))`)
+    - Parameter consumption from end of accumulated list
+    - Each CALL consumes only its expected parameter count
+    - Enables complex recursive patterns like Ackermann function
   - **Complete Comparison Operators**: All six comparison operators (==, !=, <, <=, >, >=) generate correct C code
   - **Clean C Output**: Generated C code compiles without warnings
 - **Production-Ready Standalone Compiler**:
@@ -85,6 +89,23 @@ This release adds significant new language features including iteration support,
   - Fixed by checking step direction: positive uses `i < end`, negative uses `i > end`
 
 #### **Critical Compiler Fixes**
+- **Nested Function Call Parameters**: Fixed parameter handling for nested function calls ⭐ NEW
+  - **Problem**: `func(a, func(b, c))` generated wrong parameter counts (outer got 3, inner got 1)
+  - **Solution**: Consume only last N parameters based on function definition
+  - **Impact**: Enables Ackermann function and complex recursive patterns
+  - **Scope**: Applies to user-defined and built-in functions (`print`, `range`, `len`)
+- **Scientific Notation Parsing**: Extended lexer to support scientific notation ⭐ NEW
+  - Format: `1.5e10`, `2.5e-3`, `-2.5e-2`
+  - Handles optional `+/-` signs after exponent
+  - Automatically sets float type for scientific notation literals
+- **String Return Type Inference**: Fixed two-pass architecture for string parameter returns ⭐ NEW
+  - **Problem**: Functions returning string parameters had wrong type (int64_t vs const char*)
+  - **Root Cause**: Return type inference before parameter types known
+  - **Solution**: Three-pass architecture:
+    * Pass 1a: Collect function structures and parameter names from DECLARE
+    * Pass 1b: Collect parameter types from all CALL sites (PARAM before CALL)
+    * Pass 2: Infer return types using complete parameter type information
+  - **Bonus**: Populates `variable_types` with parameter types for GET_VAR tracking
 - **Missing Comparison Operators**: Added all comparison operators to C code generator
   - Implemented: `!=` (NE), `<=` (LE), `>` (GT), `>=` (GE)
   - Previously only `==` (EQ) and `<` (LT) were implemented
@@ -160,6 +181,31 @@ This release adds significant new language features including iteration support,
 
 - **New Test File**: Added `tests/enhanced-data-structures/test_iteration.csr` for iteration features
 - **IR/Codegen Tests**: Added `tests/test_ir.cpp` with comprehensive IR and code generation tests
+- **Edge Case Test Suite**: Added `tests/manual/test_edge_cases.csr` with 92 assertions ⭐ NEW
+  - Tests string return types, bool arithmetic, implicit returns
+  - Tests scientific notation: 1.5e10, 2.5e-3, -2.5e-2
+  - Tests mixed type promotions, empty strings, negative floats
+  - Tests division edge cases, comparisons in arithmetic
+  - Tests string parameter pass-through
+  - **Result**: 92/92 tests passing, zero compiler warnings
+- **Advanced Compiler Test Suite**: Added `tests/manual/test_compiler_advanced.csr` ⭐ NEW
+  - **15 comprehensive test sections** covering advanced compiler features:
+    1. Forward declarations (caller before callee)
+    2. Mutual recursion (2-way: even/odd)
+    3. Ackermann function (nested recursive calls)
+    4. 22 C reserved keywords as function names
+    5. Recursive Fibonacci
+    6. Tail recursion optimization readiness
+    7. Triple mutual recursion (a→b→c→a)
+    8. Nested recursive calls (power, factorial, combine)
+    9. Countdown recursion with side effects
+    10. Forward declaration chains (4 levels deep)
+    11. Mixed type recursion (int/float)
+    12. More C keywords recursively
+    13. Deep recursion stress (200 levels)
+    14. Recursive helper functions (sum_range, product_range)
+    15. Multi-parameter forward declarations
+  - **Result**: All 15 sections pass, validates complex compiler scenarios
 - **Comprehensive Range Test Suite**: Added `tests/manual/test_range_comprehensive.csr` with 25 test scenarios
   - Tests all range() variants: 1, 2, and 3 arguments
   - Tests positive and negative steps

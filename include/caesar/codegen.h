@@ -100,6 +100,7 @@ private:
     std::unordered_map<std::string, std::string> register_types;  // Track register types (int64_t or char*)
     std::unordered_map<std::string, std::string> function_return_types;  // Track function return types
     std::vector<std::string> call_params;  // Track parameters for upcoming CALL
+    std::unordered_map<std::string, std::vector<std::string>> function_params;  // func_name -> param names
     
     void emitLine(const std::string& line);
     void emitInstruction(const IRInstruction& instr);

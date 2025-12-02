@@ -54,3 +54,7 @@
 - Don’t introduce extra “meta-docs” (e.g. explaining what Copilot did) unless explicitly asked.
 - Keep diffs as **minimal and focused** as possible: one concern per change.
 
+--
+
+> Ensure everything you do is production-ready. No quick hacks or shortcuts that would only work temporarily/locally. Aim for high quality, maintainable, and robust code that fits seamlessly into the Caesar project.
+

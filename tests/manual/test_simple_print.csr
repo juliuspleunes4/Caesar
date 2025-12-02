@@ -1,0 +1,6 @@
+# Simple test for print with both strings and numbers
+
+print("Hello")
+print(42)
+print("World")
+print(100)
