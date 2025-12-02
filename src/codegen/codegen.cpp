@@ -352,6 +352,21 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             register_types[instr.dest.value] = "bool";
             break;
             
+        case IROpcode::AND:
+            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " && " + instr.src2.value + ";");
+            register_types[instr.dest.value] = "bool";
+            break;
+            
+        case IROpcode::OR:
+            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " || " + instr.src2.value + ";");
+            register_types[instr.dest.value] = "bool";
+            break;
+            
+        case IROpcode::NOT:
+            emitLine("bool " + instr.dest.value + " = !" + instr.src1.value + ";");
+            register_types[instr.dest.value] = "bool";
+            break;
+            
         case IROpcode::JUMP:
             emitLine("goto " + instr.dest.value + ";");
             break;

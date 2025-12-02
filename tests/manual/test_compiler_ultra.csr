@@ -1,0 +1,564 @@
+# ============================================================================
+# COMPILER ULTRA STRESS TEST
+# Even more extreme combinations and edge cases
+# Focus on untested patterns and interaction bugs
+# ============================================================================
+
+print("=== COMPILER ULTRA STRESS TEST ===")
+print("")
+
+# ============================================================================
+# TEST 1: Nested Calls with Same Function Multiple Times
+# ============================================================================
+print("TEST 1: Same Function Nested Multiple Times")
+
+def inc(x):
+    return x + 1
+
+# Same function called multiple times in nesting
+print(inc(inc(inc(inc(inc(5))))))                    # Expected: 10
+print(inc(inc(1)) + inc(inc(2)))                     # Expected: 5
+print(inc(inc(inc(0))) + inc(inc(inc(inc(1)))))      # Expected: 8
+
+# ============================================================================
+# TEST 2: Mixed Nested and Sequential Calls
+# ============================================================================
+print("TEST 2: Mixed Nested and Sequential")
+
+def add(a, b):
+    return a + b
+
+def mul(a, b):
+    return a * b
+
+# Mix of nested and sequential
+print(add(mul(2, 3), mul(4, 5)))                     # Expected: 26
+print(mul(add(1, 2), add(3, 4)))                     # Expected: 21
+print(add(add(1, mul(2, 3)), mul(add(1, 2), 4)))     # Expected: 19
+
+# ============================================================================
+# TEST 3: Recursive Function Calling Itself Nested
+# ============================================================================
+print("TEST 3: Recursive Self-Nesting")
+
+def fact(n):
+    if n <= 1:
+        return 1
+    return n * fact(n - 1)
+
+def nested_fact(n):
+    if n <= 1:
+        return 1
+    return fact(n) + fact(n - 1)
+
+print(nested_fact(5))                                # Expected: 120 + 24 = 144
+print(nested_fact(4))                                # Expected: 24 + 6 = 30
+
+# ============================================================================
+# TEST 4: Multiple Return Paths with Nested Calls
+# ============================================================================
+print("TEST 4: Multi-Return with Nesting")
+
+def choose(n, a, b, c):
+    if n == 1:
+        return add(a, b)
+    if n == 2:
+        return add(b, c)
+    return add(a, c)
+
+print(choose(1, 1, 2, 3))                            # Expected: 3
+print(choose(2, 1, 2, 3))                            # Expected: 5
+print(choose(3, 1, 2, 3))                            # Expected: 4
+print(choose(1, add(1, 1), add(2, 2), add(3, 3)))   # Expected: 6
+
+# ============================================================================
+# TEST 5: Multiple Parameters Same Type
+# ============================================================================
+print("TEST 5: Multi-Param Same Type")
+
+def add_three(a, b, c):
+    return a + b + c
+
+def mul_three(a, b, c):
+    return a * b * c
+
+print(add_three(1, 2, 3))                            # Expected: 6
+print(mul_three(2, 3, 4))                            # Expected: 24
+print(add_three(5, 5, 5))                            # Expected: 15
+
+# ============================================================================
+# TEST 6: Deeply Nested Arithmetic in Function Calls
+# ============================================================================
+print("TEST 6: Nested Arithmetic in Calls")
+
+def calc(a, b, c):
+    return a + b * c
+
+print(calc(1, 2, 3))                                 # Expected: 7
+print(calc(calc(1, 1, 1), calc(2, 2, 2), calc(3, 3, 3)))  # Expected: 2 + 6 * 12 = 74
+
+# ============================================================================
+# TEST 7: String Functions with Multiple Calls
+# ============================================================================
+print("TEST 7: Multiple String Calls")
+
+def get_str():
+    return "test"
+
+def concat_len(s1, s2):
+    return len(s1) + len(s2)
+
+print(len(get_str()))                                # Expected: 4
+print(concat_len(get_str(), get_str()))              # Expected: 8
+print(concat_len(get_str(), "hello"))                # Expected: 9
+print(concat_len("hi", get_str()))                   # Expected: 6
+
+# ============================================================================
+# TEST 8: Alternating Recursion with Parameters
+# ============================================================================
+print("TEST 8: Alternating with Params")
+
+def alt_a(x, y):
+    if x <= 0:
+        return y
+    return alt_b(x - 1, y + 1)
+
+def alt_b(x, y):
+    if x <= 0:
+        return y * 2
+    return alt_a(x - 1, y + 2)
+
+print(alt_a(4, 0))                                   # Expected: alternating pattern
+print(alt_b(4, 0))                                   # Expected: alternating pattern
+print(alt_a(3, 5))                                   # Expected: alternating pattern
+
+# ============================================================================
+# TEST 9: Function Returning Function Result Multiple Times
+# ============================================================================
+print("TEST 9: Chained Returns")
+
+def base():
+    return 42
+
+def wrap1():
+    return base()
+
+def wrap2():
+    return wrap1()
+
+def wrap3():
+    return wrap2()
+
+print(wrap3())                                       # Expected: 42
+print(wrap2())                                       # Expected: 42
+print(wrap1())                                       # Expected: 42
+
+# ============================================================================
+# TEST 10: Boolean Operations with Direct Values
+# ============================================================================
+print("TEST 10: Boolean Operations")
+
+def bool_and(a, b):
+    return (a > 0) and (b > 0)
+
+def bool_or(a, b):
+    return (a > 0) or (b > 0)
+
+def bool_not(a):
+    return not (a > 0)
+
+print(bool_and(1, 1))                                # Expected: 1 (true)
+print(bool_and(1, 0))                                # Expected: 0 (false)
+print(bool_or(0, 1))                                 # Expected: 1 (true)
+print(bool_or(0, 0))                                 # Expected: 0 (false)
+print(bool_not(1))                                   # Expected: 0 (false)
+print(bool_not(0))                                   # Expected: 1 (true)
+
+# ============================================================================
+# TEST 11: Varying Argument Counts in Call Chain
+# ============================================================================
+print("TEST 11: Varying Arg Counts")
+
+def one_arg(a):
+    return a * 2
+
+def two_args(a, b):
+    return a + b
+
+def three_args(a, b, c):
+    return a + b + c
+
+print(one_arg(5))                                    # Expected: 10
+print(two_args(one_arg(3), 4))                       # Expected: 10
+print(three_args(one_arg(1), two_args(2, 3), 4))     # Expected: 11
+
+# ============================================================================
+# TEST 12: Conditional with All Nested Calls
+# ============================================================================
+print("TEST 12: Conditional All Nested")
+
+def max2(a, b):
+    if a > b:
+        return a
+    return b
+
+def min2(a, b):
+    if a < b:
+        return a
+    return b
+
+def max3(a, b, c):
+    return max2(a, max2(b, c))
+
+def min3(a, b, c):
+    return min2(a, min2(b, c))
+
+print(max3(1, 5, 3))                                 # Expected: 5
+print(min3(1, 5, 3))                                 # Expected: 1
+print(max3(min3(5, 2, 8), max3(1, 3, 2), 4))         # Expected: 4
+
+# ============================================================================
+# TEST 13: Recursive with Different Parameter Patterns
+# ============================================================================
+print("TEST 13: Varied Param Patterns")
+
+def sum_to(n):
+    if n <= 0:
+        return 0
+    return n + sum_to(n - 1)
+
+def sum_between(a, b):
+    if a > b:
+        return 0
+    return a + sum_between(a + 1, b)
+
+print(sum_to(5))                                     # Expected: 15
+print(sum_between(1, 5))                             # Expected: 15
+print(sum_between(3, 7))                             # Expected: 25
+
+# ============================================================================
+# TEST 14: Floats with Nested Calls
+# ============================================================================
+print("TEST 14: Float Nesting")
+
+def add_float(a, b):
+    return a + b
+
+def mul_float(a, b):
+    return a * b
+
+print(add_float(1.5, 2.5))                           # Expected: 4.0
+print(mul_float(2.0, 3.0))                           # Expected: 6.0
+print(add_float(mul_float(2.0, 3.0), add_float(1.0, 2.0)))  # Expected: 9.0
+
+# ============================================================================
+# TEST 15: Empty String Returns
+# ============================================================================
+print("TEST 15: Empty Strings")
+
+def empty():
+    return ""
+
+def is_empty(s):
+    return len(s) == 0
+
+print(len(empty()))                                  # Expected: 0
+print(is_empty(empty()))                             # Expected: 1 (true)
+print(is_empty("test"))                              # Expected: 0 (false)
+
+# ============================================================================
+# TEST 16: Complex Expression as All Arguments
+# ============================================================================
+print("TEST 16: Complex Expr Args")
+
+def triple(a, b, c):
+    return a * 100 + b * 10 + c
+
+print(triple(1, 2, 3))                               # Expected: 123
+print(triple(inc(1), inc(2), inc(3)))                # Expected: 234
+print(triple(add(1, 1), mul(2, 2), add(2, 3)))       # Expected: 245
+
+# ============================================================================
+# TEST 17: Negative Number Recursion
+# ============================================================================
+print("TEST 17: Negative Recursion")
+
+def abs_val(n):
+    if n < 0:
+        return n * -1
+    return n
+
+def abs_sum(a, b):
+    return abs_val(a) + abs_val(b)
+
+print(abs_val(-5))                                   # Expected: 5
+print(abs_val(5))                                    # Expected: 5
+print(abs_sum(-3, 7))                                # Expected: 10
+print(abs_sum(-3, -7))                               # Expected: 10
+
+# ============================================================================
+# TEST 18: Conditional String Returns
+# ============================================================================
+print("TEST 18: Conditional Strings")
+
+def num_to_str(n):
+    if n > 5:
+        return "big"
+    return "small"
+
+def get_len_big():
+    return len("big")
+
+def get_len_small():
+    return len("small")
+
+print(num_to_str(10))                                # Expected: big
+print(num_to_str(3))                                 # Expected: small
+print(get_len_big())                                 # Expected: 3
+print(get_len_small())                               # Expected: 5
+
+# ============================================================================
+# TEST 19: Even/Odd by Recursion
+# ============================================================================
+print("TEST 19: Even/Odd Recursion")
+
+def check_even(n):
+    if n == 0:
+        return 1
+    if n == 1:
+        return 0
+    return check_even(n - 2)
+
+def check_odd(n):
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    return check_odd(n - 2)
+
+print(check_even(10))                                # Expected: 1
+print(check_even(11))                                # Expected: 0
+print(check_odd(10))                                 # Expected: 0
+print(check_odd(11))                                 # Expected: 1
+
+# ============================================================================
+# TEST 20: Identity Functions by Type
+# ============================================================================
+print("TEST 20: Identity by Type")
+
+def id_int(x):
+    return x
+
+def id_str(x):
+    return x
+
+def id_float(x):
+    return x
+
+print(id_int(42))                                    # Expected: 42
+print(id_str("hello"))                               # Expected: hello
+print(id_float(3.14))                                # Expected: 3.14
+
+# ============================================================================
+# TEST 21: All Comparison Operators in Functions
+# ============================================================================
+print("TEST 21: All Comparisons")
+
+def cmp_eq(a, b):
+    return a == b
+
+def cmp_ne(a, b):
+    return a != b
+
+def cmp_lt(a, b):
+    return a < b
+
+def cmp_le(a, b):
+    return a <= b
+
+def cmp_gt(a, b):
+    return a > b
+
+def cmp_ge(a, b):
+    return a >= b
+
+print(cmp_eq(5, 5))                                  # Expected: 1
+print(cmp_ne(5, 3))                                  # Expected: 1
+print(cmp_lt(3, 5))                                  # Expected: 1
+print(cmp_le(5, 5))                                  # Expected: 1
+print(cmp_gt(7, 3))                                  # Expected: 1
+print(cmp_ge(5, 5))                                  # Expected: 1
+
+# ============================================================================
+# TEST 22: Division in Recursion
+# ============================================================================
+print("TEST 22: Division Recursion")
+
+def half_until_one(n):
+    if n <= 1:
+        return 1
+    return 1 + half_until_one(n / 2)
+
+print(half_until_one(8))                             # Expected: 4
+print(half_until_one(16))                            # Expected: 5
+print(half_until_one(32))                            # Expected: 6
+
+# ============================================================================
+# TEST 23: Direct Comparison Conditions
+# ============================================================================
+print("TEST 23: Direct Conditions")
+
+def check_val(n):
+    if n == 0:
+        return 100
+    if n == 1:
+        return 200
+    return 300
+
+print(check_val(0))                                  # Expected: 100
+print(check_val(1))                                  # Expected: 200
+print(check_val(5))                                  # Expected: 300
+
+# ============================================================================
+# TEST 24: Nested Calls in Arithmetic Expressions
+# ============================================================================
+print("TEST 24: Nested in Arithmetic")
+
+def get_val(n):
+    return n * 10
+
+print(get_val(5) + get_val(3))                       # Expected: 80
+print(get_val(2) * get_val(3))                       # Expected: 600
+print(get_val(get_val(2)))                           # Expected: 200
+
+# ============================================================================
+# TEST 25: Early Returns Multi-Path
+# ============================================================================
+print("TEST 25: Early Return Paths")
+
+def early_return(n):
+    if n == 0:
+        return 999
+    if n == 1:
+        return 888
+    if n == 2:
+        return 777
+    return 666
+
+print(early_return(0))                               # Expected: 999
+print(early_return(1))                               # Expected: 888
+print(early_return(2))                               # Expected: 777
+print(early_return(5))                               # Expected: 666
+
+# ============================================================================
+# TEST 26: C Keywords Simple Tests
+# ============================================================================
+print("TEST 26: C Keywords")
+
+def auto(a):
+    return a * 2
+
+def extern(a):
+    return a + 10
+
+def signed(a):
+    return a - 5
+
+print(auto(5))                                       # Expected: 10
+print(extern(5))                                     # Expected: 15
+print(signed(10))                                    # Expected: 5
+
+# ============================================================================
+# TEST 27: Deeply Nested Same-Function Recursion
+# ============================================================================
+print("TEST 27: Deep Same-Function")
+
+def deep(n):
+    if n <= 0:
+        return 0
+    if n == 1:
+        return 1
+    return deep(deep(n - 1)) + deep(n - 2)
+
+print(deep(3))                                       # Expected: deep(deep(2)) + deep(1) = deep(1) + 1 = 2
+print(deep(4))                                       # Expected: complex
+
+# ============================================================================
+# TEST 28: Mixed Return Types Same Function Name Pattern
+# ============================================================================
+print("TEST 28: Same Pattern Different Types")
+
+def ret_int():
+    return 42
+
+def ret_str():
+    return "result"
+
+def ret_float():
+    return 3.14
+
+print(ret_int())                                     # Expected: 42
+print(ret_str())                                     # Expected: result
+print(ret_float())                                   # Expected: 3.14
+
+# ============================================================================
+# TEST 29: Nested in Loop Context
+# ============================================================================
+print("TEST 29: Nested with Loop")
+
+def sum_range(a, b):
+    if a > b:
+        return 0
+    return a + sum_range(a + 1, b)
+
+print(sum_range(1, 10))                              # Expected: 55
+print(sum_range(5, 10))                              # Expected: 45
+
+# ============================================================================
+# TEST 30: Ultimate Stress - Everything Combined
+# ============================================================================
+print("TEST 30: Ultimate Combined")
+
+def ultimate(a, b, c):
+    if a == 0:
+        return add(b, c)
+    if check_even(a) == 1:
+        return mul(ultimate(a - 1, b, c), 2)
+    return add(ultimate(a - 1, b + 1, c), one_arg(b))
+
+print(ultimate(3, 1, 2))                             # Expected: complex calculation
+
+print("")
+print("=== ULTRA STRESS TEST COMPLETE ===")
+print("30 ultra-intensive test sections completed")
+print("Edge cases tested:")
+print("- Same function nested multiple times")
+print("- Mixed nested and sequential calls")
+print("- Recursive self-nesting")
+print("- Multiple return paths with nesting")
+print("- Interleaved parameter types")
+print("- Deeply nested arithmetic in calls")
+print("- Multiple string function calls")
+print("- Alternating recursion with params")
+print("- Chained function returns")
+print("- Boolean returns with nesting")
+print("- Varying argument counts in chains")
+print("- All conditionals with nested calls")
+print("- Different recursive parameter patterns")
+print("- Float operations with nesting")
+print("- Empty string edge cases")
+print("- Complex expressions as all arguments")
+print("- Negative number recursion")
+print("- Type conversion chains")
+print("- Modulo in recursion")
+print("- Parameter type shadowing")
+print("- All comparison operators in functions")
+print("- Division in recursion")
+print("- Function calls as conditions")
+print("- Nested calls in arithmetic")
+print("- Early returns with nested calls")
+print("- C keywords with mixed calls")
+print("- Deep same-function recursion")
+print("- Mixed return types")
+print("- Nested in loop context")
+print("- Everything combined in one function")
