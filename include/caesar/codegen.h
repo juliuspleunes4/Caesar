@@ -102,6 +102,10 @@ private:
     std::vector<std::string> call_params;  // Track parameters for upcoming CALL
     std::unordered_map<std::string, std::vector<std::string>> function_params;  // func_name -> param names
     
+    // Monomorphization support
+    std::map<std::pair<std::string, std::vector<std::string>>, std::string> monomorphized_names;  // (func_label, types) -> name
+    std::map<std::pair<std::string, std::vector<std::string>>, std::string> instantiation_return_types;  // (func_label, types) -> return type
+    
     void emitLine(const std::string& line);
     void emitInstruction(const IRInstruction& instr);
     std::string indent() const;

@@ -23,7 +23,12 @@ static const std::unordered_set<std::string> c_reserved_words = {
 // Helper: Convert Caesar function name to safe C function name
 static std::string safe_function_name(const std::string& caesar_name) {
     // Extract the actual name from "func_NAME"
-    std::string name = caesar_name.substr(5);  // Skip "func_"
+    std::string name = (caesar_name.length() > 5) ? caesar_name.substr(5) : caesar_name;
+    
+    // Defensive: if name is empty after extraction, return a placeholder
+    if (name.empty()) {
+        return "anonymous_func";
+    }
     
     // Check if it's a reserved word
     if (c_reserved_words.find(name) != c_reserved_words.end()) {
@@ -440,16 +445,9 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
                     call_params.pop_back();  // Remove used parameter
                 }
             } else {
-                // User-defined function call - use safe name if it's a reserved word
+                // User-defined function call
                 std::string func_name = instr.src1.value;
                 std::string func_label = "func_" + instr.src1.value;
-                if (c_reserved_words.find(func_name) != c_reserved_words.end()) {
-                    func_name = "caesar_" + func_name;
-                }
-                
-                // Look up return type from function_return_types
-                auto ret_it = function_return_types.find(func_label);
-                std::string return_type = (ret_it != function_return_types.end()) ? ret_it->second : "int64_t";
                 
                 // Determine how many parameters this function expects (from function definition)
                 size_t expected_param_count = call_params.size();  // default to all
@@ -461,6 +459,37 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
                 // Only consume the LAST N parameters from call_params (for nested calls)
                 size_t params_to_use = std::min(expected_param_count, call_params.size());
                 size_t start_idx = call_params.size() - params_to_use;
+                
+                // Determine actual argument types for monomorphization lookup
+                std::vector<std::string> arg_types;
+                for (size_t i = 0; i < params_to_use; i++) {
+                    std::string param_reg = call_params[start_idx + i];
+                    auto type_it = register_types.find(param_reg);
+                    std::string param_type = (type_it != register_types.end()) ? type_it->second : "int64_t";
+                    arg_types.push_back(param_type);
+                }
+                
+                // Look up monomorphized function name
+                auto mono_it = monomorphized_names.find({func_label, arg_types});
+                if (mono_it != monomorphized_names.end()) {
+                    func_name = mono_it->second;
+                } else {
+                    // No monomorphized version found: use default name
+                    if (c_reserved_words.find(func_name) != c_reserved_words.end()) {
+                        func_name = "caesar_" + func_name;
+                    }
+                }
+                
+                // Look up return type from instantiation_return_types (per-signature return type)
+                auto ret_inst_it = instantiation_return_types.find({func_label, arg_types});
+                std::string return_type;
+                if (ret_inst_it != instantiation_return_types.end()) {
+                    return_type = ret_inst_it->second;
+                } else {
+                    // Fall back to function_return_types if no instantiation-specific type found
+                    auto ret_it = function_return_types.find(func_label);
+                    return_type = (ret_it != function_return_types.end()) ? ret_it->second : "int64_t";
+                }
                 
                 std::string args;
                 for (size_t i = 0; i < params_to_use; i++) {
@@ -512,6 +541,13 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     variable_types.clear();
     register_types.clear();
     function_return_types.clear();  // Clear member variable
+    
+    // Monomorphization tracking: func_label -> list of unique type signatures
+    // Each signature is a vector of param types (e.g., ["int64_t", "const char*"])
+    std::unordered_map<std::string, std::vector<std::vector<std::string>>> function_instantiations;
+    
+    // Use member variable monomorphized_names (don't redeclare!)
+    monomorphized_names.clear();  // Clear from previous calls
     
     // Pass 1a: Collect function names and parameters from DECLARE instructions
     std::vector<std::string> function_names;
@@ -627,7 +663,21 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
                                 pending_call_param_types.clear();
                             }
                             
-                            // Update parameter types: prioritize specific types over generic int64_t
+                            // Track this instantiation for monomorphization
+                            auto& instantiations = function_instantiations[fn];
+                            bool signature_exists = false;
+                            for (const auto& sig : instantiations) {
+                                if (sig == this_call_types) {
+                                    signature_exists = true;
+                                    break;
+                                }
+                            }
+                            if (!signature_exists && !this_call_types.empty()) {
+                                instantiations.push_back(this_call_types);
+                                types_changed = true;
+                            }
+                            
+                            // For backward compatibility: also update function_param_types with merged types
                             if (function_param_types.find(fn) == function_param_types.end()) {
                                 function_param_types[fn] = this_call_types;
                                 types_changed = true;
@@ -799,6 +849,104 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
         }
     }
     
+    // Pass 1d: Generate monomorphized function names
+    // For each function with multiple instantiations, create unique C function names
+    for (const auto& entry : function_instantiations) {
+        const std::string& func_label = entry.first;
+        const std::vector<std::vector<std::string>>& instantiations = entry.second;
+        
+        // Extract base function name (remove "func_" prefix)
+        std::string base_name = (func_label.length() > 5) ? func_label.substr(5) : func_label;
+        if (base_name.empty()) {
+            continue;  // Skip functions with empty names (shouldn't happen, but defensive)
+        }
+        
+        for (const auto& signature : instantiations) {
+            // Generate suffix from type signature
+            std::string suffix;
+            for (const std::string& type : signature) {
+                if (!suffix.empty()) suffix += "_";
+                
+                if (type == "int64_t") {
+                    suffix += "int";
+                } else if (type == "const char*" || type == "char*") {
+                    suffix += "str";
+                } else if (type == "double") {
+                    suffix += "float";
+                } else if (type == "bool") {
+                    suffix += "bool";
+                } else {
+                    suffix += "any";
+                }
+            }
+            
+            // Generate monomorphized name
+            std::string mono_name;
+            // Only monomorphize if: (1) multiple instantiations exist AND (2) function has parameters
+            if (instantiations.size() == 1 || signature.empty()) {
+                // Single instantiation or no parameters: use base name (no suffix)
+                mono_name = base_name;
+            } else {
+                // Multiple instantiations with parameters: append type suffix
+                mono_name = base_name + "_" + suffix;
+            }
+            
+            // Handle C reserved words
+            if (c_reserved_words.find(base_name) != c_reserved_words.end()) {
+                mono_name = "caesar_" + mono_name;
+            }
+            
+            monomorphized_names[{func_label, signature}] = mono_name;
+        }
+    }
+    
+    // Pass 1e: Infer return types per instantiation
+    // For functions that return a parameter, the return type matches that parameter's type
+    instantiation_return_types.clear();  // Use member variable
+    
+    for (const auto& entry : function_instantiations) {
+        const std::string& func_label = entry.first;
+        const std::vector<std::vector<std::string>>& instantiations = entry.second;
+        
+        // Find which parameter (if any) is returned by this function
+        int returned_param_index = -1;
+        for (const auto& block : blocks) {
+            if (block.label != func_label) continue;
+            
+            std::unordered_map<std::string, int> param_indices;
+            auto& params = function_params[func_label];
+            for (size_t i = 0; i < params.size(); i++) {
+                param_indices[params[i]] = i;
+            }
+            
+            // Look for RETURN instruction
+            for (const auto& instr : block.instructions) {
+                if (instr.opcode == IROpcode::RETURN && instr.dest.type == IROperandType::REGISTER) {
+                    // Check if this register came from a GET_VAR of a parameter
+                    for (const auto& instr2 : block.instructions) {
+                        if (instr2.opcode == IROpcode::GET_VAR && instr2.dest.value == instr.dest.value) {
+                            auto it = param_indices.find(instr2.src1.value);
+                            if (it != param_indices.end()) {
+                                returned_param_index = it->second;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            break;
+        }
+        
+        // Set return type for each instantiation
+        for (const auto& signature : instantiations) {
+            std::string return_type = "int64_t";  // default
+            if (returned_param_index >= 0 && returned_param_index < (int)signature.size()) {
+                return_type = signature[returned_param_index];
+            }
+            instantiation_return_types[{func_label, signature}] = return_type;
+        }
+    }
+    
     // Pass 2: Infer return types now that we know parameter types
     std::unordered_map<std::string, std::string> local_function_return_types;
     temp_register_types.clear();  // Reset for second pass
@@ -949,57 +1097,126 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     output << "// Generated by Caesar Compiler v1.5.1\n\n";
     output << "#include \"caesar/caesar_runtime.h\"\n\n";
     
-    // Generate forward declarations for user functions
+    // Generate forward declarations for user functions (including monomorphized versions)
     if (!function_names.empty()) {
         output << "// Forward declarations\n";
         for (const auto& func_label : function_names) {
-            std::string func_name = safe_function_name(func_label);
-            auto& params = function_params[func_label];
-            auto& param_types = function_param_types[func_label];
+            auto inst_it = function_instantiations.find(func_label);
             
-            // Get return type (default to int64_t if not tracked)
-            auto ret_it = local_function_return_types.find(func_label);
-            std::string return_type = (ret_it != local_function_return_types.end()) ? ret_it->second : "int64_t";
-            
-            output << return_type << " " << func_name << "(";
-            for (size_t i = 0; i < params.size(); i++) {
-                if (i > 0) output << ", ";
-                // Use tracked parameter type if available, otherwise default to int64_t
-                std::string param_type = (i < param_types.size()) ? param_types[i] : "int64_t";
-                output << param_type << " " << params[i];
+            if (inst_it != function_instantiations.end() && !inst_it->second.empty()) {
+                // Generate declaration for each monomorphized version
+                for (const auto& signature : inst_it->second) {
+                    // Try to get monomorphized name; skip if not found or empty
+                    auto mono_it = monomorphized_names.find({func_label, signature});
+                    std::string mono_name;
+                    if (mono_it != monomorphized_names.end() && !mono_it->second.empty()) {
+                        mono_name = mono_it->second;
+                    } else {
+                        mono_name = safe_function_name(func_label);
+                    }
+                    
+                    auto& params = function_params[func_label];
+                    
+                    // Get return type - use instantiation-specific return type
+                    auto ret_inst_it = instantiation_return_types.find({func_label, signature});
+                    std::string return_type = "int64_t";
+                    if (ret_inst_it != instantiation_return_types.end()) {
+                        return_type = ret_inst_it->second;
+                    } else {
+                        auto ret_it = local_function_return_types.find(func_label);
+                        if (ret_it != local_function_return_types.end()) {
+                            return_type = ret_it->second;
+                        }
+                    }
+                    
+                    output << return_type << " " << mono_name << "(";
+                    for (size_t i = 0; i < params.size(); i++) {
+                        if (i > 0) output << ", ";
+                        std::string param_type = (i < signature.size()) ? signature[i] : "int64_t";
+                        output << param_type << " " << params[i];
+                    }
+                    output << ");\n";
+                }
+            } else {
+                // No instantiations tracked: use default signature
+                std::string func_name = safe_function_name(func_label);
+                auto& params = function_params[func_label];
+                auto& param_types = function_param_types[func_label];
+                
+                auto ret_it = local_function_return_types.find(func_label);
+                std::string return_type = (ret_it != local_function_return_types.end()) ? ret_it->second : "int64_t";
+                
+                output << return_type << " " << func_name << "(";
+                for (size_t i = 0; i < params.size(); i++) {
+                    if (i > 0) output << ", ";
+                    std::string param_type = (i < param_types.size()) ? param_types[i] : "int64_t";
+                    output << param_type << " " << params[i];
+                }
+                output << ");\n";
             }
-            output << ");\n";
         }
         output << "\n";
     }
     
-    // Generate user-defined functions
+    // Generate user-defined functions (including all monomorphized versions)
     for (const auto& func_label : function_names) {
-        std::string func_name = safe_function_name(func_label);
         auto& params = function_params[func_label];
-        auto& param_types = function_param_types[func_label];
         
-        // Get return type (default to int64_t if not tracked)
-        auto ret_it = local_function_return_types.find(func_label);
-        std::string return_type = (ret_it != local_function_return_types.end()) ? ret_it->second : "int64_t";
+        // Get all instantiations for this function
+        auto inst_it = function_instantiations.find(func_label);
+        std::vector<std::vector<std::string>> signatures_to_generate;
         
-        output << return_type << " " << func_name << "(";
-        for (size_t i = 0; i < params.size(); i++) {
-            if (i > 0) output << ", ";
-            // Use tracked parameter type if available, otherwise default to int64_t
-            std::string param_type = (i < param_types.size()) ? param_types[i] : "int64_t";
-            output << param_type << " " << params[i];
+        if (inst_it != function_instantiations.end() && !inst_it->second.empty()) {
+            signatures_to_generate = inst_it->second;
+        } else {
+            // No instantiations: use default signature
+            signatures_to_generate.push_back(function_param_types[func_label]);
         }
-        output << ") {\n";
         
-        indent_level = 1;
-        
-        // Register parameter types in variable_types map for this function's scope
-        for (size_t i = 0; i < params.size(); i++) {
-            std::string param_type = (i < param_types.size()) ? param_types[i] : "int64_t";
-            variable_types[params[i]] = param_type;
-            register_types[params[i]] = param_type;  // Also add to register_types for consistency
-        }
+        // Generate a function for each unique signature
+        for (const auto& signature : signatures_to_generate) {
+            std::string func_name;
+            std::string return_type;
+            
+            if (inst_it != function_instantiations.end()) {
+                // Try to get monomorphized name; fall back to safe_function_name if not found
+                auto mono_it = monomorphized_names.find({func_label, signature});
+                if (mono_it != monomorphized_names.end() && !mono_it->second.empty()) {
+                    func_name = mono_it->second;
+                } else {
+                    func_name = safe_function_name(func_label);
+                }
+                
+                // Use instantiation-specific return type
+                auto ret_inst_it = instantiation_return_types.find({func_label, signature});
+                if (ret_inst_it != instantiation_return_types.end()) {
+                    return_type = ret_inst_it->second;
+                } else {
+                    auto ret_it = local_function_return_types.find(func_label);
+                    return_type = (ret_it != local_function_return_types.end()) ? ret_it->second : "int64_t";
+                }
+            } else {
+                func_name = safe_function_name(func_label);
+                auto ret_it = local_function_return_types.find(func_label);
+                return_type = (ret_it != local_function_return_types.end()) ? ret_it->second : "int64_t";
+            }
+            
+            output << return_type << " " << func_name << "(";
+            for (size_t i = 0; i < params.size(); i++) {
+                if (i > 0) output << ", ";
+                std::string param_type = (i < signature.size()) ? signature[i] : "int64_t";
+                output << param_type << " " << params[i];
+            }
+            output << ") {\n";
+            
+            indent_level = 1;
+            
+            // Register parameter types in variable_types map for this function's scope
+            for (size_t i = 0; i < params.size(); i++) {
+                std::string param_type = (i < signature.size()) ? signature[i] : "int64_t";
+                variable_types[params[i]] = param_type;
+                register_types[params[i]] = param_type;  // Also add to register_types for consistency
+            }
         
         // Collect local variables for this function (non-param variables used in function)
         std::unordered_set<std::string> func_local_vars;
@@ -1055,9 +1272,10 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
             }
         }
         
-        indent_level = 0;
-        output << "}\n\n";
-    }
+            indent_level = 0;
+            output << "}\n\n";
+        }  // end for each signature
+    }  // end for each function
     
     // Generate main function
     output << "int main() {\n";

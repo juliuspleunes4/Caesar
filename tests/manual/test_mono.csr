@@ -1,0 +1,25 @@
+# Test monomorphization: same function with different types
+print("=== MONOMORPHIZATION TEST ===")
+
+def identity(x):
+    return x
+
+# Call with int
+print(identity(42))           # Should use identity_int
+
+# Call with string  
+print(identity("hello"))      # Should use identity_str
+
+# Call with float
+print(identity(3.14))         # Should use identity_float
+
+def get_first(a, b):
+    return a
+
+# Call with ints
+print(get_first(10, 20))      # Should use get_first_int_int
+
+# Call with strings
+print(get_first("hi", "bye")) # Should use get_first_str_str
+
+print("=== TEST COMPLETE ===")
