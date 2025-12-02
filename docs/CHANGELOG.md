@@ -89,12 +89,26 @@ This release adds significant new language features including iteration support,
   - Fixed by checking step direction: positive uses `i < end`, negative uses `i > end`
 
 #### **Critical Compiler Fixes**
-- **Nested Function Call Parameters**: Fixed parameter handling for nested function calls ⭐ NEW
+- **Boolean Operations (AND/OR/NOT)**: Added missing IR opcode handlers ⭐ NEW
+  - **Problem**: `AND`, `OR`, `NOT` IR opcodes existed but C code generator had no handlers
+  - **Solution**: Added cases to generate C boolean operations (`&&`, `||`, `!`)
+  - **Impact**: Functions can now use `and`, `or`, `not` operations correctly
+  - **Example**: `def both_zero(a, b): return (a == 0) and (b == 0)` now compiles
+- **Body-Based Parameter Type Inference**: Parameters now inferred from usage ⭐ NEW
+  - **Problem**: Parameters defaulted to `int64_t` even when used with `len()` or string ops
+  - **Solution**: Added Pass 1c to analyze function bodies for type clues:
+    * `len(param)` usage → infers `const char*`
+    * Comparison with int literals (`param == 0`) → infers `int64_t`
+    * Arithmetic operations → infers numeric type
+  - **Impact**: Generic-style functions now work without explicit type annotations
+  - **Example**: `def str_len(s): return len(s)` correctly infers `s` is string
+  - **Limitation**: Each function works with ONE type signature (no polymorphism yet)
+- **Nested Function Call Parameters**: Fixed parameter handling for nested function calls
   - **Problem**: `func(a, func(b, c))` generated wrong parameter counts (outer got 3, inner got 1)
   - **Solution**: Consume only last N parameters based on function definition
   - **Impact**: Enables Ackermann function and complex recursive patterns
   - **Scope**: Applies to user-defined and built-in functions (`print`, `range`, `len`)
-- **Scientific Notation Parsing**: Extended lexer to support scientific notation ⭐ NEW
+- **Scientific Notation Parsing**: Extended lexer to support scientific notation
   - Format: `1.5e10`, `2.5e-3`, `-2.5e-2`
   - Handles optional `+/-` signs after exponent
   - Automatically sets float type for scientific notation literals

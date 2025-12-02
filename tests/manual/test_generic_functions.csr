@@ -1,0 +1,193 @@
+# ============================================================================
+# GENERIC FUNCTION TYPE INFERENCE TEST
+# Tests body-based parameter type inference
+# ============================================================================
+
+print("=== GENERIC FUNCTION TYPE INFERENCE TEST ===")
+print("")
+
+# ============================================================================
+# TEST 1: Parameter type inferred from len() usage
+# ============================================================================
+print("TEST 1: len() parameter inference")
+
+def str_len(s):
+    return len(s)
+
+def concat_lengths(a, b):
+    return len(a) + len(b)
+
+print(str_len("hello"))                              # Expected: 5
+print(str_len("test"))                               # Expected: 4
+print(concat_lengths("hi", "world"))                 # Expected: 7
+
+# ============================================================================
+# TEST 2: Parameter type inferred from int comparison
+# ============================================================================
+print("TEST 2: int comparison inference")
+
+def is_zero(n):
+    return n == 0
+
+def is_positive(n):
+    return n > 0
+
+def is_equal(a, b):
+    return a == b
+
+print(is_zero(0))                                    # Expected: 1
+print(is_zero(5))                                    # Expected: 0
+print(is_positive(10))                               # Expected: 1
+print(is_positive(-5))                               # Expected: 0
+print(is_equal(5, 5))                                # Expected: 1
+print(is_equal(3, 7))                                # Expected: 0
+
+# ============================================================================
+# TEST 3: Generic identity function (returns same type)
+# ============================================================================
+print("TEST 3: identity functions")
+
+def identity_int(x):
+    return x
+
+def identity_str(x):
+    return x
+
+def identity_float(x):
+    return x
+
+print(identity_int(42))                              # Expected: 42
+print(identity_str("test"))                          # Expected: test
+print(identity_float(3.14))                          # Expected: 3.14
+
+# ============================================================================
+# TEST 4: First/second parameter selectors (int version)
+# ============================================================================
+print("TEST 4: parameter selectors")
+
+def get_first_int(a, b):
+    return a
+
+def get_second_int(a, b):
+    return b
+
+def get_first_str(a, b):
+    return a
+
+def get_second_str(a, b):
+    return b
+
+print(get_first_int(10, 20))                         # Expected: 10
+print(get_second_int(10, 20))                        # Expected: 20
+print(get_first_str("hello", "world"))               # Expected: hello
+print(get_second_str("hello", "world"))              # Expected: world
+
+# ============================================================================
+# TEST 5: Boolean operations with inferred int parameters
+# ============================================================================
+print("TEST 5: boolean with inference")
+
+def both_zero(a, b):
+    return (a == 0) and (b == 0)
+
+def either_zero(a, b):
+    return (a == 0) or (b == 0)
+
+print(both_zero(0, 0))                               # Expected: 1
+print(both_zero(0, 5))                               # Expected: 0
+print(either_zero(0, 5))                             # Expected: 1
+print(either_zero(3, 5))                             # Expected: 0
+
+# ============================================================================
+# TEST 6: Arithmetic operations infer int type
+# ============================================================================
+print("TEST 6: arithmetic inference")
+
+def add_one(n):
+    return n + 1
+
+def double_it(n):
+    return n * 2
+
+def subtract_five(n):
+    return n - 5
+
+print(add_one(10))                                   # Expected: 11
+print(double_it(7))                                  # Expected: 14
+print(subtract_five(20))                             # Expected: 15
+
+# ============================================================================
+# TEST 7: Nested calls with generic functions
+# ============================================================================
+print("TEST 7: nested generic calls")
+
+def apply_twice(n):
+    return add_one(add_one(n))
+
+def compare_lens(s1, s2):
+    return len(s1) == len(s2)
+
+print(apply_twice(5))                                # Expected: 7
+print(compare_lens("hi", "no"))                      # Expected: 1
+print(compare_lens("hello", "hi"))                   # Expected: 0
+
+# ============================================================================
+# TEST 8: Mixed parameter types in one function
+# ============================================================================
+print("TEST 8: mixed parameters")
+
+def combine(n, s):
+    return n + len(s)
+
+print(combine(10, "hello"))                          # Expected: 15
+print(combine(5, "test"))                            # Expected: 9
+
+# ============================================================================
+# TEST 9: Conditional with generic parameter
+# ============================================================================
+print("TEST 9: conditional generic")
+
+def max_of_two(a, b):
+    if a > b:
+        return a
+    return b
+
+def min_of_two(a, b):
+    if a < b:
+        return a
+    return b
+
+print(max_of_two(10, 5))                             # Expected: 10
+print(max_of_two(3, 8))                              # Expected: 8
+print(min_of_two(10, 5))                             # Expected: 5
+print(min_of_two(3, 8))                              # Expected: 3
+
+# ============================================================================
+# TEST 10: Multiple comparisons
+# ============================================================================
+print("TEST 10: multi-comparison")
+
+def in_range(n, low, high):
+    return (n >= low) and (n <= high)
+
+def is_between(x, a, b):
+    return (x > a) and (x < b)
+
+print(in_range(5, 1, 10))                            # Expected: 1
+print(in_range(15, 1, 10))                           # Expected: 0
+print(is_between(5, 3, 7))                           # Expected: 1
+print(is_between(10, 3, 7))                          # Expected: 0
+
+print("")
+print("=== GENERIC FUNCTION TEST COMPLETE ===")
+print("Successfully tested:")
+print("- len() usage infers string parameters")
+print("- Comparison with int literals infers int parameters")
+print("- Identity functions work with multiple types")
+print("- Parameter selector functions (first/second)")
+print("- Boolean operations with inferred types")
+print("- Arithmetic operations infer numeric types")
+print("- Nested calls with generic functions")
+print("- Mixed parameter types in single function")
+print("- Conditionals with generic parameters")
+print("- Multiple comparisons for range checking")

@@ -668,6 +668,137 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
         }
     }
     
+    // Pass 1c: Infer parameter types from function body usage
+    // This handles cases where parameters are used with built-in functions (len),
+    // in comparisons with literals, or in arithmetic operations
+    for (const auto& func_entry : function_params) {
+        const std::string& func_label = func_entry.first;
+        const std::vector<std::string>& params = func_entry.second;
+        
+        if (params.empty()) continue;
+        
+        // Find the function's block
+        for (const auto& block : blocks) {
+            if (block.label != func_label) continue;
+            
+            // Track what we learn about each parameter
+            std::unordered_map<std::string, std::string> param_inferred_types;
+            std::unordered_map<std::string, std::string> local_reg_types;
+            std::vector<std::string> local_call_params;
+            
+            for (const auto& instr : block.instructions) {
+                // Track LOAD_CONST for type inference
+                if (instr.opcode == IROpcode::LOAD_CONST) {
+                    if (!instr.src1.value.empty() && instr.src1.value[0] == '"') {
+                        local_reg_types[instr.dest.value] = "const char*";
+                    } else if (instr.src1.value.find('.') != std::string::npos || 
+                               instr.src1.value.find('e') != std::string::npos ||
+                               instr.src1.value.find('E') != std::string::npos) {
+                        local_reg_types[instr.dest.value] = "double";
+                    } else {
+                        local_reg_types[instr.dest.value] = "int64_t";
+                    }
+                }
+                
+                // Track GET_VAR - parameter loaded into register
+                if (instr.opcode == IROpcode::GET_VAR) {
+                    const std::string& var_name = instr.src1.value;
+                    bool is_param = false;
+                    for (const auto& p : params) {
+                        if (p == var_name) {
+                            is_param = true;
+                            break;
+                        }
+                    }
+                    if (is_param) {
+                        // This register holds a parameter value
+                        local_reg_types[instr.dest.value] = "PARAM:" + var_name;
+                    }
+                }
+                
+                // Detect len() calls - parameter must be string
+                if (instr.opcode == IROpcode::PARAM) {
+                    local_call_params.push_back(instr.dest.value);
+                }
+                
+                if (instr.opcode == IROpcode::CALL && instr.src1.value == "len") {
+                    if (!local_call_params.empty()) {
+                        std::string param_reg = local_call_params.back();
+                        auto it = local_reg_types.find(param_reg);
+                        if (it != local_reg_types.end() && it->second.rfind("PARAM:", 0) == 0) {
+                            std::string param_name = it->second.substr(6);  // Skip "PARAM:"
+                            param_inferred_types[param_name] = "const char*";
+                        }
+                        local_call_params.pop_back();
+                    }
+                }
+                
+                // Detect arithmetic/comparison operations with int literals
+                if (instr.opcode == IROpcode::ADD || instr.opcode == IROpcode::SUB ||
+                    instr.opcode == IROpcode::MUL || instr.opcode == IROpcode::DIV ||
+                    instr.opcode == IROpcode::EQ || instr.opcode == IROpcode::NE ||
+                    instr.opcode == IROpcode::LT || instr.opcode == IROpcode::LE ||
+                    instr.opcode == IROpcode::GT || instr.opcode == IROpcode::GE) {
+                    
+                    // Check if either operand is a parameter
+                    for (const std::string& reg : {instr.src1.value, instr.src2.value}) {
+                        auto it = local_reg_types.find(reg);
+                        if (it != local_reg_types.end() && it->second.rfind("PARAM:", 0) == 0) {
+                            std::string param_name = it->second.substr(6);
+                            
+                            // Check if the other operand gives us type info
+                            std::string other_reg = (reg == instr.src1.value) ? instr.src2.value : instr.src1.value;
+                            auto other_it = local_reg_types.find(other_reg);
+                            
+                            if (other_it != local_reg_types.end()) {
+                                if (other_it->second == "int64_t" && param_inferred_types.find(param_name) == param_inferred_types.end()) {
+                                    param_inferred_types[param_name] = "int64_t";
+                                } else if (other_it->second == "double") {
+                                    param_inferred_types[param_name] = "double";
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Detect RETURN - if returning a parameter directly
+                if (instr.opcode == IROpcode::RETURN && instr.dest.type == IROperandType::REGISTER) {
+                    auto it = local_reg_types.find(instr.dest.value);
+                    if (it != local_reg_types.end() && it->second.rfind("PARAM:", 0) == 0) {
+                        std::string param_name = it->second.substr(6);
+                        // If we know the return type from call sites, use it for parameter
+                        auto ret_it = function_return_types.find(func_label);
+                        if (ret_it != function_return_types.end() && ret_it->second != "int64_t") {
+                            param_inferred_types[param_name] = ret_it->second;
+                        }
+                    }
+                }
+            }
+            
+            // Apply inferred types to function_param_types
+            if (!param_inferred_types.empty()) {
+                auto& param_types = function_param_types[func_label];
+                if (param_types.empty()) {
+                    param_types.resize(params.size(), "int64_t");
+                }
+                
+                for (size_t i = 0; i < params.size(); i++) {
+                    auto it = param_inferred_types.find(params[i]);
+                    if (it != param_inferred_types.end()) {
+                        // Upgrade type if we found something more specific
+                        if (param_types[i] == "int64_t" || param_types.size() <= i) {
+                            if (i < param_types.size()) {
+                                param_types[i] = it->second;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            break;  // Found the function block, no need to continue
+        }
+    }
+    
     // Pass 2: Infer return types now that we know parameter types
     std::unordered_map<std::string, std::string> local_function_return_types;
     temp_register_types.clear();  // Reset for second pass
