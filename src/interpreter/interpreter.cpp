@@ -420,14 +420,28 @@ void Interpreter::visit(ForStatement& node) {
                 int step = std::stoi(str_val.substr(second_underscore + 1));
                 
                 try {
-                    for (int i = start; i < end; i += step) {
-                        environment->define(node.variable, static_cast<int64_t>(i));
-                        try {
-                            node.body->accept(*this);
-                        } catch (const ContinueException&) {
-                            continue;
-                        } catch (const BreakException&) {
-                            break;
+                    // Handle both positive and negative steps
+                    if (step > 0) {
+                        for (int i = start; i < end; i += step) {
+                            environment->define(node.variable, static_cast<int64_t>(i));
+                            try {
+                                node.body->accept(*this);
+                            } catch (const ContinueException&) {
+                                continue;
+                            } catch (const BreakException&) {
+                                break;
+                            }
+                        }
+                    } else if (step < 0) {
+                        for (int i = start; i > end; i += step) {
+                            environment->define(node.variable, static_cast<int64_t>(i));
+                            try {
+                                node.body->accept(*this);
+                            } catch (const ContinueException&) {
+                                continue;
+                            } catch (const BreakException&) {
+                                break;
+                            }
                         }
                     }
                 } catch (const ReturnException&) {

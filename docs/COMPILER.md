@@ -128,11 +128,11 @@ Bytecode    x86-64 ASM    C Code      (Future: LLVM IR)
 
 **Critical (Required for basic programs):**
 
-| Feature | Priority | Estimated Effort | Blocker For |
-|---------|----------|------------------|-------------|
-| **Built-in: range()** | 🔥 Critical | 4h | For-loops, iteration |
-| **Built-in: len()** | 🔥 Critical | 2h | String/list operations |
-| **For-in loops** | 🔥 Critical | 6h | Most Caesar programs |
+| Feature | Priority | Status | Notes |
+|---------|----------|--------|-------|
+| **Built-in: range()** | 🔥 Critical | ✅ **DONE** | Full iterator protocol with ITER_INIT/NEXT/DONE |
+| **Built-in: len()** | 🔥 Critical | ✅ **DONE** | String length implemented |
+| **For-in loops** | 🔥 Critical | ✅ **DONE** | Range-based iteration working |
 | **String operations** | 🔥 Critical | 4h | String manipulation |
 | **List support** | 🔥 Critical | 8h | Data structures |
 | **Dictionary support** | 🔥 Critical | 8h | Data structures |
@@ -644,22 +644,25 @@ done
 - ✅ Type tracking implemented
 - ✅ Break/continue fixed
 
-### Phase 2: Runtime Library (Next - 40h)
+### Phase 2: Runtime Library (Next - 40h) - 30% Complete ✅
 **Goal**: Core language features work compiled
+- ✅ **Iterator protocol implemented** (ITER_INIT/NEXT/DONE opcodes)
+- ✅ **range() fully working** (1/2/3 parameter versions)
+- ✅ **print() working** (type-aware dispatch)
+- ✅ **len() for strings**
 - 🔴 Implement Value type system
 - 🔴 Implement List data structure
 - 🔴 Implement Dict data structure
-- 🔴 Implement all built-in functions
-- 🔴 Implement iterator protocol
+- 🔴 Implement remaining built-ins (str/int/float/type/abs)
 - 🔴 Add memory management
 - 🔴 Build libcaesar.a
-- 🔴 Update C generator to use runtime
+- 🔴 List/dict iteration support
 
 ### Phase 3: Advanced Features (80h)
 **Goal**: All example programs compile
 - 🔴 User-defined functions
 - 🔴 Nested functions
-- 🔴 For-loops with iteration
+- ✅ **For-loops with iteration** (range-based loops done)
 - 🔴 If-elif-else chains
 - 🔴 List/dict comprehensions
 - 🔴 String operations
