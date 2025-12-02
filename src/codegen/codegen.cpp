@@ -447,13 +447,33 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             } else {
                 // User-defined function call
                 std::string func_name = instr.src1.value;
-                std::string func_label = "func_" + instr.src1.value;
                 
                 // Determine how many parameters this function expects (from function definition)
+                // Need to find the correct function by matching name + arity
                 size_t expected_param_count = call_params.size();  // default to all
-                auto params_it = function_params.find(func_label);
-                if (params_it != function_params.end()) {
-                    expected_param_count = params_it->second.size();
+                std::string func_label;
+                
+                // Try to find matching function by checking available parameters from end
+                // (for nested calls, we need to match arity to correctly consume parameters)
+                bool found = false;
+                for (const auto& [label, params] : function_params) {
+                    // Check if label matches "func_<funcname>_arityN"
+                    if (label.rfind("func_" + func_name + "_arity", 0) == 0) {
+                        size_t arity = params.size();
+                        // Check if we have enough parameters available
+                        if (arity <= call_params.size()) {
+                            func_label = label;
+                            expected_param_count = arity;
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (!found) {
+                    // Fallback: construct label from name and available param count
+                    func_label = "func_" + func_name + "_arity" + std::to_string(call_params.size());
+                    expected_param_count = call_params.size();
                 }
                 
                 // Only consume the LAST N parameters from call_params (for nested calls)
@@ -474,7 +494,8 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
                 if (mono_it != monomorphized_names.end()) {
                     func_name = mono_it->second;
                 } else {
-                    // No monomorphized version found: use default name
+                    // No monomorphized version found: use arity-specific name
+                    func_name = func_name + "_arity" + std::to_string(expected_param_count);
                     if (c_reserved_words.find(func_name) != c_reserved_words.end()) {
                         func_name = "caesar_" + func_name;
                     }
@@ -577,9 +598,168 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
         block_owner[block.label] = current_function;
     }
     
+    // Pass 2: Infer return types (before Pass 1b so return types are known for call site type inference)
+    // Iterate multiple times until return types stabilize (for function call chains)
+    std::unordered_map<std::string, std::string> local_function_return_types;
+    std::unordered_map<std::string, std::string> temp_register_types;  // Track register types
+    const int MAX_RETURN_TYPE_ITERATIONS = 10;
+    
+    for (int iteration = 0; iteration < MAX_RETURN_TYPE_ITERATIONS; iteration++) {
+        std::unordered_map<std::string, std::string> prev_return_types = local_function_return_types;
+        temp_register_types.clear();  // Reset for each iteration
+        current_function = "main";
+        
+        for (const auto& block : blocks) {
+            // Track which function we're in
+            auto owner_it = block_owner.find(block.label);
+            if (owner_it != block_owner.end()) {
+                current_function = owner_it->second;
+            }
+            
+            for (const auto& instr : block.instructions) {
+                // Track register types from LOAD_CONST
+                if (instr.opcode == IROpcode::LOAD_CONST && instr.dest.type == IROperandType::REGISTER) {
+                    if (!instr.src1.value.empty() && instr.src1.value[0] == '"') {
+                        temp_register_types[instr.dest.value] = "const char*";
+                    } else if (instr.src1.value.find('.') != std::string::npos || 
+                               instr.src1.value.find('e') != std::string::npos ||
+                               instr.src1.value.find('E') != std::string::npos) {
+                        temp_register_types[instr.dest.value] = "double";
+                    } else {
+                        temp_register_types[instr.dest.value] = "int64_t";
+                    }
+                }
+                // Track GET_VAR to propagate variable types to registers
+                if (instr.opcode == IROpcode::GET_VAR && instr.src1.type == IROperandType::VARIABLE) {
+                    auto vit = variable_types.find(instr.src1.value);
+                    if (vit != variable_types.end()) {
+                        temp_register_types[instr.dest.value] = vit->second;
+                    } else {
+                        variable_types[instr.src1.value] = "int64_t";  // Default
+                    }
+                }
+                // Track variable types from SET_VAR
+                if (instr.opcode == IROpcode::SET_VAR && instr.dest.type == IROperandType::VARIABLE) {
+                    auto it = temp_register_types.find(instr.src1.value);
+                    if (it != temp_register_types.end()) {
+                        variable_types[instr.dest.value] = it->second;
+                    } else {
+                        variable_types[instr.dest.value] = "int64_t";  // Default
+                    }
+                }
+                // Track arithmetic operations - determine result types
+                if (instr.opcode == IROpcode::DIV) {
+                    // Division always returns double
+                    temp_register_types[instr.dest.value] = "double";
+                } else if (instr.opcode == IROpcode::ADD || instr.opcode == IROpcode::SUB || 
+                           instr.opcode == IROpcode::MUL || instr.opcode == IROpcode::MOD) {
+                    // Check operand types - if either is double, result is double
+                    std::string type1 = "int64_t";
+                    std::string type2 = "int64_t";
+                    
+                    if (instr.src1.type == IROperandType::REGISTER) {
+                        auto it = temp_register_types.find(instr.src1.value);
+                        if (it != temp_register_types.end()) type1 = it->second;
+                    }
+                    if (instr.src2.type == IROperandType::REGISTER) {
+                        auto it = temp_register_types.find(instr.src2.value);
+                        if (it != temp_register_types.end()) type2 = it->second;
+                    }
+                    
+                    // Promote to double if either operand is double
+                    if (type1 == "double" || type2 == "double") {
+                        temp_register_types[instr.dest.value] = "double";
+                    } else {
+                        temp_register_types[instr.dest.value] = "int64_t";
+                    }
+                } else if (instr.opcode == IROpcode::NEG) {
+                    // Negation preserves operand type
+                    if (instr.src1.type == IROperandType::REGISTER) {
+                        auto it = temp_register_types.find(instr.src1.value);
+                        if (it != temp_register_types.end()) {
+                            temp_register_types[instr.dest.value] = it->second;
+                        }
+                    }
+                }
+                // Track CALL instructions - propagate return types to result registers
+                if (instr.opcode == IROpcode::CALL && instr.dest.type == IROperandType::REGISTER) {
+                    std::string func_name = instr.src1.value;
+                    // Try to find any function with this name (match "func_<name>_arity*")
+                    std::string return_type;
+                    bool found = false;
+                    for (const auto& [label, ret_type] : local_function_return_types) {
+                        if (label.rfind("func_" + func_name + "_arity", 0) == 0) {
+                            return_type = ret_type;
+                            found = true;
+                            break;  // Use first match (all overloads should have same return type in most cases)
+                        }
+                    }
+                    
+                    if (found) {
+                        temp_register_types[instr.dest.value] = return_type;
+                    } else {
+                        // Check if it's a built-in function
+                        if (func_name == "len") {
+                            temp_register_types[instr.dest.value] = "int64_t";
+                        } else {
+                            // Default to int64_t for unknown functions
+                            temp_register_types[instr.dest.value] = "int64_t";
+                        }
+                    }
+                }
+                // Track RETURN instructions - determine return type
+                if (instr.opcode == IROpcode::RETURN && current_function != "main" && 
+                    instr.dest.type != IROperandType::NONE) {
+                    // Get the type of the return value
+                    std::string return_type = "int64_t";  // default
+                    if (instr.dest.type == IROperandType::REGISTER || instr.dest.type == IROperandType::VARIABLE) {
+                        auto it = temp_register_types.find(instr.dest.value);
+                        if (it != temp_register_types.end()) {
+                            return_type = it->second;
+                        }
+                    } else if (instr.dest.type == IROperandType::CONSTANT) {
+                        // Check if constant is a float or string
+                        if (!instr.dest.value.empty() && instr.dest.value[0] == '"') {
+                            return_type = "const char*";
+                        } else if (instr.dest.value.find('.') != std::string::npos || 
+                                   instr.dest.value.find('e') != std::string::npos ||
+                                   instr.dest.value.find('E') != std::string::npos) {
+                            return_type = "double";
+                        }
+                    }
+                    
+                    // Update function return type (promote to double if any return is double)
+                    auto ret_it = local_function_return_types.find(current_function);
+                    if (ret_it == local_function_return_types.end()) {
+                        local_function_return_types[current_function] = return_type;
+                    } else if (ret_it->second == "int64_t" && return_type == "double") {
+                        // Promote to double if any return path returns double
+                        local_function_return_types[current_function] = "double";
+                    } else if (ret_it->second == "double" || return_type == "double") {
+                        // Keep as double if either is double
+                        local_function_return_types[current_function] = "double";
+                    } else if (ret_it->second == "const char*" || return_type == "const char*") {
+                        // Keep as const char* if either is string
+                        local_function_return_types[current_function] = "const char*";
+                    }
+                }
+            }
+        }  // End for (const auto& block : blocks)
+        
+        // Check if return types have stabilized
+        if (prev_return_types == local_function_return_types) {
+            // Converged - no changes in this iteration
+            break;
+        }
+    }
+    
+    // Copy local tracking to member variable for use throughout remaining passes
+    function_return_types = local_function_return_types;
+    
     // Pass 1b: Collect parameter types from all call sites (iterative until stable)
+    // Now we can use function_return_types to properly type function call results!
     std::unordered_map<std::string, std::vector<std::string>> function_param_types;  // func_name -> param types
-    std::unordered_map<std::string, std::string> temp_register_types;  // Reused across iterations
+    temp_register_types.clear();  // Reused for Pass 1b
     
     // Iterate until types stabilize (max 10 iterations to prevent infinite loops)
     for (int iteration = 0; iteration < 10; iteration++) {
@@ -622,6 +802,30 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
                     }
                 }
                 
+                // Track CALL instructions - propagate return types to result registers
+                // This is CRITICAL for Pass 1b: when get_str() is called, we need to know it returns const char*
+                if (instr.opcode == IROpcode::CALL && instr.dest.type == IROperandType::REGISTER) {
+                    std::string func_name = instr.src1.value;
+                    // Find matching function label (format: "func_<name>_arity*")
+                    std::string return_type;
+                    bool found = false;
+                    for (const auto& [label, ret_type] : function_return_types) {
+                        if (label.rfind("func_" + func_name + "_arity", 0) == 0) {
+                            return_type = ret_type;
+                            found = true;
+                            break;
+                        }
+                    }
+                    
+                    if (found) {
+                        temp_register_types[instr.dest.value] = return_type;
+                    } else if (func_name == "len") {
+                        temp_register_types[instr.dest.value] = "int64_t";
+                    } else {
+                        temp_register_types[instr.dest.value] = "int64_t";
+                    }
+                }
+                
                 // Track PARAM instructions to collect parameter types
                 if (instr.opcode == IROpcode::PARAM) {
                     std::string param_reg = instr.dest.value;
@@ -635,7 +839,8 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
                 if (instr.opcode == IROpcode::CALL && !pending_call_params.empty()) {
                     std::string func_name = instr.src1.value;
                     for (const auto& fn : function_names) {
-                        if (fn == "func_" + func_name) {
+                        // Match function label (format: "func_<name>_arity*")
+                        if (fn.rfind("func_" + func_name + "_arity", 0) == 0) {
                             // Determine how many parameters this function expects
                             auto params_it = function_params.find(fn);
                             size_t expected_param_count = (params_it != function_params.end()) 
@@ -835,8 +1040,9 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
                 for (size_t i = 0; i < params.size(); i++) {
                     auto it = param_inferred_types.find(params[i]);
                     if (it != param_inferred_types.end()) {
-                        // Upgrade type if we found something more specific
-                        if (param_types[i] == "int64_t" || param_types.size() <= i) {
+                        // ALWAYS override with string type if len() is used (definitive evidence)
+                        // For other types, only upgrade from int64_t default
+                        if (it->second == "const char*" || param_types[i] == "int64_t" || param_types.size() <= i) {
                             if (i < param_types.size()) {
                                 param_types[i] = it->second;
                             }
@@ -947,151 +1153,8 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
         }
     }
     
-    // Pass 2: Infer return types now that we know parameter types
-    std::unordered_map<std::string, std::string> local_function_return_types;
-    temp_register_types.clear();  // Reset for second pass
-    current_function = "main";
-    
-    for (const auto& block : blocks) {
-        // Track which function we're in
-        auto owner_it = block_owner.find(block.label);
-        if (owner_it != block_owner.end()) {
-            current_function = owner_it->second;
-        }
-        
-        // If this is a function block, register its parameter types in temp_register_types AND variable_types
-        if (block.label.rfind("func_", 0) == 0 && block.label != "func_main") {
-            auto param_it = function_param_types.find(block.label);
-            if (param_it != function_param_types.end()) {
-                auto& params = function_params[block.label];
-                auto& param_types = param_it->second;
-                for (size_t i = 0; i < params.size() && i < param_types.size(); i++) {
-                    temp_register_types[params[i]] = param_types[i];
-                    variable_types[params[i]] = param_types[i];  // Also populate variable_types for GET_VAR tracking
-                }
-            }
-        }
-        
-        for (const auto& instr : block.instructions) {
-            // Track register types from LOAD_CONST
-            if (instr.opcode == IROpcode::LOAD_CONST && instr.dest.type == IROperandType::REGISTER) {
-                if (!instr.src1.value.empty() && instr.src1.value[0] == '"') {
-                    temp_register_types[instr.dest.value] = "const char*";
-                } else if (instr.src1.value.find('.') != std::string::npos || 
-                           instr.src1.value.find('e') != std::string::npos ||
-                           instr.src1.value.find('E') != std::string::npos) {
-                    temp_register_types[instr.dest.value] = "double";
-                } else {
-                    temp_register_types[instr.dest.value] = "int64_t";
-                }
-            }
-            // Track GET_VAR to propagate variable types to registers
-            if (instr.opcode == IROpcode::GET_VAR && instr.src1.type == IROperandType::VARIABLE) {
-                auto vit = variable_types.find(instr.src1.value);
-                if (vit != variable_types.end()) {
-                    temp_register_types[instr.dest.value] = vit->second;
-                } else {
-                    variable_types[instr.src1.value] = "int64_t";  // Default
-                }
-            }
-            // Track variable types from SET_VAR
-            if (instr.opcode == IROpcode::SET_VAR && instr.dest.type == IROperandType::VARIABLE) {
-                auto it = temp_register_types.find(instr.src1.value);
-                if (it != temp_register_types.end()) {
-                    variable_types[instr.dest.value] = it->second;
-                } else {
-                    variable_types[instr.dest.value] = "int64_t";  // Default
-                }
-            }
-            // Track arithmetic operations - determine result types
-            if (instr.opcode == IROpcode::DIV) {
-                // Division always returns double
-                temp_register_types[instr.dest.value] = "double";
-            } else if (instr.opcode == IROpcode::ADD || instr.opcode == IROpcode::SUB || 
-                       instr.opcode == IROpcode::MUL || instr.opcode == IROpcode::MOD) {
-                // Check operand types - if either is double, result is double
-                std::string type1 = "int64_t";
-                std::string type2 = "int64_t";
-                
-                if (instr.src1.type == IROperandType::REGISTER) {
-                    auto it = temp_register_types.find(instr.src1.value);
-                    if (it != temp_register_types.end()) type1 = it->second;
-                }
-                if (instr.src2.type == IROperandType::REGISTER) {
-                    auto it = temp_register_types.find(instr.src2.value);
-                    if (it != temp_register_types.end()) type2 = it->second;
-                }
-                
-                // Promote to double if either operand is double
-                if (type1 == "double" || type2 == "double") {
-                    temp_register_types[instr.dest.value] = "double";
-                } else {
-                    temp_register_types[instr.dest.value] = "int64_t";
-                }
-            } else if (instr.opcode == IROpcode::NEG) {
-                // Negation preserves operand type
-                if (instr.src1.type == IROperandType::REGISTER) {
-                    auto it = temp_register_types.find(instr.src1.value);
-                    if (it != temp_register_types.end()) {
-                        temp_register_types[instr.dest.value] = it->second;
-                    }
-                }
-            }
-            // Track RETURN instructions - determine return type (parameter types already collected in Pass 1b)
-            if (instr.opcode == IROpcode::RETURN && current_function != "main" && 
-                instr.dest.type != IROperandType::NONE) {
-                // Get the type of the return value
-                std::string return_type = "int64_t";  // default
-                if (instr.dest.type == IROperandType::REGISTER || instr.dest.type == IROperandType::VARIABLE) {
-                    auto it = temp_register_types.find(instr.dest.value);
-                    if (it != temp_register_types.end()) {
-                        return_type = it->second;
-                    } else {
-                        // Check if it's a parameter of this function
-                        auto param_types_it = function_param_types.find(current_function);
-                        auto params_it = function_params.find(current_function);
-                        if (param_types_it != function_param_types.end() && params_it != function_params.end()) {
-                            auto& params = params_it->second;
-                            auto& param_types = param_types_it->second;
-                            for (size_t i = 0; i < params.size() && i < param_types.size(); i++) {
-                                if (params[i] == instr.dest.value) {
-                                    return_type = param_types[i];
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                } else if (instr.dest.type == IROperandType::CONSTANT) {
-                    // Check if constant is a float or string
-                    if (!instr.dest.value.empty() && instr.dest.value[0] == '"') {
-                        return_type = "const char*";
-                    } else if (instr.dest.value.find('.') != std::string::npos || 
-                               instr.dest.value.find('e') != std::string::npos ||
-                               instr.dest.value.find('E') != std::string::npos) {
-                        return_type = "double";
-                    }
-                }
-                
-                // Update function return type (promote to double if any return is double)
-                auto ret_it = local_function_return_types.find(current_function);
-                if (ret_it == local_function_return_types.end()) {
-                    local_function_return_types[current_function] = return_type;
-                } else if (ret_it->second == "int64_t" && return_type == "double") {
-                    // Promote to double if any return path returns double
-                    local_function_return_types[current_function] = "double";
-                } else if (ret_it->second == "double" || return_type == "double") {
-                    // Keep as double if either is double
-                    local_function_return_types[current_function] = "double";
-                } else if (ret_it->second == "const char*" || return_type == "const char*") {
-                    // Keep as const char* if either is string
-                    local_function_return_types[current_function] = "const char*";
-                }
-            }
-        }
-    }
-    
-    // Copy local tracking to member variable for use in emitInstruction
-    function_return_types = local_function_return_types;
+    // Pass 2 has already run (after Pass 1a, before Pass 1b)
+    // function_return_types is already populated
     
     output << "// Caesar C Code\n";
     output << "// Generated by Caesar Compiler v1.5.1\n\n";

@@ -341,8 +341,9 @@ void IRGenerator::visit(ForStatement& node) {
 }
 
 void IRGenerator::visit(FunctionDefinition& node) {
-    // Create function block
-    std::string func_label = "func_" + node.name;
+    // Create function block with arity to ensure uniqueness
+    // (functions with same name but different parameter counts need different labels)
+    std::string func_label = "func_" + node.name + "_arity" + std::to_string(node.parameters.size());
     newBlock(func_label);
     
     // Declare parameters
