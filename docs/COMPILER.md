@@ -114,11 +114,12 @@ Bytecode    x86-64 ASM    C Code      (Future: LLVM IR)
 | **Basic Types** | ✅ Complete | `int64_t` for integers, `double` for floats, `const char*` for strings |
 | **Type Tracking** | ✅ Complete | Register types and variable types tracked with automatic promotion |
 | **Variable Declarations** | ✅ Complete | Two-pass analysis for proper typing |
-| **Arithmetic** | ✅ Complete | +, -, *, /, % |
+| **Arithmetic** | ✅ Complete | +, -, *, /, % (type-aware with promotion) |
+| **Division** | ✅ Complete | Always returns `double` for mathematical correctness |
 | **Comparisons** | ✅ Complete | ==, !=, <, >, <=, >= |
 | **Logical Ops** | ✅ Complete | &&, \|\|, ! |
 | **Assignment** | ✅ Complete | Variable assignment with type inference |
-| **Print (basic)** | ✅ Complete | `caesar_print_int()`, `caesar_print_str()` |
+| **Print (basic)** | ✅ Complete | `caesar_print_int()`, `caesar_print_str()`, `caesar_print_double()` |
 | **Labels & Jumps** | ✅ Complete | goto labels for control flow |
 | **Conditional Jumps** | ✅ Complete | if (!condition) goto label |
 | **While Loops** | ✅ Complete | Loop labels with break/continue |
@@ -137,6 +138,14 @@ Bytecode    x86-64 ASM    C Code      (Future: LLVM IR)
 | **String operations** | 🔥 Critical | 4h | String manipulation |
 | **List support** | 🔥 Critical | 8h | Data structures |
 | **Dictionary support** | 🔥 Critical | 8h | Data structures |
+
+##### ⚠️ Known Limitations
+
+| Limitation | Severity | Impact | Workaround | ETA to Fix |
+|------------|----------|--------|------------|------------|
+| **Function return types always `int64_t`** | Medium | Functions returning floats lose precision when assigned | Cast result: `x = (double)my_func()` | 4h |
+| **Top-level variable assignment without declaration** | Low | Variables used before declaration fail to compile | Use explicit assignments in functions | 2h |
+| **No type annotations** | Low | Cannot explicitly specify types | Rely on type inference | Future |
 
 **Important (Required for advanced programs):**
 

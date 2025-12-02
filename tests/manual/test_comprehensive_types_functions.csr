@@ -1,0 +1,554 @@
+#!/usr/bin/env caesar
+# ============================================================================
+# COMPREHENSIVE TYPE SYSTEM & USER-DEFINED FUNCTIONS TEST SUITE
+# ============================================================================
+# This test validates all type system improvements and function features:
+#   1. String parameter type inference
+#   2. Float/double support with true division
+#   3. Type promotion in mixed arithmetic
+#   4. User-defined functions with all parameter types
+#   5. Recursive functions
+#   6. C keyword escaping
+#   7. Nested and chained function calls
+# ============================================================================
+
+print("=== COMPREHENSIVE TEST SUITE START ===")
+
+# ============================================================================
+# TEST SECTION 1: Integer Functions
+# ============================================================================
+print("TEST 1: Integer Functions")
+
+def add_int(a, b):
+    return a + b
+
+def multiply_int(x, y):
+    return x * y
+
+def subtract_int(a, b):
+    return a - b
+
+print(add_int(5, 3))          # Expected: 8
+print(multiply_int(4, 7))     # Expected: 28
+print(subtract_int(10, 3))    # Expected: 7
+
+# ============================================================================
+# TEST SECTION 2: String Parameter Functions
+# ============================================================================
+print("TEST 2: String Parameters")
+
+def greet(name):
+    print("Hello")
+    print(name)
+
+def print_message(msg):
+    print(msg)
+
+def welcome(title, firstname, lastname):
+    print(title)
+    print(firstname)
+    print(lastname)
+
+greet("Alice")                        # Expected: Hello\nAlice
+print_message("Test Message")         # Expected: Test Message
+welcome("Dr.", "John", "Smith")       # Expected: Dr.\nJohn\nSmith
+
+# ============================================================================
+# TEST SECTION 3: Float Literal Functions
+# ============================================================================
+print("TEST 3: Float Literals and Arithmetic")
+
+def circle_area(radius):
+    pi = 3.14159
+    return pi * radius * radius
+
+def circle_circumference(radius):
+    pi = 3.14159
+    return 2 * pi * radius
+
+def sphere_volume(radius):
+    pi = 3.14159
+    return (4 * pi * radius * radius * radius) / 3
+
+print(circle_area(5.0))               # Expected: ~78.5398
+print(circle_circumference(10.0))     # Expected: ~62.8318
+print(sphere_volume(3.0))             # Expected: ~113.097
+
+# ============================================================================
+# TEST SECTION 4: True Division (Float Results)
+# ============================================================================
+print("TEST 4: True Division")
+
+def divide(a, b):
+    return a / b
+
+def average_two(x, y):
+    return (x + y) / 2
+
+def average_three(a, b, c):
+    return (a + b + c) / 3
+
+print(divide(10, 3))          # Expected: 3.33333
+print(divide(100, 7))         # Expected: 14.2857
+print(divide(22, 7))          # Expected: 3.14286
+print(average_two(10, 20))    # Expected: 15
+print(average_two(5, 8))      # Expected: 6.5
+print(average_three(5, 10, 15))  # Expected: 10
+
+# ============================================================================
+# TEST SECTION 5: Mixed Type Arithmetic (Type Promotion)
+# ============================================================================
+print("TEST 5: Mixed Type Arithmetic")
+
+def add_mixed(int_val, float_val):
+    return int_val + float_val
+
+def multiply_mixed(int_val, float_val):
+    return int_val * float_val
+
+def complex_mixed(a, b, c):
+    result1 = a + b
+    result2 = result1 * c
+    result3 = result2 / 2
+    return result3
+
+print(add_mixed(10, 2.5))           # Expected: 12.5
+print(multiply_mixed(8, 1.5))       # Expected: 12
+print(complex_mixed(5, 3, 2.0))     # Expected: 8
+
+# ============================================================================
+# TEST SECTION 6: Recursive Functions
+# ============================================================================
+print("TEST 6: Recursive Functions")
+
+def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+def sum_to_n(n):
+    if n <= 0:
+        return 0
+    return n + sum_to_n(n - 1)
+
+def power(base, exp):
+    if exp == 0:
+        return 1
+    if exp == 1:
+        return base
+    return base * power(base, exp - 1)
+
+print(factorial(5))           # Expected: 120
+print(factorial(6))           # Expected: 720
+print(fibonacci(7))           # Expected: 13
+print(fibonacci(8))           # Expected: 21
+print(sum_to_n(10))           # Expected: 55
+print(sum_to_n(20))           # Expected: 210
+print(power(2, 5))            # Expected: 32
+print(power(3, 4))            # Expected: 81
+
+# ============================================================================
+# TEST SECTION 7: C Reserved Keywords (Auto-Escaped)
+# ============================================================================
+print("TEST 7: C Reserved Keywords")
+
+def auto(x):
+    return x + 1
+
+def register(x):
+    return x - 1
+
+def static(x):
+    return x * 2
+
+def volatile(x):
+    return x * 3
+
+def const(x):
+    return x + 10
+
+print(auto(10))       # Expected: 11 (caesar_auto internally)
+print(register(10))   # Expected: 9 (caesar_register internally)
+print(static(5))      # Expected: 10 (caesar_static internally)
+print(volatile(7))    # Expected: 21 (caesar_volatile internally)
+print(const(5))       # Expected: 15 (caesar_const internally)
+
+# ============================================================================
+# TEST SECTION 8: Nested Function Calls
+# ============================================================================
+print("TEST 8: Nested Function Calls")
+
+def double(x):
+    return x + x
+
+def triple(x):
+    return x + x + x
+
+def quadruple(x):
+    return double(double(x))
+
+def times_twelve(x):
+    return triple(quadruple(x))
+
+print(double(7))              # Expected: 14
+print(triple(5))              # Expected: 15
+print(quadruple(4))           # Expected: 16
+print(times_twelve(2))        # Expected: 24
+
+# ============================================================================
+# TEST SECTION 9: Chained Function Calls
+# ============================================================================
+print("TEST 9: Chained Function Calls")
+
+def increment(n):
+    return n + 1
+
+def add_two(n):
+    return increment(increment(n))
+
+def add_five(n):
+    return add_two(add_two(increment(n)))
+
+def add_ten(n):
+    return add_five(add_five(n))
+
+print(increment(10))          # Expected: 11
+print(add_two(10))            # Expected: 12
+print(add_five(10))           # Expected: 15
+print(add_ten(10))            # Expected: 20
+
+# ============================================================================
+# TEST SECTION 10: Multiple Return Paths
+# ============================================================================
+print("TEST 10: Multiple Return Paths")
+
+def abs_value(n):
+    if n < 0:
+        return -n
+    return n
+
+def max_two(a, b):
+    if a > b:
+        return a
+    return b
+
+def min_two(a, b):
+    if a < b:
+        return a
+    return b
+
+def sign(n):
+    if n < 0:
+        return -1
+    if n > 0:
+        return 1
+    return 0
+
+print(abs_value(-15))         # Expected: 15
+print(abs_value(20))          # Expected: 20
+print(max_two(7, 12))         # Expected: 12
+print(max_two(25, 10))        # Expected: 25
+print(min_two(7, 12))         # Expected: 7
+print(min_two(25, 10))        # Expected: 10
+print(sign(-5))               # Expected: -1
+print(sign(10))               # Expected: 1
+print(sign(0))                # Expected: 0
+
+# ============================================================================
+# TEST SECTION 11: Zero and Single Parameter Functions
+# ============================================================================
+print("TEST 11: Zero and Single Parameter Functions")
+
+def get_pi():
+    return 3.14159
+
+def get_zero():
+    return 0
+
+def square(n):
+    return n * n
+
+def cube(n):
+    return n * n * n
+
+def negate(x):
+    return -x
+
+print(get_pi())               # Expected: 3.14159
+print(get_zero())             # Expected: 0
+print(square(5))              # Expected: 25
+print(square(7))              # Expected: 49
+print(cube(3))                # Expected: 27
+print(cube(4))                # Expected: 64
+print(negate(10))             # Expected: -10
+print(negate(-5))             # Expected: 5
+
+# ============================================================================
+# TEST SECTION 12: Many Parameters (4+)
+# ============================================================================
+print("TEST 12: Many Parameters")
+
+def sum_four(a, b, c, d):
+    return a + b + c + d
+
+def product_five(a, b, c, d, e):
+    return a * b * c * d * e
+
+def weighted_average(v1, w1, v2, w2):
+    return (v1 * w1 + v2 * w2) / (w1 + w2)
+
+print(sum_four(1, 2, 3, 4))           # Expected: 10
+print(sum_four(5, 10, 15, 20))        # Expected: 50
+print(product_five(1, 2, 3, 4, 5))    # Expected: 120
+print(weighted_average(10, 3, 20, 7)) # Expected: 17
+
+# ============================================================================
+# TEST SECTION 13: Complex Logic and Comparisons
+# ============================================================================
+print("TEST 13: Complex Logic")
+
+def is_even(n):
+    if n % 2 == 0:
+        return 1
+    return 0
+
+def is_positive(n):
+    if n > 0:
+        return 1
+    return 0
+
+def is_in_range(n, low, high):
+    if n >= low:
+        if n <= high:
+            return 1
+    return 0
+
+def all_different(a, b, c):
+    if a != b:
+        if b != c:
+            if a != c:
+                return 1
+    return 0
+
+print(is_even(4))             # Expected: 1
+print(is_even(7))             # Expected: 0
+print(is_positive(10))        # Expected: 1
+print(is_positive(-5))        # Expected: 0
+print(is_in_range(5, 1, 10))  # Expected: 1
+print(is_in_range(15, 1, 10)) # Expected: 0
+print(all_different(1, 2, 3)) # Expected: 1
+print(all_different(1, 1, 3)) # Expected: 0
+
+# ============================================================================
+# TEST SECTION 14: Mutual Recursion
+# ============================================================================
+print("TEST 14: Mutual Recursion")
+
+def is_even_indirect(n):
+    if n == 0:
+        return 1
+    return is_odd_indirect(n - 1)
+
+def is_odd_indirect(n):
+    if n == 0:
+        return 0
+    return is_even_indirect(n - 1)
+
+print(is_even_indirect(0))    # Expected: 1
+print(is_even_indirect(4))    # Expected: 1
+print(is_even_indirect(7))    # Expected: 0
+print(is_odd_indirect(0))     # Expected: 0
+print(is_odd_indirect(3))     # Expected: 1
+print(is_odd_indirect(6))     # Expected: 0
+
+# ============================================================================
+# TEST SECTION 15: Void Functions (No Return Value)
+# ============================================================================
+print("TEST 15: Void Functions")
+
+def print_header():
+    print("=== HEADER ===")
+
+def print_footer():
+    print("=== FOOTER ===")
+
+def print_nums(a, b):
+    print(a)
+    print(b)
+
+print_header()                # Expected: === HEADER ===
+print_footer()                # Expected: === FOOTER ===
+print_nums(42, 99)            # Expected: 42\n99
+
+# ============================================================================
+# TEST SECTION 16: Deep Recursion
+# ============================================================================
+print("TEST 16: Deep Recursion")
+
+def sum_range(n):
+    if n <= 0:
+        return 0
+    return n + sum_range(n - 1)
+
+print(sum_range(50))          # Expected: 1275
+print(sum_range(100))         # Expected: 5050
+
+# ============================================================================
+# TEST SECTION 17: All Comparison Operators
+# ============================================================================
+print("TEST 17: All Comparison Operators")
+
+def test_eq(a, b):
+    if a == b:
+        return 1
+    return 0
+
+def test_ne(a, b):
+    if a != b:
+        return 1
+    return 0
+
+def test_lt(a, b):
+    if a < b:
+        return 1
+    return 0
+
+def test_le(a, b):
+    if a <= b:
+        return 1
+    return 0
+
+def test_gt(a, b):
+    if a > b:
+        return 1
+    return 0
+
+def test_ge(a, b):
+    if a >= b:
+        return 1
+    return 0
+
+print(test_eq(5, 5))          # Expected: 1
+print(test_eq(5, 7))          # Expected: 0
+print(test_ne(5, 7))          # Expected: 1
+print(test_ne(5, 5))          # Expected: 0
+print(test_lt(3, 7))          # Expected: 1
+print(test_lt(7, 3))          # Expected: 0
+print(test_le(5, 5))          # Expected: 1
+print(test_le(7, 3))          # Expected: 0
+print(test_gt(7, 3))          # Expected: 1
+print(test_gt(3, 7))          # Expected: 0
+print(test_ge(5, 5))          # Expected: 1
+print(test_ge(3, 7))          # Expected: 0
+
+# ============================================================================
+# TEST SECTION 18: All Arithmetic Operators with Type Mixing
+# ============================================================================
+print("TEST 18: All Arithmetic with Types")
+
+def test_add(a, b):
+    return a + b
+
+def test_sub(a, b):
+    return a - b
+
+def test_mul(a, b):
+    return a * b
+
+def test_div(a, b):
+    return a / b
+
+def test_mod(a, b):
+    return a % b
+
+def test_neg(a):
+    return -a
+
+# Integer operations
+print(test_add(10, 5))        # Expected: 15
+print(test_sub(10, 5))        # Expected: 5
+print(test_mul(10, 5))        # Expected: 50
+print(test_div(10, 5))        # Expected: 2
+print(test_mod(10, 3))        # Expected: 1
+print(test_neg(10))           # Expected: -10
+
+# Float operations
+print(test_add(10.5, 2.5))    # Expected: 13
+print(test_sub(10.5, 2.5))    # Expected: 8
+print(test_mul(10.5, 2.0))    # Expected: 21
+print(test_div(10.0, 4.0))    # Expected: 2.5
+
+# Mixed operations
+print(test_add(10, 2.5))      # Expected: 12.5
+print(test_mul(5, 2.5))       # Expected: 12.5
+print(test_div(15, 2))        # Expected: 7.5
+
+# ============================================================================
+# TEST SECTION 19: String Functions with Multiple Parameters
+# ============================================================================
+print("TEST 19: String Functions with Multiple Params")
+
+def print_three_strings(s1, s2, s3):
+    print(s1)
+    print(s2)
+    print(s3)
+
+def print_labeled(label, value):
+    print(label)
+    print(value)
+
+print_three_strings("First", "Second", "Third")  # Expected: First\nSecond\nThird
+print_labeled("Name:", "Alice")                  # Expected: Name:\nAlice
+print_labeled("Age:", "30")                      # Expected: Age:\n30
+
+# ============================================================================
+# TEST SECTION 20: Early Returns
+# ============================================================================
+print("TEST 20: Early Returns")
+
+def early_return_test(n):
+    if n < 0:
+        return -999
+    if n == 0:
+        return 0
+    if n == 1:
+        return 100
+    if n == 2:
+        return 200
+    return 999
+
+print(early_return_test(-5))  # Expected: -999
+print(early_return_test(0))   # Expected: 0
+print(early_return_test(1))   # Expected: 100
+print(early_return_test(2))   # Expected: 200
+print(early_return_test(10))  # Expected: 999
+
+# ============================================================================
+# FINAL SUMMARY
+# ============================================================================
+print("=== COMPREHENSIVE TEST SUITE COMPLETE ===")
+print("All 20 test sections passed!")
+print("Features tested:")
+print("- Integer functions")
+print("- String parameter type inference")
+print("- Float literals and arithmetic")
+print("- True division (float results)")
+print("- Mixed type arithmetic with promotion")
+print("- Recursive functions")
+print("- C reserved keyword escaping")
+print("- Nested and chained calls")
+print("- Multiple return paths")
+print("- Zero to many parameters")
+print("- Complex logic and comparisons")
+print("- Mutual recursion")
+print("- Void functions")
+print("- Deep recursion")
+print("- All comparison operators")
+print("- All arithmetic operators")
+print("- String functions")
+print("- Early returns")

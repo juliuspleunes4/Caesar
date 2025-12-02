@@ -1,0 +1,162 @@
+=== COMPREHENSIVE TEST SUITE START ===
+TEST 1: Integer Functions
+8
+28
+7
+TEST 2: String Parameters
+Hello
+Alice
+Test Message
+Dr.
+John
+Smith
+TEST 3: Float Literals and Arithmetic
+78
+62
+113
+TEST 4: True Division
+3
+14
+3
+15
+6
+10
+TEST 5: Mixed Type Arithmetic
+12
+12
+8
+TEST 6: Recursive Functions
+120
+720
+13
+21
+55
+210
+32
+81
+TEST 7: C Reserved Keywords
+11
+9
+10
+21
+15
+TEST 8: Nested Function Calls
+14
+15
+16
+24
+TEST 9: Chained Function Calls
+11
+12
+15
+20
+TEST 10: Multiple Return Paths
+15
+20
+12
+25
+7
+10
+-1
+1
+0
+TEST 11: Zero and Single Parameter Functions
+3
+0
+25
+49
+27
+64
+-10
+5
+TEST 12: Many Parameters
+10
+50
+120
+17
+TEST 13: Complex Logic
+1
+0
+1
+0
+1
+0
+1
+0
+TEST 14: Mutual Recursion
+1
+1
+0
+0
+1
+0
+TEST 15: Void Functions
+=== HEADER ===
+=== FOOTER ===
+42
+99
+TEST 16: Deep Recursion
+1275
+5050
+TEST 17: All Comparison Operators
+1
+0
+1
+0
+1
+0
+1
+0
+1
+0
+1
+0
+TEST 18: All Arithmetic with Types
+15
+5
+50
+2
+1
+-10
+12
+8
+20
+2
+12
+10
+7
+TEST 19: String Functions with Multiple Params
+First
+Second
+Third
+Name:
+Alice
+Age:
+30
+TEST 20: Early Returns
+-999
+0
+100
+200
+999
+=== COMPREHENSIVE TEST SUITE COMPLETE ===
+All 20 test sections passed!
+Features tested:
+- Integer functions
+- String parameter type inference
+- Float literals and arithmetic
+- True division (float results)
+- Mixed type arithmetic with promotion
+- Recursive functions
+- C reserved keyword escaping
+- Nested and chained calls
+- Multiple return paths
+- Zero to many parameters
+- Complex logic and comparisons
+- Mutual recursion
+- Void functions
+- Deep recursion
+- All comparison operators
+- All arithmetic operators
+- String functions
+- Early returns
