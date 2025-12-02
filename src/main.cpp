@@ -5,6 +5,11 @@
  * @version 1.5.0
  */
 
+// Define include directory path at compile time
+#ifndef CAESAR_INCLUDE_PATH
+#define CAESAR_INCLUDE_PATH "../include"
+#endif
+
 #include "caesar/caesar.h"
 #include "caesar/lexer.h"
 #include "caesar/parser.h"
@@ -237,8 +242,9 @@ int main(int argc, char* argv[]) {
             c_out << c_code;
             c_out.close();
             
-            // Compile with GCC
-            std::string compile_cmd = "gcc " + temp_c_file + " -o " + output_file + " -O2";
+            // Compile with GCC (include runtime header path)
+            std::string include_path = "-I\"" + std::string(CAESAR_INCLUDE_PATH) + "\"";
+            std::string compile_cmd = "gcc " + temp_c_file + " " + include_path + " -o " + output_file + " -O2";
             int result = system(compile_cmd.c_str());
             
             // Clean up temp file

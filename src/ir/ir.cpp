@@ -290,27 +290,47 @@ void IRGenerator::visit(WhileStatement& node) {
 }
 
 void IRGenerator::visit(ForStatement& node) {
-    // Note: This is a simplified for loop implementation for IR.
-    // The complete for-loop semantics (iterator management, termination condition)
-    // are fully handled by the interpreter. The IR representation here serves
-    // primarily for basic code structure analysis and simple code generation.
+    // Generate proper iterator-based for-loop
     std::string loop_label = newLabel("forloop");
     std::string end_label = newLabel("endfor");
+    std::string check_label = newLabel("forcheck");
     
     // Push loop context for break/continue handling
     pushLoopContext(loop_label, end_label);
     
-    // Initialize iterator (simplified)
+    // Evaluate iterable expression (e.g., range(10))
     node.iterable->accept(*this);
+    int iterable_reg = next_register - 1;  // Last allocated register
     
-    // Loop start
+    // Initialize iterator: iter = ITER_INIT(iterable)
+    int iter_reg = next_register++;
+    emit(IRInstruction(IROpcode::ITER_INIT, IROperand::Reg(iter_reg), IROperand::Reg(iterable_reg)));
+    
+    // Jump to check before first iteration
+    emit(IRInstruction(IROpcode::JUMP, IROperand::Lab(check_label)));
+    
+    // Loop body label
     newBlock(loop_label);
     
-    // Loop body
+    // Get next value: %value = ITER_NEXT %iter
+    int value_reg = next_register++;
+    emit(IRInstruction(IROpcode::ITER_NEXT, IROperand::Reg(value_reg), IROperand::Reg(iter_reg)));
+    
+    // Assign to loop variable: loop_var = %value
+    emit(IRInstruction(IROpcode::SET_VAR, IROperand::Var(node.variable), IROperand::Reg(value_reg)));
+    
+    // Execute loop body
     node.body->accept(*this);
     
-    // Jump back to loop start (simplified - proper termination is in interpreter)
-    emit(IRInstruction(IROpcode::JUMP, IROperand::Lab(loop_label)));
+    // Check condition label
+    newBlock(check_label);
+    
+    // Check if iterator is done: done = ITER_DONE(iter)
+    int done_reg = next_register++;
+    emit(IRInstruction(IROpcode::ITER_DONE, IROperand::Reg(done_reg), IROperand::Reg(iter_reg)));
+    
+    // If not done, jump back to loop body
+    emit(IRInstruction(IROpcode::JUMP_IF_FALSE, IROperand::Lab(loop_label), IROperand::Reg(done_reg)));
     
     // Pop loop context
     popLoopContext();

@@ -29,6 +29,7 @@ target_include_directories(caesar_lib PUBLIC ${CMAKE_SOURCE_DIR}/include)
 # Create the main Caesar executable
 add_executable(caesar main.cpp)
 target_link_libraries(caesar caesar_lib)
+target_compile_definitions(caesar PRIVATE CAESAR_INCLUDE_PATH="${CMAKE_SOURCE_DIR}/include")
 
 # Create a simple REPL executable for testing
 add_executable(caesar_repl repl.cpp)

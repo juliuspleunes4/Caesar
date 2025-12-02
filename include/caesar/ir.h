@@ -40,6 +40,11 @@ enum class IROpcode {
     // Variables
     DECLARE, ASSIGN, GET_VAR, SET_VAR,
     
+    // Iterator operations
+    ITER_INIT,      // Initialize iterator from iterable
+    ITER_NEXT,      // Get next value from iterator
+    ITER_DONE,      // Check if iteration is complete
+    
     // Special
     PRINT, PARAM, NOP
 };
@@ -78,6 +83,9 @@ inline std::string opcodeToString(IROpcode opcode) {
         case IROpcode::ASSIGN: return "ASSIGN";
         case IROpcode::GET_VAR: return "GET_VAR";
         case IROpcode::SET_VAR: return "SET_VAR";
+        case IROpcode::ITER_INIT: return "ITER_INIT";
+        case IROpcode::ITER_NEXT: return "ITER_NEXT";
+        case IROpcode::ITER_DONE: return "ITER_DONE";
         case IROpcode::PRINT: return "PRINT";
         case IROpcode::PARAM: return "PARAM";
         case IROpcode::NOP: return "NOP";
