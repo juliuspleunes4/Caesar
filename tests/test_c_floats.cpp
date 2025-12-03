@@ -35,8 +35,10 @@ bool testCCodeGen(const std::string& caesarCode, std::string& cCode) {
         cCode = c_gen->generate(ir_blocks);
         
         // Write to temporary file with unique name
-        srand(time(nullptr) + getpid());
-        std::string tempFile = "/tmp/caesar_test_float_" + std::to_string(getpid()) + "_" + std::to_string(rand()) + ".c";
+        // Use multiple sources of entropy for better uniqueness
+        srand(time(nullptr) + getpid() * 31);
+        std::string tempFile = "/tmp/caesar_test_float_" + std::to_string(getpid()) + "_" + 
+                              std::to_string(time(nullptr)) + "_" + std::to_string(rand()) + ".c";
         std::string exeFile = tempFile + ".exe";
         
         std::ofstream outFile(tempFile);
@@ -137,6 +139,9 @@ if x > y:
 }
 
 void test_float_equality() {
+    // Note: Direct float equality (==) is generally problematic due to precision issues.
+    // This test verifies that the compiler generates correct C code; users should be
+    // aware that float comparisons may not behave as expected for non-exact values.
     std::string code = R"(
 x = 5.0
 y = 5.0
@@ -278,27 +283,34 @@ if x != y:
 int main() {
     std::cout << "Running comprehensive float C code generation tests...\n\n";
     
-    test_simple_float();
-    test_float_arithmetic();
-    test_float_subtraction();
-    test_float_multiplication();
-    test_float_division();
-    test_mixed_int_float();
-    test_float_comparison();
-    test_float_equality();
-    test_negative_float();
-    test_zero_float();
-    test_very_small_float();
-    test_very_large_float();
-    test_float_in_loop();
-    test_multiple_float_ops();
-    test_float_reassignment();
-    test_float_conditional_assignment();
-    test_complex_float_expression();
-    test_float_less_than_equal();
-    test_float_greater_than_equal();
-    test_float_not_equal();
+    // Run all float tests
+    const int TOTAL_TESTS = 20;  // Update this if tests are added/removed
+    int tests_run = 0;
     
-    std::cout << "\n✅ All 20 float C code generation tests passed!\n";
+    test_simple_float(); tests_run++;
+    test_float_arithmetic(); tests_run++;
+    test_float_subtraction(); tests_run++;
+    test_float_multiplication(); tests_run++;
+    test_float_division(); tests_run++;
+    test_mixed_int_float(); tests_run++;
+    test_float_comparison(); tests_run++;
+    test_float_equality(); tests_run++;
+    test_negative_float(); tests_run++;
+    test_zero_float(); tests_run++;
+    test_very_small_float(); tests_run++;
+    test_very_large_float(); tests_run++;
+    test_float_in_loop(); tests_run++;
+    test_multiple_float_ops(); tests_run++;
+    test_float_reassignment(); tests_run++;
+    test_float_conditional_assignment(); tests_run++;
+    test_complex_float_expression(); tests_run++;
+    test_float_less_than_equal(); tests_run++;
+    test_float_greater_than_equal(); tests_run++;
+    test_float_not_equal(); tests_run++;
+    
+    std::cout << "\n✅ All " << tests_run << " float C code generation tests passed!\n";
+    if (tests_run != TOTAL_TESTS) {
+        std::cerr << "⚠️  Warning: Expected " << TOTAL_TESTS << " tests but ran " << tests_run << "\n";
+    }
     return 0;
 }
