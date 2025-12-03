@@ -602,6 +602,47 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
                     emitLine("// ERROR: str() requires exactly 1 argument");
                     pending_params.clear();
                 }
+            } else if (func_name == "int") {
+                // Generate call to caesar_int runtime function
+                if (pending_params.size() >= 1) {
+                    // Take the last parameter (most recent one pushed)
+                    std::string param = pending_params.back();
+                    pending_params.pop_back();  // Remove it from the list
+                    
+                    bool had_other_params = !pending_params.empty();  // Check if there were other params
+                    
+                    std::string caesar_type = getCaesarType(param);
+                    std::string sanitized = sanitizeName(param);
+                    std::string result = sanitizeName(instr.dest.value);
+                    
+                    // Create a temp variable name for the arg
+                    static int int_counter = 0;
+                    std::string temp_arg = "int_arg_" + std::to_string(int_counter++);
+                    
+                    emitLine("CaesarValue " + temp_arg + ";");
+                    emitLine(temp_arg + ".type = " + caesar_type + ";");
+                    
+                    if (caesar_type == "CAESAR_INT") {
+                        emitLine(temp_arg + ".data.i = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_FLOAT") {
+                        emitLine(temp_arg + ".data.f = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_STRING") {
+                        emitLine(temp_arg + ".data.s = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_BOOL") {
+                        emitLine(temp_arg + ".data.b = " + sanitized + ";");
+                    }
+                    
+                    emitLine("int64_t " + result + " = caesar_int(&" + temp_arg + ");");
+                    variable_types[instr.dest.value] = "int64_t";
+                    
+                    // If there were other params, this is a nested call - add result back for parent call
+                    if (had_other_params) {
+                        pending_params.push_back(instr.dest.value);
+                    }
+                } else {
+                    emitLine("// ERROR: int() requires exactly 1 argument");
+                    pending_params.clear();
+                }
             } else {
                 // Other function calls not yet implemented
                 emitLine("// CALL " + func_name + " (not fully implemented)");
@@ -689,6 +730,16 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     output << "            return \"None\";\n";
     output << "        default:\n";
     output << "            return \"\";\n";
+    output << "    }\n";
+    output << "}\n\n";
+    output << "int64_t caesar_int(CaesarValue* arg) {\n";
+    output << "    switch (arg->type) {\n";
+    output << "        case CAESAR_INT: return arg->data.i;\n";
+    output << "        case CAESAR_FLOAT: return (int64_t)arg->data.f;  // Truncate float to int\n";
+    output << "        case CAESAR_BOOL: return arg->data.b ? 1 : 0;\n";
+    output << "        case CAESAR_STRING: return (int64_t)atoll(arg->data.s);  // Parse string to int\n";
+    output << "        case CAESAR_NONE: return 0;\n";
+    output << "        default: return 0;\n";
     output << "    }\n";
     output << "}\n\n";
     output << "int main() {\n";
