@@ -312,7 +312,8 @@ std::string CCodeGenerator::getCaesarType(const std::string& ir_operand) const {
 
 std::string CCodeGenerator::escapeCString(const std::string& str) const {
     // Escape special characters for C string literals
-    // Input should already have quotes, e.g., "hello\nworld"
+    // Input contains literal characters (e.g., actual newline) that need escaping
+    // The lexer converts \n to actual newline, we convert back to \n for C
     if (str.length() < 2 || (str[0] != '"' && str[0] != '\'')) {
         return str;  // Not a string literal
     }

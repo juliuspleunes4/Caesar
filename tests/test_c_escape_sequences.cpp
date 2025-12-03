@@ -218,11 +218,12 @@ bool test_backslash_literal() {
 
 // Test 18: Unicode-like sequences (not supported, treated as literal)
 bool test_unknown_escape() {
-    // Unknown escape sequences are kept as-is
+    // Unknown escape sequences: backslash is consumed, character kept
+    // Lexer treats \x as just 'x' (unknown escape)
     return compileAndTest(
         "text = \"\\x41\"\nprint(text)\n",
         "unknown_escape",
-        "x41\n"  // The x41 is literal (backslash removed)
+        "x41\n"  // Backslash consumed by lexer, 'x' and '41' remain
     );
 }
 
