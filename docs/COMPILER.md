@@ -66,16 +66,19 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 
 ### 🚧 Partial Implementation
 
-5. **C Code Generator** (65%)
+5. **C Code Generator** (70%)
    - ✅ Variables and assignments
    - ✅ All arithmetic operations (+, -, *, /, %, negation)
    - ✅ All comparison operators (==, !=, <, <=, >, >=)
    - ✅ All logical operators (and, or, not)
    - ✅ Boolean literals (True/False → true/false)
    - ✅ Control flow (if/else, goto, labels)
-   - ✅ Loop structures (while, for)
+   - ✅ Loop structures (while, for, nested)
    - ✅ Variable declaration tracking
-   - ✅ **15 comprehensive tests pass**
+   - ✅ Negative numbers, zero operations
+   - ✅ Large numbers, operator precedence
+   - ✅ Deep nesting, complex expressions
+   - ✅ **35 comprehensive tests pass** (15 basic + 20 edge cases)
    - ⚠️ Function calls incomplete
    - ⚠️ Built-in functions incomplete
    - ⚠️ Data structures not implemented
@@ -146,12 +149,15 @@ $ caesar -i program.csr
 
 ### Testing Status
 
-- **12/12 tests passing** (100%)
+- **13/13 tests passing** (100%)
 - Comprehensive lexer tests ✅
 - Comprehensive parser tests ✅
 - IR generation tests ✅
 - Compiler tests (basic) ✅
-- **C code generation tests (15 sub-tests)** ✅
+- **C code generation tests** ✅
+  - Basic features: 15 sub-tests
+  - Edge cases: 20 sub-tests
+  - **Total: 35 comprehensive C codegen tests**
 - Integration tests ✅
 - **Missing**: VM execution tests, end-to-end compilation with execution tests
 
