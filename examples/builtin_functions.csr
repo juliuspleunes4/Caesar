@@ -1,0 +1,49 @@
+# Built-in Function Examples in Caesar
+# This example works with both interpreter and C compilation
+
+# print() function - already used throughout
+print("Testing built-in functions:")
+
+# len() function for strings
+text = "Hello, Caesar!"
+length = len(text)
+print("Length of '", text, "':", length)
+
+# str() function - type conversion
+number = 42
+text_number = str(number)
+print("Number as string:", text_number)
+
+# int() function - type conversion
+text = "123"
+parsed = int(text)
+result = parsed + 10
+print("Parsed '123' + 10 =", result)
+
+# float() function - type conversion
+int_num = 42
+float_num = float(int_num)
+print("42 as float:", float_num)
+
+# type() function - get type name
+x = 42
+y = 3.14
+z = "hello"
+b = True
+
+print("type(42) =", type(x))
+print("type(3.14) =", type(y))
+print("type('hello') =", type(z))
+print("type(True) =", type(b))
+
+# abs() function - absolute value
+negative = -15
+positive = abs(negative)
+print("abs(-15) =", positive)
+
+# Combining functions
+value = -3.7
+abs_value = abs(value)
+int_abs = int(abs_value)
+str_result = str(int_abs)
+print("Chained conversions: abs(int(-3.7)) =", str_result)
