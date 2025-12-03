@@ -84,6 +84,14 @@ public:
     explicit RuntimeException(const std::string& message) : CaesarException("Runtime Error: " + message) {}
 };
 
+/**
+ * @brief Exception thrown during VM execution
+ */
+class VMException : public CaesarException {
+public:
+    explicit VMException(const std::string& message) : CaesarException("VM Error: " + message) {}
+};
+
 } // namespace caesar
 
 #endif // CAESAR_H

@@ -97,10 +97,17 @@ class CCodeGenerator : public CodeGenerator {
 private:
     int indent_level;
     std::unordered_map<std::string, std::string> variable_types;
+    std::vector<std::string> pending_params;  // For tracking PARAM instructions before CALL
     
     void emitLine(const std::string& line);
     void emitInstruction(const IRInstruction& instr);
     std::string indent() const;
+    std::string convertConstant(const std::string& value) const;
+    bool isStringLiteral(const std::string& value) const;
+    bool isFloatLiteral(const std::string& value) const;
+    std::string getResultType(const std::string& type1, const std::string& type2) const;
+    std::string sanitizeName(const std::string& name) const;
+    std::string getCaesarType(const std::string& ir_operand) const;
     
 public:
     CCodeGenerator() : CodeGenerator(TargetArch::BYTECODE), indent_level(0) {}

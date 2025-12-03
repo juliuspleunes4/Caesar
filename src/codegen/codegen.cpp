@@ -210,59 +210,569 @@ void CCodeGenerator::emitLine(const std::string& line) {
     output << indent() << line << "\n";
 }
 
+std::string CCodeGenerator::convertConstant(const std::string& value) const {
+    // Convert Caesar constants to C constants
+    if (value == "#True" || value == "True") return "true";
+    if (value == "#False" || value == "False") return "false";
+    if (value == "#None" || value == "None") return "0";  // None maps to 0 in C
+    
+    // Remove # prefix if present
+    if (!value.empty() && value[0] == '#') {
+        return value.substr(1);
+    }
+    
+    return value;
+}
+
+bool CCodeGenerator::isStringLiteral(const std::string& value) const {
+    return !value.empty() && value[0] == '"' && value[value.length()-1] == '"';
+}
+
+bool CCodeGenerator::isFloatLiteral(const std::string& value) const {
+    // Check if value contains a decimal point and is a valid number
+    if (value.empty() || value.find('"') != std::string::npos) return false;
+    
+    size_t dot_pos = value.find('.');
+    if (dot_pos == std::string::npos) return false;
+    
+    // Basic validation: check if characters are digits, dot, or negative sign
+    for (size_t i = 0; i < value.length(); ++i) {
+        char c = value[i];
+        if (!std::isdigit(c) && c != '.' && c != '-' && c != '+') {
+            return false;
+        }
+    }
+    
+    // Ensure there's at least one digit before or after the dot
+    if (dot_pos > 0 && dot_pos < value.length() - 1) {
+        return true;
+    }
+    
+    return false;
+}
+
+std::string CCodeGenerator::getResultType(const std::string& type1, const std::string& type2) const {
+    // Determine result type for binary operations
+    // If either operand is double, result is double
+    if (type1 == "double" || type2 == "double") return "double";
+    
+    // String arithmetic is not valid - this indicates a potential error
+    // For now, emit a comment warning and fall back to int64_t
+    // In production, this should throw an error
+    if (type1 == "const char*" || type2 == "const char*") {
+        // TODO: Add proper error handling for invalid string arithmetic
+        return "int64_t";  // Fallback for now
+    }
+    
+    // If either is bool, treat as int64_t
+    if (type1 == "bool" || type2 == "bool") return "int64_t";
+    // Both int64_t
+    return "int64_t";
+}
+
+std::string CCodeGenerator::sanitizeName(const std::string& name) const {
+    // Remove IR prefixes (%, $, @, #) to make valid C identifiers
+    std::string result = name;
+    if (!result.empty() && (result[0] == '%' || result[0] == '$' || result[0] == '@' || result[0] == '#')) {
+        result = result.substr(1);
+    }
+    // Replace any remaining invalid characters
+    for (char& c : result) {
+        if (!std::isalnum(c) && c != '_') {
+            c = '_';
+        }
+    }
+    return result;
+}
+
+std::string CCodeGenerator::getCaesarType(const std::string& ir_operand) const {
+    // Determine Caesar type for runtime based on IR operand
+    auto it = variable_types.find(ir_operand);
+    if (it != variable_types.end()) {
+        const std::string& type = it->second;
+        if (type == "int64_t") return "CAESAR_INT";
+        if (type == "double") return "CAESAR_FLOAT";
+        if (type == "const char*") return "CAESAR_STRING";
+        if (type == "bool") return "CAESAR_BOOL";
+    }
+    
+    // Try to infer from the value itself
+    std::string value = ir_operand;
+    // Remove # prefix if present
+    if (!value.empty() && value[0] == '#') {
+        value = value.substr(1);
+    }
+    
+    if (value == "True" || value == "False") return "CAESAR_BOOL";
+    if (isStringLiteral(value)) return "CAESAR_STRING";
+    if (isFloatLiteral(value)) return "CAESAR_FLOAT";
+    
+    return "CAESAR_INT";  // Default to int
+}
+
 void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
     switch (instr.opcode) {
-        case IROpcode::LOAD_CONST:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + ";");
+        case IROpcode::LOAD_CONST: {
+            std::string converted_value = convertConstant(instr.src1.value);
+            std::string dest_name = sanitizeName(instr.dest.value);
+            // Determine type based on value and track it
+            std::string type;
+            if (converted_value == "true" || converted_value == "false") {
+                type = "bool";
+                emitLine("bool " + dest_name + " = " + converted_value + ";");
+            } else if (isStringLiteral(converted_value)) {
+                type = "const char*";
+                emitLine("const char* " + dest_name + " = " + converted_value + ";");
+            } else if (isFloatLiteral(converted_value)) {
+                type = "double";
+                emitLine("double " + dest_name + " = " + converted_value + ";");
+            } else {
+                type = "int64_t";
+                emitLine("int64_t " + dest_name + " = " + converted_value + ";");
+            }
+            variable_types[instr.dest.value] = type;
             break;
+        }
             
-        case IROpcode::GET_VAR:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + ";");
+        case IROpcode::GET_VAR: {
+            // Use the type of the source variable if known
+            auto it = variable_types.find(instr.src1.value);
+            std::string type = (it != variable_types.end()) ? it->second : "int64_t";
+            std::string dest_name = sanitizeName(instr.dest.value);
+            std::string src_name = sanitizeName(instr.src1.value);
+            emitLine(type + " " + dest_name + " = " + src_name + ";");
+            variable_types[instr.dest.value] = type;
             break;
+        }
             
-        case IROpcode::SET_VAR:
-            emitLine(instr.dest.value + " = " + instr.src1.value + ";");
-            break;
+        case IROpcode::SET_VAR: {
+            // Get the type of the source register
+            auto it = variable_types.find(instr.src1.value);
+            std::string type = (it != variable_types.end()) ? it->second : "int64_t";
+            std::string dest_name = sanitizeName(instr.dest.value);
+            std::string src_name = sanitizeName(instr.src1.value);
             
-        case IROpcode::ADD:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " + " + instr.src2.value + ";");
+            // Declare variable if not yet declared
+            if (variable_types.find(instr.dest.value) == variable_types.end()) {
+                emitLine(type + " " + dest_name + ";");
+                variable_types[instr.dest.value] = type;
+            }
+            emitLine(dest_name + " = " + src_name + ";");
             break;
+        }
             
-        case IROpcode::SUB:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " - " + instr.src2.value + ";");
+        case IROpcode::ADD: {
+            auto it1 = variable_types.find(instr.src1.value);
+            auto it2 = variable_types.find(instr.src2.value);
+            std::string type1 = (it1 != variable_types.end()) ? it1->second : "int64_t";
+            std::string type2 = (it2 != variable_types.end()) ? it2->second : "int64_t";
+            std::string result_type = getResultType(type1, type2);
+            emitLine(result_type + " " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " + " + sanitizeName(instr.src2.value) + ";");
+            variable_types[instr.dest.value] = result_type;
             break;
+        }
             
-        case IROpcode::MUL:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " * " + instr.src2.value + ";");
+        case IROpcode::SUB: {
+            auto it1 = variable_types.find(instr.src1.value);
+            auto it2 = variable_types.find(instr.src2.value);
+            std::string type1 = (it1 != variable_types.end()) ? it1->second : "int64_t";
+            std::string type2 = (it2 != variable_types.end()) ? it2->second : "int64_t";
+            std::string result_type = getResultType(type1, type2);
+            emitLine(result_type + " " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " - " + sanitizeName(instr.src2.value) + ";");
+            variable_types[instr.dest.value] = result_type;
             break;
+        }
             
-        case IROpcode::DIV:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " / " + instr.src2.value + ";");
+        case IROpcode::MUL: {
+            auto it1 = variable_types.find(instr.src1.value);
+            auto it2 = variable_types.find(instr.src2.value);
+            std::string type1 = (it1 != variable_types.end()) ? it1->second : "int64_t";
+            std::string type2 = (it2 != variable_types.end()) ? it2->second : "int64_t";
+            std::string result_type = getResultType(type1, type2);
+            emitLine(result_type + " " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " * " + sanitizeName(instr.src2.value) + ";");
+            variable_types[instr.dest.value] = result_type;
             break;
+        }
             
-        case IROpcode::MOD:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " % " + instr.src2.value + ";");
+        case IROpcode::DIV: {
+            auto it1 = variable_types.find(instr.src1.value);
+            auto it2 = variable_types.find(instr.src2.value);
+            std::string type1 = (it1 != variable_types.end()) ? it1->second : "int64_t";
+            std::string type2 = (it2 != variable_types.end()) ? it2->second : "int64_t";
+            std::string result_type = getResultType(type1, type2);
+            emitLine(result_type + " " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " / " + sanitizeName(instr.src2.value) + ";");
+            variable_types[instr.dest.value] = result_type;
             break;
+        }
             
-        case IROpcode::NEG:
-            emitLine("int64_t " + instr.dest.value + " = -" + instr.src1.value + ";");
+        case IROpcode::MOD: {
+            // Modulo typically only works with integers, so keep as int64_t
+            emitLine("int64_t " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " % " + sanitizeName(instr.src2.value) + ";");
+            variable_types[instr.dest.value] = "int64_t";
             break;
+        }
+            
+        case IROpcode::NEG: {
+            auto it = variable_types.find(instr.src1.value);
+            std::string type = (it != variable_types.end()) ? it->second : "int64_t";
+            // Keep same type for negation
+            if (type == "double") {
+                emitLine("double " + sanitizeName(instr.dest.value) + " = -" + sanitizeName(instr.src1.value) + ";");
+            } else {
+                emitLine("int64_t " + sanitizeName(instr.dest.value) + " = -" + sanitizeName(instr.src1.value) + ";");
+            }
+            variable_types[instr.dest.value] = type;
+            break;
+        }
             
         case IROpcode::EQ:
-            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " == " + instr.src2.value + ";");
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " == " + sanitizeName(instr.src2.value) + ";");
+            break;
+            
+        case IROpcode::NE:
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " != " + sanitizeName(instr.src2.value) + ";");
             break;
             
         case IROpcode::LT:
-            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " < " + instr.src2.value + ";");
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " < " + sanitizeName(instr.src2.value) + ";");
+            break;
+            
+        case IROpcode::LE:
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " <= " + sanitizeName(instr.src2.value) + ";");
+            break;
+            
+        case IROpcode::GT:
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " > " + sanitizeName(instr.src2.value) + ";");
+            break;
+            
+        case IROpcode::GE:
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " >= " + sanitizeName(instr.src2.value) + ";");
+            break;
+            
+        case IROpcode::AND:
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " && " + sanitizeName(instr.src2.value) + ";");
+            break;
+            
+        case IROpcode::OR:
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " || " + sanitizeName(instr.src2.value) + ";");
+            break;
+            
+        case IROpcode::NOT:
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = !" + sanitizeName(instr.src1.value) + ";");
             break;
             
         case IROpcode::JUMP:
-            emitLine("goto " + instr.dest.value + ";");
+            emitLine("goto " + sanitizeName(instr.dest.value) + ";");
+            break;
+            
+        case IROpcode::JUMP_IF_TRUE:
+            emitLine("if (" + sanitizeName(instr.src1.value) + ") goto " + sanitizeName(instr.dest.value) + ";");
             break;
             
         case IROpcode::JUMP_IF_FALSE:
-            emitLine("if (!" + instr.src1.value + ") goto " + instr.dest.value + ";");
+            emitLine("if (!" + sanitizeName(instr.src1.value) + ") goto " + sanitizeName(instr.dest.value) + ";");
             break;
+            
+        case IROpcode::PARAM:
+            // Track parameters for the next CALL instruction
+            // PARAM instruction has the value in dest (based on IR generation)
+            if (instr.dest.type != IROperandType::NONE) {
+                pending_params.push_back(instr.dest.value);
+            }
+            break;
+            
+        case IROpcode::CALL: {
+            // Handle built-in function calls
+            std::string func_name = sanitizeName(instr.src1.value);
+            
+            if (func_name == "print") {
+                // Generate call to caesar_print runtime function
+                int argc = pending_params.size();
+                if (argc > 0) {
+                    emitLine("{");
+                    indent_level++;
+                    emitLine("CaesarValue args[" + std::to_string(argc) + "];");
+                    
+                    for (int i = 0; i < argc; i++) {
+                        std::string param = pending_params[i];
+                        std::string caesar_type = getCaesarType(param);
+                        std::string sanitized = sanitizeName(param);
+                        
+                        emitLine("args[" + std::to_string(i) + "].type = " + caesar_type + ";");
+                        
+                        // Set the appropriate union member based on type
+                        if (caesar_type == "CAESAR_INT") {
+                            emitLine("args[" + std::to_string(i) + "].data.i = " + sanitized + ";");
+                        } else if (caesar_type == "CAESAR_FLOAT") {
+                            emitLine("args[" + std::to_string(i) + "].data.f = " + sanitized + ";");
+                        } else if (caesar_type == "CAESAR_STRING") {
+                            emitLine("args[" + std::to_string(i) + "].data.s = " + sanitized + ";");
+                        } else if (caesar_type == "CAESAR_BOOL") {
+                            emitLine("args[" + std::to_string(i) + "].data.b = " + sanitized + ";");
+                        }
+                    }
+                    
+                    emitLine("caesar_print(" + std::to_string(argc) + ", args);");
+                    indent_level--;
+                    emitLine("}");
+                } else {
+                    // Print with no arguments - just print newline
+                    emitLine("caesar_print(0, NULL);");
+                }
+                pending_params.clear();
+            } else if (func_name == "len") {
+                // Generate call to caesar_len runtime function
+                if (pending_params.size() >= 1) {
+                    // Take the last parameter (most recent one pushed)
+                    std::string param = pending_params.back();
+                    pending_params.pop_back();  // Remove it from the list
+                    
+                    bool had_other_params = !pending_params.empty();  // Check if there were other params
+                    
+                    std::string caesar_type = getCaesarType(param);
+                    std::string sanitized = sanitizeName(param);
+                    std::string result = sanitizeName(instr.dest.value);
+                    
+                    // Create a temp variable name for the arg
+                    static int len_counter = 0;
+                    std::string temp_arg = "len_arg_" + std::to_string(len_counter++);
+                    
+                    emitLine("CaesarValue " + temp_arg + ";");
+                    emitLine(temp_arg + ".type = " + caesar_type + ";");
+                    
+                    if (caesar_type == "CAESAR_INT") {
+                        emitLine(temp_arg + ".data.i = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_FLOAT") {
+                        emitLine(temp_arg + ".data.f = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_STRING") {
+                        emitLine(temp_arg + ".data.s = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_BOOL") {
+                        emitLine(temp_arg + ".data.b = " + sanitized + ";");
+                    }
+                    
+                    emitLine("int64_t " + result + " = caesar_len(&" + temp_arg + ");");
+                    variable_types[instr.dest.value] = "int64_t";
+                    
+                    // If there were other params, this is a nested call - add result back for parent call
+                    if (had_other_params) {
+                        pending_params.push_back(instr.dest.value);
+                    }
+                } else {
+                    emitLine("// ERROR: len() requires exactly 1 argument");
+                    pending_params.clear();
+                }
+            } else if (func_name == "str") {
+                // Generate call to caesar_str runtime function
+                if (pending_params.size() >= 1) {
+                    // Take the last parameter (most recent one pushed)
+                    std::string param = pending_params.back();
+                    pending_params.pop_back();  // Remove it from the list
+                    
+                    bool had_other_params = !pending_params.empty();  // Check if there were other params
+                    
+                    std::string caesar_type = getCaesarType(param);
+                    std::string sanitized = sanitizeName(param);
+                    std::string result = sanitizeName(instr.dest.value);
+                    
+                    // Create a temp variable name for the arg
+                    static int str_counter = 0;
+                    std::string temp_arg = "str_arg_" + std::to_string(str_counter++);
+                    
+                    emitLine("CaesarValue " + temp_arg + ";");
+                    emitLine(temp_arg + ".type = " + caesar_type + ";");
+                    
+                    if (caesar_type == "CAESAR_INT") {
+                        emitLine(temp_arg + ".data.i = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_FLOAT") {
+                        emitLine(temp_arg + ".data.f = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_STRING") {
+                        emitLine(temp_arg + ".data.s = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_BOOL") {
+                        emitLine(temp_arg + ".data.b = " + sanitized + ";");
+                    }
+                    
+                    emitLine("const char* " + result + " = caesar_str(&" + temp_arg + ");");
+                    variable_types[instr.dest.value] = "const char*";
+                    
+                    // If there were other params, this is a nested call - add result back for parent call
+                    if (had_other_params) {
+                        pending_params.push_back(instr.dest.value);
+                    }
+                } else {
+                    emitLine("// ERROR: str() requires exactly 1 argument");
+                    pending_params.clear();
+                }
+            } else if (func_name == "int") {
+                // Generate call to caesar_int runtime function
+                if (pending_params.size() >= 1) {
+                    // Take the last parameter (most recent one pushed)
+                    std::string param = pending_params.back();
+                    pending_params.pop_back();  // Remove it from the list
+                    
+                    bool had_other_params = !pending_params.empty();  // Check if there were other params
+                    
+                    std::string caesar_type = getCaesarType(param);
+                    std::string sanitized = sanitizeName(param);
+                    std::string result = sanitizeName(instr.dest.value);
+                    
+                    // Create a temp variable name for the arg
+                    static int int_counter = 0;
+                    std::string temp_arg = "int_arg_" + std::to_string(int_counter++);
+                    
+                    emitLine("CaesarValue " + temp_arg + ";");
+                    emitLine(temp_arg + ".type = " + caesar_type + ";");
+                    
+                    if (caesar_type == "CAESAR_INT") {
+                        emitLine(temp_arg + ".data.i = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_FLOAT") {
+                        emitLine(temp_arg + ".data.f = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_STRING") {
+                        emitLine(temp_arg + ".data.s = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_BOOL") {
+                        emitLine(temp_arg + ".data.b = " + sanitized + ";");
+                    }
+                    
+                    emitLine("int64_t " + result + " = caesar_int(&" + temp_arg + ");");
+                    variable_types[instr.dest.value] = "int64_t";
+                    
+                    // If there were other params, this is a nested call - add result back for parent call
+                    if (had_other_params) {
+                        pending_params.push_back(instr.dest.value);
+                    }
+                } else {
+                    emitLine("// ERROR: int() requires exactly 1 argument");
+                    pending_params.clear();
+                }
+            } else if (func_name == "float") {
+                // Generate call to caesar_float runtime function
+                if (pending_params.size() >= 1) {
+                    // Take the last parameter (most recent one pushed)
+                    std::string param = pending_params.back();
+                    pending_params.pop_back();  // Remove it from the list
+                    
+                    bool had_other_params = !pending_params.empty();  // Check if there were other params
+                    
+                    std::string caesar_type = getCaesarType(param);
+                    std::string sanitized = sanitizeName(param);
+                    std::string result = sanitizeName(instr.dest.value);
+                    
+                    // Create a temp variable name for the arg
+                    static int float_counter = 0;
+                    std::string temp_arg = "float_arg_" + std::to_string(float_counter++);
+                    
+                    emitLine("CaesarValue " + temp_arg + ";");
+                    emitLine(temp_arg + ".type = " + caesar_type + ";");
+                    
+                    if (caesar_type == "CAESAR_INT") {
+                        emitLine(temp_arg + ".data.i = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_FLOAT") {
+                        emitLine(temp_arg + ".data.f = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_STRING") {
+                        emitLine(temp_arg + ".data.s = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_BOOL") {
+                        emitLine(temp_arg + ".data.b = " + sanitized + ";");
+                    }
+                    
+                    emitLine("double " + result + " = caesar_float(&" + temp_arg + ");");
+                    variable_types[instr.dest.value] = "double";
+                    
+                    // If there were other params, this is a nested call - add result back for parent call
+                    if (had_other_params) {
+                        pending_params.push_back(instr.dest.value);
+                    }
+                } else {
+                    emitLine("// ERROR: float() requires exactly 1 argument");
+                    pending_params.clear();
+                }
+            } else if (func_name == "abs") {
+                // Generate call to caesar_abs runtime function
+                if (pending_params.size() >= 1) {
+                    // Take the last parameter (most recent one pushed)
+                    std::string param = pending_params.back();
+                    pending_params.pop_back();  // Remove it from the list
+                    
+                    bool had_other_params = !pending_params.empty();  // Check if there were other params
+                    
+                    std::string caesar_type = getCaesarType(param);
+                    std::string sanitized = sanitizeName(param);
+                    std::string result = sanitizeName(instr.dest.value);
+                    
+                    // Create a temp variable name for the arg
+                    static int abs_counter = 0;
+                    std::string temp_arg = "abs_arg_" + std::to_string(abs_counter++);
+                    
+                    emitLine("CaesarValue " + temp_arg + ";");
+                    emitLine(temp_arg + ".type = " + caesar_type + ";");
+                    
+                    if (caesar_type == "CAESAR_INT") {
+                        emitLine(temp_arg + ".data.i = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_FLOAT") {
+                        emitLine(temp_arg + ".data.f = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_STRING") {
+                        emitLine(temp_arg + ".data.s = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_BOOL") {
+                        emitLine(temp_arg + ".data.b = " + sanitized + ";");
+                    }
+                    
+                    emitLine("double " + result + " = caesar_abs(&" + temp_arg + ");");
+                    variable_types[instr.dest.value] = "double";
+                    
+                    // If there were other params, this is a nested call - add result back for parent call
+                    if (had_other_params) {
+                        pending_params.push_back(instr.dest.value);
+                    }
+                } else {
+                    emitLine("// ERROR: abs() requires exactly 1 argument");
+                    pending_params.clear();
+                }
+            } else if (func_name == "type") {
+                // Generate call to caesar_type runtime function
+                if (pending_params.size() >= 1) {
+                    // Take the last parameter (most recent one pushed)
+                    std::string param = pending_params.back();
+                    pending_params.pop_back();  // Remove it from the list
+                    
+                    bool had_other_params = !pending_params.empty();  // Check if there were other params
+                    
+                    std::string caesar_type = getCaesarType(param);
+                    std::string sanitized = sanitizeName(param);
+                    std::string result = sanitizeName(instr.dest.value);
+                    
+                    // Create a temp variable name for the arg
+                    static int type_counter = 0;
+                    std::string temp_arg = "type_arg_" + std::to_string(type_counter++);
+                    
+                    emitLine("CaesarValue " + temp_arg + ";");
+                    emitLine(temp_arg + ".type = " + caesar_type + ";");
+                    
+                    if (caesar_type == "CAESAR_INT") {
+                        emitLine(temp_arg + ".data.i = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_FLOAT") {
+                        emitLine(temp_arg + ".data.f = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_STRING") {
+                        emitLine(temp_arg + ".data.s = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_BOOL") {
+                        emitLine(temp_arg + ".data.b = " + sanitized + ";");
+                    }
+                    
+                    emitLine("const char* " + result + " = caesar_type(&" + temp_arg + ");");
+                    variable_types[instr.dest.value] = "const char*";
+                    
+                    // If there were other params, this is a nested call - add result back for parent call
+                    if (had_other_params) {
+                        pending_params.push_back(instr.dest.value);
+                    }
+                } else {
+                    emitLine("// ERROR: type() requires exactly 1 argument");
+                    pending_params.clear();
+                }
+            } else {
+                // Other function calls not yet implemented
+                emitLine("// CALL " + func_name + " (not fully implemented)");
+                pending_params.clear();
+            }
+            break;
+        }
             
         case IROpcode::RETURN:
             if (instr.dest.type != IROperandType::NONE) {
@@ -283,12 +793,109 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
 
 std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     output.str("");
+    pending_params.clear();  // Clear any previous state
     
     output << "// Caesar C Code\n";
     output << "// Generated by Caesar Compiler v1.5.1\n\n";
     output << "#include <stdio.h>\n";
     output << "#include <stdint.h>\n";
-    output << "#include <stdbool.h>\n\n";
+    output << "#include <stdbool.h>\n";
+    // Include runtime header inline to avoid path issues
+    output << "\n// Caesar Runtime Library (inline)\n";
+    output << "typedef enum { CAESAR_INT, CAESAR_FLOAT, CAESAR_STRING, CAESAR_BOOL, CAESAR_NONE } CaesarType;\n";
+    output << "typedef struct {\n";
+    output << "    CaesarType type;\n";
+    output << "    union {\n";
+    output << "        int64_t i;\n";
+    output << "        double f;\n";
+    output << "        const char* s;\n";
+    output << "        bool b;\n";
+    output << "    } data;\n";
+    output << "} CaesarValue;\n\n";
+    output << "void caesar_print(int argc, CaesarValue* args) {\n";
+    output << "    for (int i = 0; i < argc; i++) {\n";
+    output << "        if (i > 0) printf(\" \");\n";
+    output << "        switch (args[i].type) {\n";
+    output << "            case CAESAR_INT: printf(\"%lld\", (long long)args[i].data.i); break;\n";
+    output << "            case CAESAR_FLOAT: printf(\"%g\", args[i].data.f); break;\n";
+    output << "            case CAESAR_STRING: printf(\"%s\", args[i].data.s); break;\n";
+    output << "            case CAESAR_BOOL: printf(\"%s\", args[i].data.b ? \"True\" : \"False\"); break;\n";
+    output << "            case CAESAR_NONE: printf(\"None\"); break;\n";
+    output << "        }\n";
+    output << "    }\n";
+    output << "    printf(\"\\n\");\n";
+    output << "}\n\n";
+    output << "#include <string.h>\n";
+    output << "#include <stdlib.h>\n";
+    output << "int64_t caesar_len(CaesarValue* arg) {\n";
+    output << "    switch (arg->type) {\n";
+    output << "        case CAESAR_STRING: return (int64_t)strlen(arg->data.s);\n";
+    output << "        case CAESAR_INT: return 1;  // Single value has length 1\n";
+    output << "        case CAESAR_FLOAT: return 1;\n";
+    output << "        case CAESAR_BOOL: return 1;\n";
+    output << "        case CAESAR_NONE: return 0;\n";
+    output << "        default: return 0;\n";
+    output << "    }\n";
+    output << "}\n\n";
+    output << "const char* caesar_str(CaesarValue* arg) {\n";
+    output << "    static char buffer[256];\n";
+    output << "    switch (arg->type) {\n";
+    output << "        case CAESAR_STRING: return arg->data.s;\n";
+    output << "        case CAESAR_INT:\n";
+    output << "            snprintf(buffer, sizeof(buffer), \"%lld\", (long long)arg->data.i);\n";
+    output << "            return buffer;\n";
+    output << "        case CAESAR_FLOAT:\n";
+    output << "            snprintf(buffer, sizeof(buffer), \"%g\", arg->data.f);\n";
+    output << "            return buffer;\n";
+    output << "        case CAESAR_BOOL:\n";
+    output << "            return arg->data.b ? \"True\" : \"False\";\n";
+    output << "        case CAESAR_NONE:\n";
+    output << "            return \"None\";\n";
+    output << "        default:\n";
+    output << "            return \"\";\n";
+    output << "    }\n";
+    output << "}\n\n";
+    output << "int64_t caesar_int(CaesarValue* arg) {\n";
+    output << "    switch (arg->type) {\n";
+    output << "        case CAESAR_INT: return arg->data.i;\n";
+    output << "        case CAESAR_FLOAT: return (int64_t)arg->data.f;  // Truncate float to int\n";
+    output << "        case CAESAR_BOOL: return arg->data.b ? 1 : 0;\n";
+    output << "        case CAESAR_STRING: return (int64_t)atoll(arg->data.s);  // Parse string to int\n";
+    output << "        case CAESAR_NONE: return 0;\n";
+    output << "        default: return 0;\n";
+    output << "    }\n";
+    output << "}\n\n";
+    output << "double caesar_float(CaesarValue* arg) {\n";
+    output << "    switch (arg->type) {\n";
+    output << "        case CAESAR_INT: return (double)arg->data.i;  // Convert int to float\n";
+    output << "        case CAESAR_FLOAT: return arg->data.f;  // Identity\n";
+    output << "        case CAESAR_BOOL: return arg->data.b ? 1.0 : 0.0;\n";
+    output << "        case CAESAR_STRING: return atof(arg->data.s);  // Parse string to float\n";
+    output << "        case CAESAR_NONE: return 0.0;\n";
+    output << "        default: return 0.0;\n";
+    output << "    }\n";
+    output << "}\n\n";
+    output << "#include <math.h>\n";
+    output << "double caesar_abs(CaesarValue* arg) {\n";
+    output << "    switch (arg->type) {\n";
+    output << "        case CAESAR_INT: return (double)(arg->data.i < 0 ? -arg->data.i : arg->data.i);\n";
+    output << "        case CAESAR_FLOAT: return fabs(arg->data.f);  // Use fabs for floats\n";
+    output << "        case CAESAR_BOOL: return arg->data.b ? 1.0 : 0.0;  // abs(bool) = bool as number\n";
+    output << "        case CAESAR_STRING: return fabs(atof(arg->data.s));  // Parse and abs\n";
+    output << "        case CAESAR_NONE: return 0.0;\n";
+    output << "        default: return 0.0;\n";
+    output << "    }\n";
+    output << "}\n\n";
+    output << "const char* caesar_type(CaesarValue* arg) {\n";
+    output << "    switch (arg->type) {\n";
+    output << "        case CAESAR_INT: return \"int\";\n";
+    output << "        case CAESAR_FLOAT: return \"float\";\n";
+    output << "        case CAESAR_STRING: return \"string\";\n";
+    output << "        case CAESAR_BOOL: return \"bool\";\n";
+    output << "        case CAESAR_NONE: return \"None\";\n";
+    output << "        default: return \"unknown\";\n";
+    output << "    }\n";
+    output << "}\n\n";
     output << "int main() {\n";
     
     indent_level = 1;

@@ -284,24 +284,124 @@ void IRGenerator::visit(WhileStatement& node) {
 }
 
 void IRGenerator::visit(ForStatement& node) {
-    // Simplified for loop - evaluate as while loop
-    std::string loop_label = newLabel("forloop");
-    std::string end_label = newLabel("endfor");
+    // For loops in Caesar are typically: for i in range(start, stop, step)
+    // We need to detect range() calls and convert them to while loop equivalents
     
-    // Initialize iterator (simplified)
-    node.iterable->accept(*this);
+    // Check if iterable is a range() call BEFORE evaluating it
+    CallExpression* range_call = dynamic_cast<CallExpression*>(node.iterable.get());
+    bool is_range = false;
+    int start_reg = -1;
+    int stop_reg = -1;
+    int step_reg = -1;
     
-    // Loop start
-    newBlock(loop_label);
+    // Check if the function being called is "range"
+    if (range_call) {
+        IdentifierExpression* func_id = dynamic_cast<IdentifierExpression*>(range_call->function.get());
+        if (func_id && func_id->name == "range") {
+            is_range = true;
+            
+            // Parse range arguments: range(stop) or range(start, stop) or range(start, stop, step)
+            if (range_call->arguments.size() == 1) {
+                // range(stop) - start defaults to 0, step defaults to 1
+                // Load start = 0
+                start_reg = next_register++;
+                emit(IRInstruction(IROpcode::LOAD_CONST, IROperand::Reg(start_reg), IROperand::Const("0")));
+                
+                // Evaluate stop
+                range_call->arguments[0]->accept(*this);
+                stop_reg = next_register - 1;
+                
+                // Load step = 1
+                step_reg = next_register++;
+                emit(IRInstruction(IROpcode::LOAD_CONST, IROperand::Reg(step_reg), IROperand::Const("1")));
+            } else if (range_call->arguments.size() == 2) {
+                // range(start, stop) - step defaults to 1
+                range_call->arguments[0]->accept(*this);
+                start_reg = next_register - 1;
+                
+                range_call->arguments[1]->accept(*this);
+                stop_reg = next_register - 1;
+                
+                // Load step = 1
+                step_reg = next_register++;
+                emit(IRInstruction(IROpcode::LOAD_CONST, IROperand::Reg(step_reg), IROperand::Const("1")));
+            } else if (range_call->arguments.size() >= 3) {
+                // range(start, stop, step)
+                range_call->arguments[0]->accept(*this);
+                start_reg = next_register - 1;
+                
+                range_call->arguments[1]->accept(*this);
+                stop_reg = next_register - 1;
+                
+                range_call->arguments[2]->accept(*this);
+                step_reg = next_register - 1;
+            }
+        }
+    }
     
-    // Loop body
-    node.body->accept(*this);
-    
-    // Jump back to loop start (simplified - no proper iterator check)
-    emit(IRInstruction(IROpcode::JUMP, IROperand::Lab(loop_label)));
-    
-    // End label
-    newBlock(end_label);
+    if (is_range && start_reg >= 0 && stop_reg >= 0 && step_reg >= 0) {
+        // Generate range-based for loop as while loop
+        // 1. Declare and initialize loop variable
+        emit(IRInstruction(IROpcode::DECLARE, IROperand::Var(node.variable)));
+        emit(IRInstruction(IROpcode::SET_VAR, IROperand::Var(node.variable), IROperand::Reg(start_reg)));
+        
+        // 2. Loop start label
+        std::string loop_label = newLabel("forloop");
+        newBlock(loop_label);
+        
+        // 3. Check loop condition: i < stop
+        int loop_var_reg = next_register++;
+        emit(IRInstruction(IROpcode::GET_VAR, IROperand::Reg(loop_var_reg), IROperand::Var(node.variable)));
+        
+        int cond_reg = next_register++;
+        emit(IRInstruction(IROpcode::LT, IROperand::Reg(cond_reg), 
+                          IROperand::Reg(loop_var_reg), IROperand::Reg(stop_reg)));
+        
+        std::string end_label = newLabel("endfor");
+        emit(IRInstruction(IROpcode::JUMP_IF_FALSE, IROperand::Lab(end_label), IROperand::Reg(cond_reg)));
+        
+        // 4. Loop body
+        node.body->accept(*this);
+        
+        // 5. Increment loop variable: i = i + step
+        int current_val_reg = next_register++;
+        emit(IRInstruction(IROpcode::GET_VAR, IROperand::Reg(current_val_reg), IROperand::Var(node.variable)));
+        
+        int new_val_reg = next_register++;
+        emit(IRInstruction(IROpcode::ADD, IROperand::Reg(new_val_reg), 
+                          IROperand::Reg(current_val_reg), IROperand::Reg(step_reg)));
+        
+        emit(IRInstruction(IROpcode::SET_VAR, IROperand::Var(node.variable), IROperand::Reg(new_val_reg)));
+        
+        // 6. Jump back to loop start
+        emit(IRInstruction(IROpcode::JUMP, IROperand::Lab(loop_label)));
+        
+        // 7. End label
+        newBlock(end_label);
+    } else {
+        // Generic iterator (not range) - simplified implementation
+        // TODO: Implement proper iterator protocol for lists, dicts, etc.
+        std::string loop_label = newLabel("forloop");
+        std::string end_label = newLabel("endfor");
+        
+        // Declare loop variable
+        emit(IRInstruction(IROpcode::DECLARE, IROperand::Var(node.variable)));
+        
+        // Initialize iterator (simplified)
+        node.iterable->accept(*this);
+        
+        // Loop start
+        newBlock(loop_label);
+        
+        // Loop body
+        node.body->accept(*this);
+        
+        // Jump back to loop start (simplified - no proper iterator check)
+        emit(IRInstruction(IROpcode::JUMP, IROperand::Lab(loop_label)));
+        
+        // End label
+        newBlock(end_label);
+    }
 }
 
 void IRGenerator::visit(FunctionDefinition& node) {
