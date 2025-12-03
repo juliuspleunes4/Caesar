@@ -885,13 +885,19 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     // Generate forward declarations for user-defined functions
     generateFunctionForwardDeclarations();
     
-    // SECOND PASS: Generate function definitions and main
+    // SECOND PASS: Generate function definitions and mark processed blocks
+    std::unordered_set<size_t> processed_blocks;
     for (size_t i = 0; i < blocks.size(); i++) {
         const auto& block = blocks[i];
         
         if (isFunctionLabel(block.label)) {
             // This is a function definition
+            size_t start_idx = i;
             generateFunctionDefinition(block.label, block, blocks, i);
+            // Mark all blocks from start_idx to i as processed
+            for (size_t j = start_idx; j <= i; j++) {
+                processed_blocks.insert(j);
+            }
         }
     }
     
@@ -903,9 +909,12 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     indent_level = 1;
     
     // Process non-function blocks (entry and labels within main)
-    for (const auto& block : blocks) {
-        if (isFunctionLabel(block.label)) {
-            continue;  // Skip function blocks, already processed
+    for (size_t i = 0; i < blocks.size(); i++) {
+        const auto& block = blocks[i];
+        
+        // Skip already processed blocks (functions and their sub-blocks)
+        if (processed_blocks.find(i) != processed_blocks.end()) {
+            continue;
         }
         
         if (!block.label.empty() && block.label != "entry") {
@@ -1029,28 +1038,40 @@ void CCodeGenerator::generateFunctionDefinition(const std::string& label, const 
     
     indent_level = 1;
     
-    // Process instructions, skipping DECLARE (parameters already handled)
+    // Process first block (function entry)
     for (const auto& instr : block.instructions) {
         if (instr.opcode == IROpcode::DECLARE) {
             continue;  // Skip parameter declarations
         }
-        if (instr.opcode == IROpcode::RETURN) {
-            // Handle return statement
-            if (instr.dest.type != IROperandType::NONE) {
-                emitLine("return " + sanitizeName(instr.dest.value) + ";");
-            } else {
-                if (func_info.has_return_value) {
-                    emitLine("return 0;  // Default return");
-                } else {
-                    emitLine("return;");
-                }
-            }
-            break;  // Stop processing after return
-        }
         emitInstruction(instr);
     }
     
-    // Add default return if needed
+    // Process subsequent blocks that belong to this function
+    // Continue until we hit another function or main block
+    for (size_t i = block_idx + 1; i < all_blocks.size(); i++) {
+        const auto& next_block = all_blocks[i];
+        
+        // Stop if we hit another function or main block
+        if (isFunctionLabel(next_block.label) || next_block.label.find("main_") == 0) {
+            break;
+        }
+        
+        // This block belongs to the current function
+        if (!next_block.label.empty()) {
+            indent_level = 0;
+            output << next_block.label << ":\n";
+            indent_level = 1;
+        }
+        
+        for (const auto& instr : next_block.instructions) {
+            emitInstruction(instr);
+        }
+        
+        // Mark this block as processed
+        block_idx = i;
+    }
+    
+    // Add default return if needed (function body may not have explicit return)
     if (func_info.has_return_value) {
         emitLine("return 0;  // Safety return");
     }
