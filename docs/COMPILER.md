@@ -57,16 +57,17 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
    - Data structures (lists, dicts)
    - Comprehensive test coverage
 
-4. **IR Generation** (95%)
+4. **IR Generation** (98%)
    - Three-address code generation
    - All basic blocks
    - Control flow
    - Function definitions
+   - ✅ **For loops with range()** (NEW - properly generates loop variables, initialization, condition checks, increments)
    - ⚠️ Classes not fully implemented
 
 ### 🚧 Partial Implementation
 
-5. **C Code Generator** (83%)
+5. **C Code Generator** (85%)
    - ✅ Variables and assignments
    - ✅ All arithmetic operations (+, -, *, /, %, negation)
    - ✅ All comparison operators (==, !=, <, <=, >, >=)
@@ -82,14 +83,14 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
    - ✅ **Proper C identifier generation** (sanitizes IR names)
    - ✅ Control flow (if/else, goto, labels)
    - ✅ **While loops** (simple, nested, complex conditions, all edge cases)
-   - ✅ **10 comprehensive while loop tests pass** (zero iterations, negative numbers, floats, deep nesting)
+   - ✅ **For loops with range()** (NEW - simple, start/stop, step, negative ranges, descending, nested, all edge cases)
+   - ✅ **30 comprehensive loop tests pass** (10 while + 20 for/mixed loops)
    - ✅ Variable declaration tracking
    - ✅ Negative numbers, zero operations
    - ✅ Large numbers, operator precedence
    - ✅ Deep nesting, complex expressions
-   - ✅ **105 comprehensive tests pass** (95 previous + 10 while loops)
+   - ✅ **135 comprehensive tests pass** (95 previous + 10 while + 20 for + 10 mixed loops)
    - ⚠️ Escape sequences in strings (lexer limitation)
-   - ⚠️ **For loops** (IR generation incomplete - loop variable not properly generated)
    - ⚠️ Function calls incomplete
    - ⚠️ Built-in functions incomplete
    - ⚠️ Data structures not implemented

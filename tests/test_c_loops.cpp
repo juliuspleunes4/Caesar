@@ -18,9 +18,8 @@
 
 using namespace caesar;
 
-// Note: For loops are currently excluded as they require IR generator improvements
-// The IR generator doesn't properly emit loop variables for range-based for loops
-const int TOTAL_TESTS = 10;  // While loops only for now
+// Comprehensive loop testing including while and for loops
+const int TOTAL_TESTS = 30;  // 10 while loops + 20 for/mixed loops
 
 // Helper to generate unique temporary file names
 std::string getTempFileName() {
@@ -205,15 +204,9 @@ while x < 5 and y < 10 and z < 15:
 // ============================================================================
 // For Loop Tests (range-based)
 // ============================================================================
-// NOTE: For loops currently disabled - IR generator doesn't emit loop variables
-// properly for range-based for loops. This needs to be fixed in IRGenerator first.
-//
-// The issue: `for i in range(5):` doesn't generate a declaration for `i` in IR,
-// causing "undeclared identifier" errors in generated C code.
-//
-// TODO: Fix IRGenerator::visit(ForStatement&) to properly emit loop variable
+// For Loop Tests
+// ============================================================================
 
-/*
 void test_simple_for_loop() {
     std::string code = R"(
 total = 0
@@ -428,7 +421,6 @@ for i in range(20, 10, -2):
 )";
     assert(testLoop(code, "Loop with negative step"));
 }
-*/
 
 // ============================================================================
 // Main Test Runner
@@ -452,33 +444,32 @@ int main() {
     test_deeply_nested_while(); passed++;
     test_while_with_multiple_conditions(); passed++;
     
-    // For loop tests - DISABLED until IR generator is fixed
-    // test_simple_for_loop(); passed++;
-    // test_for_loop_with_start_stop(); passed++;
-    // test_for_loop_with_step(); passed++;
-    // test_for_loop_negative_range(); passed++;
-    // test_for_loop_descending(); passed++;
-    // test_nested_for_loops(); passed++;
-    // test_for_loop_with_if(); passed++;
-    // test_for_loop_empty_range(); passed++;
-    // test_for_loop_large_range(); passed++;
-    // test_for_loop_with_multiple_statements(); passed++;
+    // For loop tests
+    test_simple_for_loop(); passed++;
+    test_for_loop_with_start_stop(); passed++;
+    test_for_loop_with_step(); passed++;
+    test_for_loop_negative_range(); passed++;
+    test_for_loop_descending(); passed++;
+    test_nested_for_loops(); passed++;
+    test_for_loop_with_if(); passed++;
+    test_for_loop_empty_range(); passed++;
+    test_for_loop_large_range(); passed++;
+    test_for_loop_with_multiple_statements(); passed++;
     
-    // Mixed loop tests - DISABLED until for loops work
-    // test_while_then_for(); passed++;
-    // test_for_inside_while(); passed++;
-    // test_while_inside_for(); passed++;
-    // test_complex_nested_loops(); passed++;
-    // test_loop_with_multiple_variables(); passed++;
-    // test_loop_with_conditional_assignment(); passed++;
-    // test_loop_with_boolean_operations(); passed++;
-    // test_loop_with_float_arithmetic(); passed++;
-    // test_loop_variable_reuse(); passed++;
-    // test_loop_with_negative_step(); passed++;
+    // Mixed loop tests
+    test_while_then_for(); passed++;
+    test_for_inside_while(); passed++;
+    test_while_inside_for(); passed++;
+    test_complex_nested_loops(); passed++;
+    test_loop_with_multiple_variables(); passed++;
+    test_loop_with_conditional_assignment(); passed++;
+    test_loop_with_boolean_operations(); passed++;
+    test_loop_with_float_arithmetic(); passed++;
+    test_loop_variable_reuse(); passed++;
+    test_loop_with_negative_step(); passed++;
     
     std::cout << "\n========================================" << std::endl;
-    std::cout << "While Loop Tests Complete: " << passed << "/" << TOTAL_TESTS << " passed" << std::endl;
-    std::cout << "Note: For loop tests disabled - IR generator needs fixing" << std::endl;
+    std::cout << "Loop Tests Complete: " << passed << "/" << TOTAL_TESTS << " passed" << std::endl;
     std::cout << "========================================" << std::endl;
     
     if (passed != TOTAL_TESTS) {
