@@ -35,6 +35,8 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 
 ## Implementation Status
 
+> **Current Focus (2024-12-03)**: The compiler is in active development with the interpreter fully functional. The C code generator works for basic programs (arithmetic, control flow, loops, built-in functions) but **user-defined functions are not yet supported** in compiled code due to architectural limitations. See Phase 1 below and IMPLEMENTATION_PLAN.md for the path forward.
+
 ### ✅ Fully Implemented (Production-Ready)
 
 1. **Lexer** (100%)
@@ -67,7 +69,7 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 
 ### 🚧 Partial Implementation
 
-5. **C Code Generator** (93%)
+5. **C Code Generator** (75% - functions not working)
    - ✅ Variables and assignments
    - ✅ All arithmetic operations (+, -, *, /, %, negation)
    - ✅ All comparison operators (==, !=, <, <=, >, >=)
@@ -98,14 +100,19 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
    - ✅ Large numbers, operator precedence
    - ✅ Deep nesting, complex expressions
    - ⚠️ Escape sequences in strings (lexer limitation)
-   - ⚠️ **Function definitions incomplete**:
+   - ⚠️ **Function definitions incomplete** - Major architectural issue:
      - ✅ IR Generator: Generates function labels, parameter declarations, body, and return instructions
-     - ❌ C Generator: No DEFINE_FUNCTION opcode handling - functions not emitted as C functions
-     - ❌ Missing: Function prologue/epilogue generation
-     - ❌ Missing: Parameter passing in generated C code
-     - ❌ Missing: Return value handling in generated C code
-     - ❌ Missing: Function call mechanism (CALL opcode only handles built-ins, user-defined functions not supported)
-     - ❌ Missing: Scope management for local variables
+     - ❌ C Generator: Functions emitted as **labels inside main()** instead of proper C functions
+       - Current: `func_add: ... return r2;` inside main() - broken
+       - Needed: `int64_t func_add(int64_t a, int64_t b) { ... return r2; }` before main()
+     - ❌ CRITICAL: Single-pass architecture prevents proper function generation
+       - Current: One output buffer, everything goes into main() sequentially
+       - Needed: Two-pass approach or separate buffers for functions vs main code
+     - ❌ Missing: Function registry to track function signatures during first pass
+     - ❌ Missing: CALL opcode handler for user-defined functions (only built-ins work)
+     - ❌ Missing: Parameter declaration handling (currently commented as "not implemented")
+     - ❌ Missing: Function-local variable scope management
+     - 📖 See docs/IMPLEMENTATION_PLAN.md Phase 1.1 for detailed restructuring plan
    - ⚠️ Other built-in functions incomplete (range returns iterator, input, etc.)
    - ⚠️ Data structures not implemented
 
