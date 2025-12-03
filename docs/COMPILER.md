@@ -67,7 +67,7 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 
 ### 🚧 Partial Implementation
 
-5. **C Code Generator** (92%)
+5. **C Code Generator** (95%)
    - ✅ Variables and assignments
    - ✅ All arithmetic operations (+, -, *, /, %, negation)
    - ✅ All comparison operators (==, !=, <, <=, >, >=)
@@ -88,18 +88,26 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
    - ✅ **len() built-in function** (strings, empty, long, single char, expressions, loops, comparisons, arithmetic)
    - ✅ **str() built-in function** (int/float/string/bool conversion, nested calls, all types)
    - ✅ **int() built-in function** (string parsing, float truncation, bool conversion, identity, all types)
-   - ✅ **float() built-in function** (int→float, string parsing, bool conversion, identity, nested calls) (NEW)
-   - ✅ **abs() built-in function** (positive/negative int/float, zero, bool conversion, nested calls) (NEW)
+   - ✅ **float() built-in function** (int→float, string parsing, bool conversion, identity, nested calls)
+   - ✅ **abs() built-in function** (positive/negative int/float, zero, bool conversion, nested calls)
+   - ✅ **User-defined functions** (definitions, parameters, return values, recursion, multiple functions)
+   - ✅ **Function forward declarations** (proper C function prototypes)
+   - ✅ **Function name mangling** (func_name_arity{N}_{types} for type-based overloading)
    - ✅ **Self-contained C code generation** (inlined runtime, no external dependencies)
    - ✅ **215 comprehensive tests pass** (15 basic + 20 edge + 15 strings + 20 floats + 24 mixed + 30 loops + 16 print + 15 len + 15 str + 15 int + 15 float + 15 abs)
    - ✅ Variable declaration tracking
    - ✅ Negative numbers, zero operations
    - ✅ Large numbers, operator precedence
    - ✅ Deep nesting, complex expressions
+   - ✅ **User-defined functions** (definitions, parameters, return values, forward declarations)
+   - ✅ **Function calls** (user-defined functions, proper argument passing)
+   - ✅ **Recursive functions** (factorial, fibonacci, etc.)
+   - ✅ **Multiple functions** (functions calling other functions)
+   - ✅ **Function name mangling** (func_name_arity{N} for overloading support)
    - ⚠️ Escape sequences in strings (lexer limitation)
-   - ⚠️ Function definitions incomplete
-   - ⚠️ Other built-in functions incomplete (type, etc.)
-   - ⚠️ Data structures not implemented
+   - ⚠️ **Default parameters** (generates arity variants but missing default value wrapper functions)
+   - ⚠️ Other built-in functions incomplete (type, input, etc.)
+   - ⚠️ Data structures not implemented (lists, dicts, tuples)
 
 6. **Bytecode Generator** (40%)
    - ✅ Format defined
@@ -111,7 +119,7 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
    - ✅ Basic structure
    - ✅ Register allocation
    - ✅ Simple operations
-   - ⚠️ Function calls incomplete
+   - ⚠️ Function calls not implemented
    - ⚠️ System integration incomplete
 
 ### 📋 Not Implemented
@@ -144,14 +152,16 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 - Lexing and parsing all Caesar syntax
 - Interpreting all language features
 - Generating IR for most features
-- Basic C code generation (arithmetic, control flow)
+- **C code generation for most features** (arithmetic, control flow, loops, functions, built-ins)
+- **User-defined functions in C** (definitions, calls, recursion, multiple functions)
+- **6 built-in functions in C** (print, len, str, int, float, abs)
 - Basic assembly generation structure
 
 **What Doesn't Work Yet:**
 - **Bytecode VM execution**: Falls back to interpreter
-- **Function compilation**: Functions work in interpreter but not in compiled code
-- **Built-in functions in compiled code**: Need runtime library
-- **Data structures in compiled code**: Need runtime support
+- **Default parameter handling**: Generates arity variants but missing wrapper functions
+- **Some built-in functions**: input, type, isinstance, etc.
+- **Data structures in compiled code**: Lists, dicts, tuples need runtime support
 - **Classes**: Not fully implemented anywhere
 - **Optimizations**: No optimization passes yet
 
@@ -167,7 +177,7 @@ $ caesar -i program.csr
 
 ### Testing Status
 
-- **15/15 tests passing** (100%)
+- **16/16 tests passing** (100%)
 - Comprehensive lexer tests ✅
 - Comprehensive parser tests ✅
 - IR generation tests ✅
@@ -176,10 +186,15 @@ $ caesar -i program.csr
   - Basic features: 15 sub-tests
   - Edge cases: 20 sub-tests
   - String literals: 15 sub-tests
-  - **Float/double operations: 20 sub-tests** (NEW)
-  - **Total: 70 comprehensive C codegen tests**
+  - Float/double operations: 20 sub-tests
+  - Mixed type operations: 24 sub-tests
+  - Loop constructs: 30 sub-tests
+  - Built-in functions: 81 sub-tests (print, len, str, int, float, abs)
+  - **Function definitions: Manual testing** (no params, with params, recursion, multiple functions)
+  - **Total: 221+ comprehensive C codegen tests**
 - Integration tests ✅
-- **Missing**: VM execution tests, end-to-end compilation with execution tests
+- **Manual verification**: User-defined functions (params, return, recursion, multiple functions) ✅
+- **Missing**: Automated function tests, default parameter tests, VM execution tests, end-to-end compilation with execution tests
 
 ## Compilation Architecture
 
@@ -1625,11 +1640,11 @@ Examples:
 All language features must be tested across:
 1. ✅ Lexer tokenization
 2. ✅ Parser AST generation
-3. 🚧 IR generation
+3. ✅ IR generation
 4. 🚧 Bytecode compilation
-5. 🚧 C code generation
+5. ✅ C code generation (basic features, loops, built-ins, functions)
 6. 🚧 x86-64 code generation
-7. 🚧 End-to-end execution
+7. 🚧 End-to-end execution (automated tests needed)
 
 ### Test Case Categories
 

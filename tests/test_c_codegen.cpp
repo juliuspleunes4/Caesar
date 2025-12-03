@@ -368,6 +368,24 @@ c = a and b
     }
 }
 
+void test_simple_function() {
+    std::cout << "Test 16: Simple Function (no params)... ";
+    
+    std::string code = R"(
+def get_five():
+    return 5
+
+result = get_five()
+print(result)
+)";
+    
+    auto result = compileAndRun(code);
+    std::cout << (result.first ? "✅ PASS" : "❌ FAIL") << "\n";
+    if (!result.first) {
+        std::cout << "  Error: " << result.second << "\n";
+    }
+}
+
 int main() {
     std::cout << "========================================\n";
     std::cout << "C Code Generation Test Suite\n";
@@ -389,6 +407,7 @@ int main() {
     test_boolean_literals();
     test_multiple_assignments();
     test_chained_comparisons();
+    test_simple_function();
     
     std::cout << "\n========================================\n";
     std::cout << "C Code Generation Tests Complete\n";
