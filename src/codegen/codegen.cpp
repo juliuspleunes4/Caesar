@@ -221,6 +221,11 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             break;
             
         case IROpcode::SET_VAR:
+            // Declare variable if not yet declared
+            if (variable_types.find(instr.dest.value) == variable_types.end()) {
+                emitLine("int64_t " + instr.dest.value + ";");
+                variable_types[instr.dest.value] = "int64_t";
+            }
             emitLine(instr.dest.value + " = " + instr.src1.value + ";");
             break;
             
@@ -252,16 +257,63 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " == " + instr.src2.value + ";");
             break;
             
+        case IROpcode::NE:
+            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " != " + instr.src2.value + ";");
+            break;
+            
         case IROpcode::LT:
             emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " < " + instr.src2.value + ";");
+            break;
+            
+        case IROpcode::LE:
+            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " <= " + instr.src2.value + ";");
+            break;
+            
+        case IROpcode::GT:
+            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " > " + instr.src2.value + ";");
+            break;
+            
+        case IROpcode::GE:
+            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " >= " + instr.src2.value + ";");
+            break;
+            
+        case IROpcode::AND:
+            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " && " + instr.src2.value + ";");
+            break;
+            
+        case IROpcode::OR:
+            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " || " + instr.src2.value + ";");
+            break;
+            
+        case IROpcode::NOT:
+            emitLine("bool " + instr.dest.value + " = !" + instr.src1.value + ";");
             break;
             
         case IROpcode::JUMP:
             emitLine("goto " + instr.dest.value + ";");
             break;
             
+        case IROpcode::JUMP_IF_TRUE:
+            emitLine("if (" + instr.src1.value + ") goto " + instr.dest.value + ";");
+            break;
+            
         case IROpcode::JUMP_IF_FALSE:
             emitLine("if (!" + instr.src1.value + ") goto " + instr.dest.value + ";");
+            break;
+            
+        case IROpcode::PARAM:
+            // For now, just emit a comment - proper function calls need more context
+            emitLine("// PARAM " + instr.dest.value);
+            break;
+            
+        case IROpcode::CALL:
+            // For now, just emit a comment - proper function calls need more context
+            if (instr.src1.value == "print") {
+                // Special handling for print - this is incomplete
+                emitLine("// CALL print (not fully implemented)");
+            } else {
+                emitLine("// CALL " + instr.src1.value + " (not fully implemented)");
+            }
             break;
             
         case IROpcode::RETURN:
