@@ -340,6 +340,88 @@ std::string CCodeGenerator::escapeCString(const std::string& str) const {
     return result;
 }
 
+bool CCodeGenerator::isFunctionBlock(const BasicBlock& block) const {
+    // Function blocks have labels like "func_name"
+    // Entry block and other non-function blocks don't match this pattern
+    return !block.label.empty() 
+        && block.label != "entry"
+        && block.label.substr(0, 5) == "func_";
+}
+
+void CCodeGenerator::registerFunction(const BasicBlock& block) {
+    FunctionInfo info;
+    info.name = block.label;  // e.g., "func_add"
+    info.return_type = "int64_t";  // Default return type
+    
+    // Extract parameters from DECLARE instructions and function body
+    // Stop at first RETURN instruction (marks end of function)
+    for (const auto& instr : block.instructions) {
+        if (instr.opcode == IROpcode::DECLARE) {
+            info.parameters.push_back(instr.dest.value);
+        }
+        
+        info.body.push_back(instr);
+        
+        // Stop after first RETURN - this marks the end of the function
+        if (instr.opcode == IROpcode::RETURN) {
+            break;
+        }
+    }
+    
+    function_registry[info.name] = info;
+}
+
+void CCodeGenerator::emitFunctionDefinition(const FunctionInfo& func) {
+    // Generate function signature
+    output << func.return_type << " " << sanitizeName(func.name) << "(";
+    
+    // Parameters
+    for (size_t i = 0; i < func.parameters.size(); i++) {
+        if (i > 0) output << ", ";
+        output << "int64_t " << sanitizeName(func.parameters[i]);
+    }
+    output << ") {\n";
+    
+    // Function body
+    indent_level = 1;
+    in_function = true;
+    current_function_name = func.name;
+    
+    // Process instructions (skip DECLARE, we handled those in parameters)
+    for (const auto& instr : func.body) {
+        if (instr.opcode != IROpcode::DECLARE) {
+            emitInstruction(instr);
+        }
+    }
+    
+    in_function = false;
+    indent_level = 0;
+    output << "}\n\n";
+}
+
+void CCodeGenerator::emitFunctionCall(const std::string& func_name, 
+                                       const std::vector<std::string>& args, 
+                                       const std::string& dest_reg) {
+    // Generate function call: dest = func(arg1, arg2, ...)
+    std::string sanitized_dest = sanitizeName(dest_reg);
+    std::string sanitized_func = sanitizeName("func_" + func_name);
+    
+    emitLine("int64_t " + sanitized_dest + " = " + sanitized_func + "(");
+    
+    // Arguments
+    std::string arg_list;
+    for (size_t i = 0; i < args.size(); i++) {
+        if (i > 0) arg_list += ", ";
+        arg_list += sanitizeName(args[i]);
+    }
+    
+    // Complete the call
+    output.seekp(-1, std::ios_base::end);  // Remove last newline
+    output << arg_list << ");\n";
+    
+    variable_types[dest_reg] = "int64_t";
+}
+
 void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
     switch (instr.opcode) {
         case IROpcode::LOAD_CONST: {
@@ -386,10 +468,12 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             
             // Declare variable if not yet declared
             if (variable_types.find(instr.dest.value) == variable_types.end()) {
-                emitLine(type + " " + dest_name + ";");
+                emitLine(type + " " + dest_name + " = " + src_name + ";");
                 variable_types[instr.dest.value] = type;
+            } else {
+                // Variable already declared, just assign
+                emitLine(dest_name + " = " + src_name + ";");
             }
-            emitLine(dest_name + " = " + src_name + ";");
             break;
         }
             
@@ -799,9 +883,28 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
                     pending_params.clear();
                 }
             } else {
-                // Other function calls not yet implemented
-                emitLine("// CALL " + func_name + " (not fully implemented)");
-                pending_params.clear();
+                // Check if it's a user-defined function
+                std::string func_label = "func_" + instr.src1.value;
+                if (function_registry.count(func_label) > 0) {
+                    // User-defined function call
+                    std::string result_reg = sanitizeName(instr.dest.value);
+                    std::string call_name = sanitizeName(func_label);
+                    
+                    // Build argument list from pending_params
+                    std::stringstream args;
+                    for (size_t i = 0; i < pending_params.size(); i++) {
+                        if (i > 0) args << ", ";
+                        args << sanitizeName(pending_params[i]);
+                    }
+                    
+                    emitLine("int64_t " + result_reg + " = " + call_name + "(" + args.str() + ");");
+                    variable_types[instr.dest.value] = "int64_t";
+                    pending_params.clear();
+                } else {
+                    // Unknown function
+                    emitLine("// ERROR: Unknown function: " + func_name);
+                    pending_params.clear();
+                }
             }
             break;
         }
@@ -928,23 +1031,86 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     output << "        default: return \"unknown\";\n";
     output << "    }\n";
     output << "}\n\n";
-    output << "int main() {\n";
     
+    // PASS 1: Identify and register all functions
+    function_registry.clear();
+    for (const auto& block : blocks) {
+        if (isFunctionBlock(block)) {
+            registerFunction(block);
+        }
+    }
+    
+    // PASS 2: Generate code in proper order
+    
+    // Step 1: Forward declarations
+    if (!function_registry.empty()) {
+        output << "// Forward declarations\n";
+        for (const auto& [name, info] : function_registry) {
+            output << info.return_type << " " << sanitizeName(name) << "(";
+            for (size_t i = 0; i < info.parameters.size(); i++) {
+                if (i > 0) output << ", ";
+                output << "int64_t " << sanitizeName(info.parameters[i]);
+            }
+            output << ");\n";
+        }
+        output << "\n";
+    }
+    
+    // Step 2: Function definitions
+    if (!function_registry.empty()) {
+        output << "// Function implementations\n";
+        for (const auto& [name, info] : function_registry) {
+            emitFunctionDefinition(info);
+        }
+    }
+    
+    // Step 3: Main function
+    output << "int main() {\n";
     indent_level = 1;
     
+    // Clear variable types from functions - main has its own scope
+    variable_types.clear();
+    
+    // Process blocks, skipping function code
     for (const auto& block : blocks) {
-        if (!block.label.empty() && block.label != "entry") {
-            indent_level = 0;
-            output << block.label << ":\n";
-            indent_level = 1;
-        }
-        
-        for (const auto& instr : block.instructions) {
-            emitInstruction(instr);
+        if (isFunctionBlock(block)) {
+            // This is a function block - skip instructions that are part of the function
+            // Find where the function ends (at first RETURN)
+            size_t func_end = 0;
+            for (size_t i = 0; i < block.instructions.size(); i++) {
+                if (block.instructions[i].opcode == IROpcode::RETURN) {
+                    func_end = i + 1;
+                    break;
+                }
+            }
+            
+            // Process remaining instructions (main code that follows)
+            // Skip any immediate RETURN after the function (cleanup return)
+            size_t start_idx = func_end;
+            if (start_idx < block.instructions.size() && 
+                block.instructions[start_idx].opcode == IROpcode::RETURN) {
+                start_idx++;
+            }
+            
+            for (size_t i = start_idx; i < block.instructions.size(); i++) {
+                emitInstruction(block.instructions[i]);
+            }
+        } else {
+            // Non-function block - process normally
+            if (!block.label.empty() && block.label != "entry") {
+                indent_level = 0;
+                output << block.label << ":\n";
+                indent_level = 1;
+            }
+            
+            for (const auto& instr : block.instructions) {
+                emitInstruction(instr);
+            }
         }
     }
     
     indent_level = 0;
+    output << "    return 0;\n";
     output << "}\n";
     
     return output.str();

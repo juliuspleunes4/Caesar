@@ -69,7 +69,7 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 
 ### 🚧 Partial Implementation
 
-5. **C Code Generator** (78% - functions not working, escape sequences complete)
+5. **C Code Generator** (85% - basic functions working, escape sequences complete)
    - ✅ Variables and assignments
    - ✅ All arithmetic operations (+, -, *, /, %, negation)
    - ✅ All comparison operators (==, !=, <, <=, >, >=)
@@ -95,24 +95,33 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
    - ✅ **type() built-in function** (returns type name string for all types, nested calls, comparisons) (NEW)
    - ✅ **Self-contained C code generation** (inlined runtime, no external dependencies)
    - ✅ **Escape sequences in strings** (\n, \t, \r, \\, \", \', \0 properly escaped for C)
-   - ✅ **250 comprehensive tests pass** (15 basic + 20 edge + 15 strings + 20 floats + 24 mixed + 30 loops + 16 print + 15 len + 15 str + 15 int + 15 float + 15 abs + 15 type + 20 escape sequences)
+   - ✅ **263 comprehensive tests pass** (15 basic + 20 edge + 15 strings + 20 floats + 24 mixed + 30 loops + 16 print + 15 len + 15 str + 15 int + 15 float + 15 abs + 15 type + 20 escape sequences + 13 functions)
    - ✅ Variable declaration tracking
    - ✅ Negative numbers, zero operations
    - ✅ Large numbers, operator precedence
    - ✅ Deep nesting, complex expressions
-   - ⚠️ **Function definitions incomplete** - Major architectural issue:
-     - ✅ IR Generator: Generates function labels, parameter declarations, body, and return instructions
-     - ❌ C Generator: Functions emitted as **labels inside main()** instead of proper C functions
-       - Current: `func_add: ... return r2;` inside main() - broken
-       - Needed: `int64_t func_add(int64_t a, int64_t b) { ... return r2; }` before main()
-     - ❌ CRITICAL: Single-pass architecture prevents proper function generation
-       - Current: One output buffer, everything goes into main() sequentially
-       - Needed: Two-pass approach or separate buffers for functions vs main code
-     - ❌ Missing: Function registry to track function signatures during first pass
-     - ❌ Missing: CALL opcode handler for user-defined functions (only built-ins work)
-     - ❌ Missing: Parameter declaration handling (currently commented as "not implemented")
-     - ❌ Missing: Function-local variable scope management
-     - 📖 See docs/IMPLEMENTATION_PLAN.md Phase 1.1 for detailed restructuring plan
+   - ✅ **User-defined functions** (PARTIAL - 65% working):
+     - ✅ Two-pass architecture implemented (function registry + separate generation)
+     - ✅ Functions emitted as proper C functions with signatures
+     - ✅ Forward declarations generated
+     - ✅ Function parameters properly declared
+     - ✅ CALL opcode handles user-defined functions
+     - ✅ Variable scoping between functions and main
+     - ✅ **Working cases (13/20 tests pass)**:
+       - Simple functions (add, multiply, subtract, divide, modulo)
+       - Functions with 0-3 parameters
+       - Functions with local variables
+       - Multiple function calls in sequence
+       - Functions calling other functions
+       - Functions calling built-in functions
+       - Negative numbers, complex expressions
+     - ⚠️ **Known limitations (7/20 tests fail)**:
+       - Functions with if/else (labels end up in wrong scope)
+       - Recursive functions (control flow labels misplaced)
+       - Nested function calls as arguments (PARAM mechanism issue)
+       - Functions with loops (label scope issue)
+     - 📝 Root cause: IR doesn't provide clear function boundaries; control flow labels
+       from function if/else statements appear after RETURN in same basic block
    - ⚠️ Other built-in functions incomplete (range returns iterator, input, etc.)
    - ⚠️ Data structures not implemented
 
