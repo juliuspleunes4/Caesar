@@ -554,7 +554,31 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     output << "#include <stdio.h>\n";
     output << "#include <stdint.h>\n";
     output << "#include <stdbool.h>\n";
-    output << "#include \"runtime/caesar_runtime.h\"\n\n";
+    // Include runtime header inline to avoid path issues
+    output << "\n// Caesar Runtime Library (inline)\n";
+    output << "typedef enum { CAESAR_INT, CAESAR_FLOAT, CAESAR_STRING, CAESAR_BOOL, CAESAR_NONE } CaesarType;\n";
+    output << "typedef struct {\n";
+    output << "    CaesarType type;\n";
+    output << "    union {\n";
+    output << "        int64_t i;\n";
+    output << "        double f;\n";
+    output << "        const char* s;\n";
+    output << "        bool b;\n";
+    output << "    } data;\n";
+    output << "} CaesarValue;\n\n";
+    output << "void caesar_print(int argc, CaesarValue* args) {\n";
+    output << "    for (int i = 0; i < argc; i++) {\n";
+    output << "        if (i > 0) printf(\" \");\n";
+    output << "        switch (args[i].type) {\n";
+    output << "            case CAESAR_INT: printf(\"%lld\", (long long)args[i].data.i); break;\n";
+    output << "            case CAESAR_FLOAT: printf(\"%g\", args[i].data.f); break;\n";
+    output << "            case CAESAR_STRING: printf(\"%s\", args[i].data.s); break;\n";
+    output << "            case CAESAR_BOOL: printf(\"%s\", args[i].data.b ? \"True\" : \"False\"); break;\n";
+    output << "            case CAESAR_NONE: printf(\"None\"); break;\n";
+    output << "        }\n";
+    output << "    }\n";
+    output << "    printf(\"\\n\");\n";
+    output << "}\n\n";
     output << "int main() {\n";
     
     indent_level = 1;

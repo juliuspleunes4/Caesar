@@ -24,8 +24,9 @@ bool runTest(const std::string& caesar_code, const std::string& test_name, const
     csr_out << caesar_code;
     csr_out.close();
     
-    // Generate C code
-    std::string cmd = "./src/caesar --c " + csr_file + " -o " + c_file + " 2>&1";
+    // Generate C code  
+    std::string caesar_path = "../src/caesar";  // From build/tests to build/src
+    std::string cmd = caesar_path + " --c " + csr_file + " -o " + c_file + " 2>&1";
     int result = system(cmd.c_str());
     if (result != 0) {
         std::cerr << "✗ " << test_name << ": Failed to generate C code\n";
