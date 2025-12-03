@@ -66,7 +66,7 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 
 ### 🚧 Partial Implementation
 
-5. **C Code Generator** (78%)
+5. **C Code Generator** (80%)
    - ✅ Variables and assignments
    - ✅ All arithmetic operations (+, -, *, /, %, negation)
    - ✅ All comparison operators (==, !=, <, <=, >, >=)
@@ -76,13 +76,14 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
    - ✅ **Float/double literals** (proper double types)
    - ✅ **Complete type system** (int64_t, bool, const char*, double)
    - ✅ **Type promotion** (mixed int/float → double, C semantics)
+   - ✅ **Float arithmetic** (all operations, mixed types, comparisons)
    - ✅ Control flow (if/else, goto, labels)
    - ✅ Loop structures (while, for, nested)
    - ✅ Variable declaration tracking
    - ✅ Negative numbers, zero operations
    - ✅ Large numbers, operator precedence
    - ✅ Deep nesting, complex expressions
-   - ✅ **50 comprehensive tests pass** (15 basic + 20 edge cases + 15 strings)
+   - ✅ **70 comprehensive tests pass** (15 basic + 20 edge cases + 15 strings + 20 floats)
    - ⚠️ Escape sequences in strings (lexer limitation)
    - ⚠️ Function calls incomplete
    - ⚠️ Built-in functions incomplete
@@ -154,7 +155,7 @@ $ caesar -i program.csr
 
 ### Testing Status
 
-- **14/14 tests passing** (100%)
+- **15/15 tests passing** (100%)
 - Comprehensive lexer tests ✅
 - Comprehensive parser tests ✅
 - IR generation tests ✅
@@ -163,7 +164,8 @@ $ caesar -i program.csr
   - Basic features: 15 sub-tests
   - Edge cases: 20 sub-tests
   - String literals: 15 sub-tests
-  - **Total: 50 comprehensive C codegen tests**
+  - **Float/double operations: 20 sub-tests** (NEW)
+  - **Total: 70 comprehensive C codegen tests**
 - Integration tests ✅
 - **Missing**: VM execution tests, end-to-end compilation with execution tests
 
