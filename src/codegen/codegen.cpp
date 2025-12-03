@@ -725,6 +725,47 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
                     emitLine("// ERROR: abs() requires exactly 1 argument");
                     pending_params.clear();
                 }
+            } else if (func_name == "type") {
+                // Generate call to caesar_type runtime function
+                if (pending_params.size() >= 1) {
+                    // Take the last parameter (most recent one pushed)
+                    std::string param = pending_params.back();
+                    pending_params.pop_back();  // Remove it from the list
+                    
+                    bool had_other_params = !pending_params.empty();  // Check if there were other params
+                    
+                    std::string caesar_type = getCaesarType(param);
+                    std::string sanitized = sanitizeName(param);
+                    std::string result = sanitizeName(instr.dest.value);
+                    
+                    // Create a temp variable name for the arg
+                    static int type_counter = 0;
+                    std::string temp_arg = "type_arg_" + std::to_string(type_counter++);
+                    
+                    emitLine("CaesarValue " + temp_arg + ";");
+                    emitLine(temp_arg + ".type = " + caesar_type + ";");
+                    
+                    if (caesar_type == "CAESAR_INT") {
+                        emitLine(temp_arg + ".data.i = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_FLOAT") {
+                        emitLine(temp_arg + ".data.f = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_STRING") {
+                        emitLine(temp_arg + ".data.s = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_BOOL") {
+                        emitLine(temp_arg + ".data.b = " + sanitized + ";");
+                    }
+                    
+                    emitLine("const char* " + result + " = caesar_type(&" + temp_arg + ");");
+                    variable_types[instr.dest.value] = "const char*";
+                    
+                    // If there were other params, this is a nested call - add result back for parent call
+                    if (had_other_params) {
+                        pending_params.push_back(instr.dest.value);
+                    }
+                } else {
+                    emitLine("// ERROR: type() requires exactly 1 argument");
+                    pending_params.clear();
+                }
             } else {
                 // Other function calls not yet implemented
                 emitLine("// CALL " + func_name + " (not fully implemented)");
@@ -843,6 +884,16 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     output << "        case CAESAR_STRING: return fabs(atof(arg->data.s));  // Parse and abs\n";
     output << "        case CAESAR_NONE: return 0.0;\n";
     output << "        default: return 0.0;\n";
+    output << "    }\n";
+    output << "}\n\n";
+    output << "const char* caesar_type(CaesarValue* arg) {\n";
+    output << "    switch (arg->type) {\n";
+    output << "        case CAESAR_INT: return \"int\";\n";
+    output << "        case CAESAR_FLOAT: return \"float\";\n";
+    output << "        case CAESAR_STRING: return \"string\";\n";
+    output << "        case CAESAR_BOOL: return \"bool\";\n";
+    output << "        case CAESAR_NONE: return \"None\";\n";
+    output << "        default: return \"unknown\";\n";
     output << "    }\n";
     output << "}\n\n";
     output << "int main() {\n";

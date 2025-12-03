@@ -67,7 +67,7 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 
 ### 🚧 Partial Implementation
 
-5. **C Code Generator** (92%)
+5. **C Code Generator** (93%)
    - ✅ Variables and assignments
    - ✅ All arithmetic operations (+, -, *, /, %, negation)
    - ✅ All comparison operators (==, !=, <, <=, >, >=)
@@ -88,10 +88,11 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
    - ✅ **len() built-in function** (strings, empty, long, single char, expressions, loops, comparisons, arithmetic)
    - ✅ **str() built-in function** (int/float/string/bool conversion, nested calls, all types)
    - ✅ **int() built-in function** (string parsing, float truncation, bool conversion, identity, all types)
-   - ✅ **float() built-in function** (int→float, string parsing, bool conversion, identity, nested calls) (NEW)
-   - ✅ **abs() built-in function** (positive/negative int/float, zero, bool conversion, nested calls) (NEW)
+   - ✅ **float() built-in function** (int→float, string parsing, bool conversion, identity, nested calls)
+   - ✅ **abs() built-in function** (positive/negative int/float, zero, bool conversion, nested calls)
+   - ✅ **type() built-in function** (returns type name string for all types, nested calls, comparisons) (NEW)
    - ✅ **Self-contained C code generation** (inlined runtime, no external dependencies)
-   - ✅ **215 comprehensive tests pass** (15 basic + 20 edge + 15 strings + 20 floats + 24 mixed + 30 loops + 16 print + 15 len + 15 str + 15 int + 15 float + 15 abs)
+   - ✅ **230 comprehensive tests pass** (15 basic + 20 edge + 15 strings + 20 floats + 24 mixed + 30 loops + 16 print + 15 len + 15 str + 15 int + 15 float + 15 abs + 15 type)
    - ✅ Variable declaration tracking
    - ✅ Negative numbers, zero operations
    - ✅ Large numbers, operator precedence
@@ -105,7 +106,7 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
      - ❌ Missing: Return value handling in generated C code
      - ❌ Missing: Function call mechanism (CALL opcode only handles built-ins, user-defined functions not supported)
      - ❌ Missing: Scope management for local variables
-   - ⚠️ Other built-in functions incomplete (type, etc.)
+   - ⚠️ Other built-in functions incomplete (range returns iterator, input, etc.)
    - ⚠️ Data structures not implemented
 
 6. **Bytecode Generator** (40%)

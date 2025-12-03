@@ -90,6 +90,10 @@ target_link_libraries(test_c_float caesar_lib)
 add_executable(test_c_abs test_c_abs.cpp)
 target_link_libraries(test_c_abs caesar_lib)
 
+# C code generation type built-in tests
+add_executable(test_c_type test_c_type.cpp)
+target_link_libraries(test_c_type caesar_lib)
+
 # Add tests to CTest
 add_test(NAME lexer_test COMMAND test_lexer)
 add_test(NAME parser_test COMMAND test_parser)
@@ -114,3 +118,4 @@ add_test(NAME c_str_test COMMAND test_c_str)
 add_test(NAME c_int_test COMMAND test_c_int)
 add_test(NAME c_float_test COMMAND test_c_float)
 add_test(NAME c_abs_test COMMAND test_c_abs)
+add_test(NAME c_type_test COMMAND test_c_type)
