@@ -15,6 +15,7 @@
 #include <cassert>
 #include <fstream>
 #include <cstdlib>
+#include <ctime>
 #include <unistd.h>
 
 using namespace caesar;
@@ -142,6 +143,8 @@ void test_float_equality() {
     // Note: Direct float equality (==) is generally problematic due to precision issues.
     // This test verifies that the compiler generates correct C code; users should be
     // aware that float comparisons may not behave as expected for non-exact values.
+    // Best practice: Use epsilon-based comparison like fabs(x - y) < epsilon for
+    // more reliable float comparisons in production code.
     std::string code = R"(
 x = 5.0
 y = 5.0
