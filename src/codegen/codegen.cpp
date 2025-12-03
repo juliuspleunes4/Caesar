@@ -285,6 +285,31 @@ std::string CCodeGenerator::sanitizeName(const std::string& name) const {
     return result;
 }
 
+std::string CCodeGenerator::getCaesarType(const std::string& ir_operand) const {
+    // Determine Caesar type for runtime based on IR operand
+    auto it = variable_types.find(ir_operand);
+    if (it != variable_types.end()) {
+        const std::string& type = it->second;
+        if (type == "int64_t") return "CAESAR_INT";
+        if (type == "double") return "CAESAR_FLOAT";
+        if (type == "const char*") return "CAESAR_STRING";
+        if (type == "bool") return "CAESAR_BOOL";
+    }
+    
+    // Try to infer from the value itself
+    std::string value = ir_operand;
+    // Remove # prefix if present
+    if (!value.empty() && value[0] == '#') {
+        value = value.substr(1);
+    }
+    
+    if (value == "True" || value == "False") return "CAESAR_BOOL";
+    if (isStringLiteral(value)) return "CAESAR_STRING";
+    if (isFloatLiteral(value)) return "CAESAR_FLOAT";
+    
+    return "CAESAR_INT";  // Default to int
+}
+
 void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
     switch (instr.opcode) {
         case IROpcode::LOAD_CONST: {
@@ -449,22 +474,59 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             break;
             
         case IROpcode::PARAM:
-            // For now, just emit a comment - proper function calls need more context
-            // PARAM uses src1 as the parameter value, not dest
+            // Track parameters for the next CALL instruction
+            // PARAM instruction has the value in dest (based on IR generation)
             if (instr.dest.type != IROperandType::NONE) {
-                emitLine("// PARAM " + sanitizeName(instr.dest.value));
+                pending_params.push_back(instr.dest.value);
             }
             break;
             
-        case IROpcode::CALL:
-            // For now, just emit a comment - proper function calls need more context
-            if (instr.src1.value == "print") {
-                // Special handling for print - this is incomplete
-                emitLine("// CALL print (not fully implemented)");
+        case IROpcode::CALL: {
+            // Handle built-in function calls
+            std::string func_name = sanitizeName(instr.src1.value);
+            
+            if (func_name == "print") {
+                // Generate call to caesar_print runtime function
+                int argc = pending_params.size();
+                if (argc > 0) {
+                    emitLine("{");
+                    indent_level++;
+                    emitLine("CaesarValue args[" + std::to_string(argc) + "];");
+                    
+                    for (int i = 0; i < argc; i++) {
+                        std::string param = pending_params[i];
+                        std::string caesar_type = getCaesarType(param);
+                        std::string sanitized = sanitizeName(param);
+                        
+                        emitLine("args[" + std::to_string(i) + "].type = " + caesar_type + ";");
+                        
+                        // Set the appropriate union member based on type
+                        if (caesar_type == "CAESAR_INT") {
+                            emitLine("args[" + std::to_string(i) + "].data.i = " + sanitized + ";");
+                        } else if (caesar_type == "CAESAR_FLOAT") {
+                            emitLine("args[" + std::to_string(i) + "].data.f = " + sanitized + ";");
+                        } else if (caesar_type == "CAESAR_STRING") {
+                            emitLine("args[" + std::to_string(i) + "].data.s = " + sanitized + ";");
+                        } else if (caesar_type == "CAESAR_BOOL") {
+                            emitLine("args[" + std::to_string(i) + "].data.b = " + sanitized + ";");
+                        }
+                    }
+                    
+                    emitLine("caesar_print(" + std::to_string(argc) + ", args);");
+                    indent_level--;
+                    emitLine("}");
+                } else {
+                    // Print with no arguments - just print newline
+                    emitLine("caesar_print(0, NULL);");
+                }
+                pending_params.clear();
             } else {
-                emitLine("// CALL " + sanitizeName(instr.src1.value) + " (not fully implemented)");
+                // Other function calls not yet implemented
+                emitLine("// CALL " + func_name + " (not fully implemented)");
+                pending_params.clear();
             }
             break;
+        }
             
         case IROpcode::RETURN:
             if (instr.dest.type != IROperandType::NONE) {
@@ -485,12 +547,14 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
 
 std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     output.str("");
+    pending_params.clear();  // Clear any previous state
     
     output << "// Caesar C Code\n";
     output << "// Generated by Caesar Compiler v1.5.1\n\n";
     output << "#include <stdio.h>\n";
     output << "#include <stdint.h>\n";
-    output << "#include <stdbool.h>\n\n";
+    output << "#include <stdbool.h>\n";
+    output << "#include \"runtime/caesar_runtime.h\"\n\n";
     output << "int main() {\n";
     
     indent_level = 1;
