@@ -102,6 +102,7 @@ private:
     void emitInstruction(const IRInstruction& instr);
     std::string indent() const;
     std::string convertConstant(const std::string& value) const;
+    bool isStringLiteral(const std::string& value) const;
     
 public:
     CCodeGenerator() : CodeGenerator(TargetArch::BYTECODE), indent_level(0) {}

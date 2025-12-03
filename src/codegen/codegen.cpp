@@ -224,31 +224,52 @@ std::string CCodeGenerator::convertConstant(const std::string& value) const {
     return value;
 }
 
+bool CCodeGenerator::isStringLiteral(const std::string& value) const {
+    return !value.empty() && value[0] == '"' && value[value.length()-1] == '"';
+}
+
 void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
     switch (instr.opcode) {
         case IROpcode::LOAD_CONST: {
             std::string converted_value = convertConstant(instr.src1.value);
-            // Determine type based on value
+            // Determine type based on value and track it
+            std::string type;
             if (converted_value == "true" || converted_value == "false") {
+                type = "bool";
                 emitLine("bool " + instr.dest.value + " = " + converted_value + ";");
+            } else if (isStringLiteral(converted_value)) {
+                type = "const char*";
+                emitLine("const char* " + instr.dest.value + " = " + converted_value + ";");
             } else {
+                type = "int64_t";
                 emitLine("int64_t " + instr.dest.value + " = " + converted_value + ";");
             }
+            variable_types[instr.dest.value] = type;
             break;
         }
             
-        case IROpcode::GET_VAR:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + ";");
+        case IROpcode::GET_VAR: {
+            // Use the type of the source variable if known
+            auto it = variable_types.find(instr.src1.value);
+            std::string type = (it != variable_types.end()) ? it->second : "int64_t";
+            emitLine(type + " " + instr.dest.value + " = " + instr.src1.value + ";");
+            variable_types[instr.dest.value] = type;
             break;
+        }
             
-        case IROpcode::SET_VAR:
+        case IROpcode::SET_VAR: {
+            // Get the type of the source register
+            auto it = variable_types.find(instr.src1.value);
+            std::string type = (it != variable_types.end()) ? it->second : "int64_t";
+            
             // Declare variable if not yet declared
             if (variable_types.find(instr.dest.value) == variable_types.end()) {
-                emitLine("int64_t " + instr.dest.value + ";");
-                variable_types[instr.dest.value] = "int64_t";
+                emitLine(type + " " + instr.dest.value + ";");
+                variable_types[instr.dest.value] = type;
             }
             emitLine(instr.dest.value + " = " + instr.src1.value + ";");
             break;
+        }
             
         case IROpcode::ADD:
             emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " + " + instr.src2.value + ";");

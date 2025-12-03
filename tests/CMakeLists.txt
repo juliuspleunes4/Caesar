@@ -50,6 +50,10 @@ target_link_libraries(test_c_codegen caesar_lib)
 add_executable(test_c_edge_cases test_c_edge_cases.cpp)
 target_link_libraries(test_c_edge_cases caesar_lib)
 
+# C code generation string tests
+add_executable(test_c_strings test_c_strings.cpp)
+target_link_libraries(test_c_strings caesar_lib)
+
 # Add tests to CTest
 add_test(NAME lexer_test COMMAND test_lexer)
 add_test(NAME parser_test COMMAND test_parser)
@@ -64,3 +68,4 @@ add_test(NAME ir_test COMMAND test_ir)
 add_test(NAME compiler_test COMMAND test_compiler)
 add_test(NAME c_codegen_test COMMAND test_c_codegen)
 add_test(NAME c_edge_cases_test COMMAND test_c_edge_cases)
+add_test(NAME c_strings_test COMMAND test_c_strings)
