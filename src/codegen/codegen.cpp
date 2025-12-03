@@ -303,7 +303,10 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             
         case IROpcode::PARAM:
             // For now, just emit a comment - proper function calls need more context
-            emitLine("// PARAM " + instr.dest.value);
+            // PARAM uses src1 as the parameter value, not dest
+            if (instr.dest.type != IROperandType::NONE) {
+                emitLine("// PARAM " + instr.dest.value);
+            }
             break;
             
         case IROpcode::CALL:
