@@ -38,6 +38,10 @@ target_link_libraries(test_coverage_analysis caesar_lib)
 add_executable(test_ir test_ir.cpp)
 target_link_libraries(test_ir caesar_lib)
 
+# Compiler tests
+add_executable(test_compiler test_compiler.cpp)
+target_link_libraries(test_compiler caesar_lib)
+
 # Add tests to CTest
 add_test(NAME lexer_test COMMAND test_lexer)
 add_test(NAME parser_test COMMAND test_parser)
@@ -49,3 +53,4 @@ add_test(NAME error_handling_test COMMAND test_error_handling)
 add_test(NAME build_system_test COMMAND test_build_system)
 add_test(NAME coverage_analysis_test COMMAND test_coverage_analysis)
 add_test(NAME ir_test COMMAND test_ir)
+add_test(NAME compiler_test COMMAND test_compiler)
