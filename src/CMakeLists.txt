@@ -16,9 +16,6 @@ set(CAESAR_SOURCES
     
     # Code Generation
     codegen/codegen.cpp
-    
-    # Runtime (to be added)
-    # runtime/runtime.cpp
 )
 
 # Create the Caesar library

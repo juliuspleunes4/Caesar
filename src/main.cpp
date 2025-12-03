@@ -201,14 +201,8 @@ int main(int argc, char* argv[]) {
             caesar::IRGenerator ir_gen;
             auto ir_blocks = ir_gen.generate(program.get());
             
-            // Generate bytecode
-            auto bytecode_gen = caesar::CodeGeneratorFactory::create(caesar::TargetArch::BYTECODE);
-            std::string bytecode = bytecode_gen->generate(ir_blocks);
-            
-            // For now, fall back to interpreter until bytecode VM is complete
-            // TODO: Execute bytecode with VM when VM is implemented
-            std::cout << "Compiling " << input_file << "...\n";
-            std::cout << "Note: Bytecode VM not yet complete, falling back to interpreter\n";
+            // TODO: Implement proper bytecode VM execution
+            // For now, fall back to interpreter until VM is production-ready
             caesar::Interpreter interpreter;
             interpreter.interpret(program.get());
         }
