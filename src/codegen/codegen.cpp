@@ -520,6 +520,37 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
                     emitLine("caesar_print(0, NULL);");
                 }
                 pending_params.clear();
+            } else if (func_name == "len") {
+                // Generate call to caesar_len runtime function
+                if (pending_params.size() == 1) {
+                    std::string param = pending_params[0];
+                    std::string caesar_type = getCaesarType(param);
+                    std::string sanitized = sanitizeName(param);
+                    std::string result = sanitizeName(instr.dest.value);
+                    
+                    // Create a temp variable name for the arg
+                    static int len_counter = 0;
+                    std::string temp_arg = "len_arg_" + std::to_string(len_counter++);
+                    
+                    emitLine("CaesarValue " + temp_arg + ";");
+                    emitLine(temp_arg + ".type = " + caesar_type + ";");
+                    
+                    if (caesar_type == "CAESAR_INT") {
+                        emitLine(temp_arg + ".data.i = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_FLOAT") {
+                        emitLine(temp_arg + ".data.f = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_STRING") {
+                        emitLine(temp_arg + ".data.s = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_BOOL") {
+                        emitLine(temp_arg + ".data.b = " + sanitized + ";");
+                    }
+                    
+                    emitLine("int64_t " + result + " = caesar_len(&" + temp_arg + ");");
+                    variable_types[instr.dest.value] = "int64_t";
+                } else {
+                    emitLine("// ERROR: len() requires exactly 1 argument");
+                }
+                pending_params.clear();
             } else {
                 // Other function calls not yet implemented
                 emitLine("// CALL " + func_name + " (not fully implemented)");
@@ -578,6 +609,17 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     output << "        }\n";
     output << "    }\n";
     output << "    printf(\"\\n\");\n";
+    output << "}\n\n";
+    output << "#include <string.h>\n";
+    output << "int64_t caesar_len(CaesarValue* arg) {\n";
+    output << "    switch (arg->type) {\n";
+    output << "        case CAESAR_STRING: return (int64_t)strlen(arg->data.s);\n";
+    output << "        case CAESAR_INT: return 1;  // Single value has length 1\n";
+    output << "        case CAESAR_FLOAT: return 1;\n";
+    output << "        case CAESAR_BOOL: return 1;\n";
+    output << "        case CAESAR_NONE: return 0;\n";
+    output << "        default: return 0;\n";
+    output << "    }\n";
     output << "}\n\n";
     output << "int main() {\n";
     
