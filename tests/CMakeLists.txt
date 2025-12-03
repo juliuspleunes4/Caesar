@@ -94,6 +94,14 @@ target_link_libraries(test_c_abs caesar_lib)
 add_executable(test_c_type test_c_type.cpp)
 target_link_libraries(test_c_type caesar_lib)
 
+# C code generation escape sequence tests
+add_executable(test_c_escape_sequences test_c_escape_sequences.cpp)
+target_link_libraries(test_c_escape_sequences caesar_lib)
+
+# C code generation function tests
+add_executable(test_c_functions test_c_functions.cpp)
+target_link_libraries(test_c_functions caesar_lib)
+
 # Add tests to CTest
 add_test(NAME lexer_test COMMAND test_lexer)
 add_test(NAME parser_test COMMAND test_parser)
@@ -118,4 +126,6 @@ add_test(NAME c_str_test COMMAND test_c_str)
 add_test(NAME c_int_test COMMAND test_c_int)
 add_test(NAME c_float_test COMMAND test_c_float)
 add_test(NAME c_abs_test COMMAND test_c_abs)
-add_test(NAME c_type_test COMMAND test_c_type)
+add_test(NAME c_type_test COMMAND test_c_type WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+add_test(NAME c_escape_sequences_test COMMAND test_c_escape_sequences WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+add_test(NAME c_functions_test COMMAND test_c_functions WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

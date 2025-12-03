@@ -1,0 +1,33 @@
+# Simple Arithmetic Examples in Caesar
+# This example works with both interpreter and C compilation
+
+# Basic arithmetic operations
+x = 10
+y = 5
+
+sum = x + y
+difference = x - y
+product = x * y
+quotient = x / y
+remainder = x % y
+
+print("x =", x)
+print("y =", y)
+print("x + y =", sum)
+print("x - y =", difference)
+print("x * y =", product)
+print("x / y =", quotient)
+print("x % y =", remainder)
+
+# Mixed type arithmetic (int and float)
+a = 10
+b = 3.5
+result = a + b
+print("10 + 3.5 =", result)
+
+# Boolean operations
+flag1 = True
+flag2 = False
+print("True and False =", flag1 and flag2)
+print("True or False =", flag1 or flag2)
+print("not True =", not flag1)

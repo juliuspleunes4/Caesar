@@ -35,6 +35,8 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 
 ## Implementation Status
 
+> **Current Focus (2025-12-03)**: The compiler is in active development with the interpreter fully functional. The C code generator works for basic programs (arithmetic, control flow, loops, built-in functions) and **basic user-defined functions** (65% of function tests pass). Functions with control flow (if/else, loops) have known limitations due to IR label scoping. See Phase 1 below and IMPLEMENTATION_PLAN.md for details.
+
 ### ✅ Fully Implemented (Production-Ready)
 
 1. **Lexer** (100%)
@@ -67,7 +69,7 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 
 ### 🚧 Partial Implementation
 
-5. **C Code Generator** (93%)
+5. **C Code Generator** (85% - basic functions working, escape sequences complete)
    - ✅ Variables and assignments
    - ✅ All arithmetic operations (+, -, *, /, %, negation)
    - ✅ All comparison operators (==, !=, <, <=, >, >=)
@@ -92,20 +94,34 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
    - ✅ **abs() built-in function** (positive/negative int/float, zero, bool conversion, nested calls)
    - ✅ **type() built-in function** (returns type name string for all types, nested calls, comparisons) (NEW)
    - ✅ **Self-contained C code generation** (inlined runtime, no external dependencies)
-   - ✅ **230 comprehensive tests pass** (15 basic + 20 edge + 15 strings + 20 floats + 24 mixed + 30 loops + 16 print + 15 len + 15 str + 15 int + 15 float + 15 abs + 15 type)
+   - ✅ **Escape sequences in strings** (\n, \t, \r, \\, \", \', \0 properly escaped for C)
+   - ✅ **263 comprehensive tests pass** (15 basic + 20 edge + 15 strings + 20 floats + 24 mixed + 30 loops + 16 print + 15 len + 15 str + 15 int + 15 float + 15 abs + 15 type + 20 escape sequences + 13 functions)
    - ✅ Variable declaration tracking
    - ✅ Negative numbers, zero operations
    - ✅ Large numbers, operator precedence
    - ✅ Deep nesting, complex expressions
-   - ⚠️ Escape sequences in strings (lexer limitation)
-   - ⚠️ **Function definitions incomplete**:
-     - ✅ IR Generator: Generates function labels, parameter declarations, body, and return instructions
-     - ❌ C Generator: No DEFINE_FUNCTION opcode handling - functions not emitted as C functions
-     - ❌ Missing: Function prologue/epilogue generation
-     - ❌ Missing: Parameter passing in generated C code
-     - ❌ Missing: Return value handling in generated C code
-     - ❌ Missing: Function call mechanism (CALL opcode only handles built-ins, user-defined functions not supported)
-     - ❌ Missing: Scope management for local variables
+   - ✅ **User-defined functions** (PARTIAL - 65% working):
+     - ✅ Two-pass architecture implemented (function registry + separate generation)
+     - ✅ Functions emitted as proper C functions with signatures
+     - ✅ Forward declarations generated
+     - ✅ Function parameters properly declared
+     - ✅ CALL opcode handles user-defined functions
+     - ✅ Variable scoping between functions and main
+     - ✅ **Working cases (13/20 tests pass)**:
+       - Simple functions (add, multiply, subtract, divide, modulo)
+       - Functions with 0-3 parameters
+       - Functions with local variables
+       - Multiple function calls in sequence
+       - Functions calling other functions
+       - Functions calling built-in functions
+       - Negative numbers, complex expressions
+     - ⚠️ **Known limitations (7/20 tests fail)**:
+       - Functions with if/else (labels end up in wrong scope)
+       - Recursive functions (control flow labels misplaced)
+       - Nested function calls as arguments (PARAM mechanism issue)
+       - Functions with loops (label scope issue)
+     - 📝 Root cause: IR doesn't provide clear function boundaries; control flow labels
+       from function if/else statements appear after RETURN in same basic block
    - ⚠️ Other built-in functions incomplete (range returns iterator, input, etc.)
    - ⚠️ Data structures not implemented
 
@@ -1761,7 +1777,7 @@ print(factorial(5))
 
 ---
 
-**Last Updated**: December 2, 2025
+**Last Updated**: December 3, 2025
 **Version**: 1.5.1
 **Author**: J.J.G. Pleunes
 **License**: MIT

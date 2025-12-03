@@ -19,7 +19,7 @@ bool compileAndTest(const std::string& caesar_code, const std::string& test_name
     out.close();
     
     // Compile to C
-    std::string compile_cmd = "../caesar --c " + caesar_file + " -o " + c_file + " 2>&1";
+    std::string compile_cmd = "../src/caesar --c " + caesar_file + " -o " + c_file + " 2>&1";
     if (system(compile_cmd.c_str()) != 0) {
         std::cerr << "Failed to compile Caesar to C: " << test_name << std::endl;
         system(("rm -f " + caesar_file + " " + c_file + " " + exe_file).c_str());

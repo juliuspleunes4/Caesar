@@ -1,0 +1,38 @@
+# Simple Conditional Examples in Caesar
+# This example works with both interpreter and C compilation
+
+# Basic if-else
+x = 10
+if x > 0:
+    print("x is positive")
+
+# If-elif-else chain
+number = 0
+if number > 0:
+    print("Number is positive")
+elif number < 0:
+    print("Number is negative")
+else:
+    print("Number is zero")
+
+# Nested conditionals
+age = 25
+has_license = True
+
+if age >= 18:
+    if has_license:
+        print("You can drive")
+    else:
+        print("You need a license")
+else:
+    print("You are too young to drive")
+
+# Comparison operators
+a = 5
+b = 10
+print("5 < 10:", a < b)
+print("5 > 10:", a > b)
+print("5 == 10:", a == b)
+print("5 != 10:", a != b)
+print("5 <= 10:", a <= b)
+print("5 >= 10:", a >= b)

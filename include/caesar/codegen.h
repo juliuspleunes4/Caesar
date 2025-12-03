@@ -95,10 +95,27 @@ public:
  */
 class CCodeGenerator : public CodeGenerator {
 private:
+    // Code generation state
     int indent_level;
+    
+    // Type and state tracking
     std::unordered_map<std::string, std::string> variable_types;
     std::vector<std::string> pending_params;  // For tracking PARAM instructions before CALL
     
+    // Function registry for two-pass generation
+    struct FunctionInfo {
+        std::string name;                    // e.g., "func_add"
+        std::vector<std::string> parameters; // Parameter names
+        std::string return_type;             // Default: "int64_t"
+        std::vector<IRInstruction> body;     // Function body instructions
+    };
+    std::unordered_map<std::string, FunctionInfo> function_registry;
+    
+    // State tracking for function generation
+    bool in_function;
+    std::string current_function_name;
+    
+    // Existing helper methods
     void emitLine(const std::string& line);
     void emitInstruction(const IRInstruction& instr);
     std::string indent() const;
@@ -108,9 +125,16 @@ private:
     std::string getResultType(const std::string& type1, const std::string& type2) const;
     std::string sanitizeName(const std::string& name) const;
     std::string getCaesarType(const std::string& ir_operand) const;
+    std::string escapeCString(const std::string& str) const;
+    
+    // NEW: Function support helper methods
+    bool isFunctionBlock(const BasicBlock& block) const;
+    void registerFunction(const BasicBlock& block);
+    void emitFunctionDefinition(const FunctionInfo& func);
+    void emitFunctionCall(const std::string& func_name, const std::vector<std::string>& args, const std::string& dest_reg);
     
 public:
-    CCodeGenerator() : CodeGenerator(TargetArch::BYTECODE), indent_level(0) {}
+    CCodeGenerator() : CodeGenerator(TargetArch::BYTECODE), indent_level(0), in_function(false) {}
     
     std::string generate(const std::vector<BasicBlock>& blocks) override;
 };
