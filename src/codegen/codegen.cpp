@@ -210,11 +210,32 @@ void CCodeGenerator::emitLine(const std::string& line) {
     output << indent() << line << "\n";
 }
 
+std::string CCodeGenerator::convertConstant(const std::string& value) const {
+    // Convert Caesar constants to C constants
+    if (value == "#True" || value == "True") return "true";
+    if (value == "#False" || value == "False") return "false";
+    if (value == "#None" || value == "None") return "0";  // None maps to 0 in C
+    
+    // Remove # prefix if present
+    if (!value.empty() && value[0] == '#') {
+        return value.substr(1);
+    }
+    
+    return value;
+}
+
 void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
     switch (instr.opcode) {
-        case IROpcode::LOAD_CONST:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + ";");
+        case IROpcode::LOAD_CONST: {
+            std::string converted_value = convertConstant(instr.src1.value);
+            // Determine type based on value
+            if (converted_value == "true" || converted_value == "false") {
+                emitLine("bool " + instr.dest.value + " = " + converted_value + ";");
+            } else {
+                emitLine("int64_t " + instr.dest.value + " = " + converted_value + ";");
+            }
             break;
+        }
             
         case IROpcode::GET_VAR:
             emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + ";");
