@@ -643,6 +643,88 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
                     emitLine("// ERROR: int() requires exactly 1 argument");
                     pending_params.clear();
                 }
+            } else if (func_name == "float") {
+                // Generate call to caesar_float runtime function
+                if (pending_params.size() >= 1) {
+                    // Take the last parameter (most recent one pushed)
+                    std::string param = pending_params.back();
+                    pending_params.pop_back();  // Remove it from the list
+                    
+                    bool had_other_params = !pending_params.empty();  // Check if there were other params
+                    
+                    std::string caesar_type = getCaesarType(param);
+                    std::string sanitized = sanitizeName(param);
+                    std::string result = sanitizeName(instr.dest.value);
+                    
+                    // Create a temp variable name for the arg
+                    static int float_counter = 0;
+                    std::string temp_arg = "float_arg_" + std::to_string(float_counter++);
+                    
+                    emitLine("CaesarValue " + temp_arg + ";");
+                    emitLine(temp_arg + ".type = " + caesar_type + ";");
+                    
+                    if (caesar_type == "CAESAR_INT") {
+                        emitLine(temp_arg + ".data.i = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_FLOAT") {
+                        emitLine(temp_arg + ".data.f = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_STRING") {
+                        emitLine(temp_arg + ".data.s = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_BOOL") {
+                        emitLine(temp_arg + ".data.b = " + sanitized + ";");
+                    }
+                    
+                    emitLine("double " + result + " = caesar_float(&" + temp_arg + ");");
+                    variable_types[instr.dest.value] = "double";
+                    
+                    // If there were other params, this is a nested call - add result back for parent call
+                    if (had_other_params) {
+                        pending_params.push_back(instr.dest.value);
+                    }
+                } else {
+                    emitLine("// ERROR: float() requires exactly 1 argument");
+                    pending_params.clear();
+                }
+            } else if (func_name == "abs") {
+                // Generate call to caesar_abs runtime function
+                if (pending_params.size() >= 1) {
+                    // Take the last parameter (most recent one pushed)
+                    std::string param = pending_params.back();
+                    pending_params.pop_back();  // Remove it from the list
+                    
+                    bool had_other_params = !pending_params.empty();  // Check if there were other params
+                    
+                    std::string caesar_type = getCaesarType(param);
+                    std::string sanitized = sanitizeName(param);
+                    std::string result = sanitizeName(instr.dest.value);
+                    
+                    // Create a temp variable name for the arg
+                    static int abs_counter = 0;
+                    std::string temp_arg = "abs_arg_" + std::to_string(abs_counter++);
+                    
+                    emitLine("CaesarValue " + temp_arg + ";");
+                    emitLine(temp_arg + ".type = " + caesar_type + ";");
+                    
+                    if (caesar_type == "CAESAR_INT") {
+                        emitLine(temp_arg + ".data.i = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_FLOAT") {
+                        emitLine(temp_arg + ".data.f = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_STRING") {
+                        emitLine(temp_arg + ".data.s = " + sanitized + ";");
+                    } else if (caesar_type == "CAESAR_BOOL") {
+                        emitLine(temp_arg + ".data.b = " + sanitized + ";");
+                    }
+                    
+                    emitLine("double " + result + " = caesar_abs(&" + temp_arg + ");");
+                    variable_types[instr.dest.value] = "double";
+                    
+                    // If there were other params, this is a nested call - add result back for parent call
+                    if (had_other_params) {
+                        pending_params.push_back(instr.dest.value);
+                    }
+                } else {
+                    emitLine("// ERROR: abs() requires exactly 1 argument");
+                    pending_params.clear();
+                }
             } else {
                 // Other function calls not yet implemented
                 emitLine("// CALL " + func_name + " (not fully implemented)");
@@ -740,6 +822,27 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
     output << "        case CAESAR_STRING: return (int64_t)atoll(arg->data.s);  // Parse string to int\n";
     output << "        case CAESAR_NONE: return 0;\n";
     output << "        default: return 0;\n";
+    output << "    }\n";
+    output << "}\n\n";
+    output << "double caesar_float(CaesarValue* arg) {\n";
+    output << "    switch (arg->type) {\n";
+    output << "        case CAESAR_INT: return (double)arg->data.i;  // Convert int to float\n";
+    output << "        case CAESAR_FLOAT: return arg->data.f;  // Identity\n";
+    output << "        case CAESAR_BOOL: return arg->data.b ? 1.0 : 0.0;\n";
+    output << "        case CAESAR_STRING: return atof(arg->data.s);  // Parse string to float\n";
+    output << "        case CAESAR_NONE: return 0.0;\n";
+    output << "        default: return 0.0;\n";
+    output << "    }\n";
+    output << "}\n\n";
+    output << "#include <math.h>\n";
+    output << "double caesar_abs(CaesarValue* arg) {\n";
+    output << "    switch (arg->type) {\n";
+    output << "        case CAESAR_INT: return (double)(arg->data.i < 0 ? -arg->data.i : arg->data.i);\n";
+    output << "        case CAESAR_FLOAT: return fabs(arg->data.f);  // Use fabs for floats\n";
+    output << "        case CAESAR_BOOL: return arg->data.b ? 1.0 : 0.0;  // abs(bool) = bool as number\n";
+    output << "        case CAESAR_STRING: return fabs(atof(arg->data.s));  // Parse and abs\n";
+    output << "        case CAESAR_NONE: return 0.0;\n";
+    output << "        default: return 0.0;\n";
     output << "    }\n";
     output << "}\n\n";
     output << "int main() {\n";

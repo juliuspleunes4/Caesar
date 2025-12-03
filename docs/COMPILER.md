@@ -67,7 +67,7 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 
 ### 🚧 Partial Implementation
 
-5. **C Code Generator** (90%)
+5. **C Code Generator** (92%)
    - ✅ Variables and assignments
    - ✅ All arithmetic operations (+, -, *, /, %, negation)
    - ✅ All comparison operators (==, !=, <, <=, >, >=)
@@ -87,16 +87,18 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
    - ✅ **print() built-in function** (single/multiple args, all types, loops, expressions)
    - ✅ **len() built-in function** (strings, empty, long, single char, expressions, loops, comparisons, arithmetic)
    - ✅ **str() built-in function** (int/float/string/bool conversion, nested calls, all types)
-   - ✅ **int() built-in function** (string parsing, float truncation, bool conversion, identity, all types) (NEW)
+   - ✅ **int() built-in function** (string parsing, float truncation, bool conversion, identity, all types)
+   - ✅ **float() built-in function** (int→float, string parsing, bool conversion, identity, nested calls) (NEW)
+   - ✅ **abs() built-in function** (positive/negative int/float, zero, bool conversion, nested calls) (NEW)
    - ✅ **Self-contained C code generation** (inlined runtime, no external dependencies)
-   - ✅ **185 comprehensive tests pass** (15 basic + 20 edge + 15 strings + 20 floats + 24 mixed + 30 loops + 16 print + 15 len + 15 str + 15 int)
+   - ✅ **215 comprehensive tests pass** (15 basic + 20 edge + 15 strings + 20 floats + 24 mixed + 30 loops + 16 print + 15 len + 15 str + 15 int + 15 float + 15 abs)
    - ✅ Variable declaration tracking
    - ✅ Negative numbers, zero operations
    - ✅ Large numbers, operator precedence
    - ✅ Deep nesting, complex expressions
    - ⚠️ Escape sequences in strings (lexer limitation)
    - ⚠️ Function definitions incomplete
-   - ⚠️ Other built-in functions incomplete (float, type, abs, etc.)
+   - ⚠️ Other built-in functions incomplete (type, etc.)
    - ⚠️ Data structures not implemented
 
 6. **Bytecode Generator** (40%)
