@@ -105,6 +105,7 @@ private:
     bool isStringLiteral(const std::string& value) const;
     bool isFloatLiteral(const std::string& value) const;
     std::string getResultType(const std::string& type1, const std::string& type2) const;
+    std::string sanitizeName(const std::string& name) const;
     
 public:
     CCodeGenerator() : CodeGenerator(TargetArch::BYTECODE), indent_level(0) {}

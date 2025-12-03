@@ -270,24 +270,40 @@ std::string CCodeGenerator::getResultType(const std::string& type1, const std::s
     return "int64_t";
 }
 
+std::string CCodeGenerator::sanitizeName(const std::string& name) const {
+    // Remove IR prefixes (%, $, @, #) to make valid C identifiers
+    std::string result = name;
+    if (!result.empty() && (result[0] == '%' || result[0] == '$' || result[0] == '@' || result[0] == '#')) {
+        result = result.substr(1);
+    }
+    // Replace any remaining invalid characters
+    for (char& c : result) {
+        if (!std::isalnum(c) && c != '_') {
+            c = '_';
+        }
+    }
+    return result;
+}
+
 void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
     switch (instr.opcode) {
         case IROpcode::LOAD_CONST: {
             std::string converted_value = convertConstant(instr.src1.value);
+            std::string dest_name = sanitizeName(instr.dest.value);
             // Determine type based on value and track it
             std::string type;
             if (converted_value == "true" || converted_value == "false") {
                 type = "bool";
-                emitLine("bool " + instr.dest.value + " = " + converted_value + ";");
+                emitLine("bool " + dest_name + " = " + converted_value + ";");
             } else if (isStringLiteral(converted_value)) {
                 type = "const char*";
-                emitLine("const char* " + instr.dest.value + " = " + converted_value + ";");
+                emitLine("const char* " + dest_name + " = " + converted_value + ";");
             } else if (isFloatLiteral(converted_value)) {
                 type = "double";
-                emitLine("double " + instr.dest.value + " = " + converted_value + ";");
+                emitLine("double " + dest_name + " = " + converted_value + ";");
             } else {
                 type = "int64_t";
-                emitLine("int64_t " + instr.dest.value + " = " + converted_value + ";");
+                emitLine("int64_t " + dest_name + " = " + converted_value + ";");
             }
             variable_types[instr.dest.value] = type;
             break;
@@ -297,7 +313,9 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             // Use the type of the source variable if known
             auto it = variable_types.find(instr.src1.value);
             std::string type = (it != variable_types.end()) ? it->second : "int64_t";
-            emitLine(type + " " + instr.dest.value + " = " + instr.src1.value + ";");
+            std::string dest_name = sanitizeName(instr.dest.value);
+            std::string src_name = sanitizeName(instr.src1.value);
+            emitLine(type + " " + dest_name + " = " + src_name + ";");
             variable_types[instr.dest.value] = type;
             break;
         }
@@ -306,13 +324,15 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             // Get the type of the source register
             auto it = variable_types.find(instr.src1.value);
             std::string type = (it != variable_types.end()) ? it->second : "int64_t";
+            std::string dest_name = sanitizeName(instr.dest.value);
+            std::string src_name = sanitizeName(instr.src1.value);
             
             // Declare variable if not yet declared
             if (variable_types.find(instr.dest.value) == variable_types.end()) {
-                emitLine(type + " " + instr.dest.value + ";");
+                emitLine(type + " " + dest_name + ";");
                 variable_types[instr.dest.value] = type;
             }
-            emitLine(instr.dest.value + " = " + instr.src1.value + ";");
+            emitLine(dest_name + " = " + src_name + ";");
             break;
         }
             
@@ -322,7 +342,7 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             std::string type1 = (it1 != variable_types.end()) ? it1->second : "int64_t";
             std::string type2 = (it2 != variable_types.end()) ? it2->second : "int64_t";
             std::string result_type = getResultType(type1, type2);
-            emitLine(result_type + " " + instr.dest.value + " = " + instr.src1.value + " + " + instr.src2.value + ";");
+            emitLine(result_type + " " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " + " + sanitizeName(instr.src2.value) + ";");
             variable_types[instr.dest.value] = result_type;
             break;
         }
@@ -333,7 +353,7 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             std::string type1 = (it1 != variable_types.end()) ? it1->second : "int64_t";
             std::string type2 = (it2 != variable_types.end()) ? it2->second : "int64_t";
             std::string result_type = getResultType(type1, type2);
-            emitLine(result_type + " " + instr.dest.value + " = " + instr.src1.value + " - " + instr.src2.value + ";");
+            emitLine(result_type + " " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " - " + sanitizeName(instr.src2.value) + ";");
             variable_types[instr.dest.value] = result_type;
             break;
         }
@@ -344,7 +364,7 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             std::string type1 = (it1 != variable_types.end()) ? it1->second : "int64_t";
             std::string type2 = (it2 != variable_types.end()) ? it2->second : "int64_t";
             std::string result_type = getResultType(type1, type2);
-            emitLine(result_type + " " + instr.dest.value + " = " + instr.src1.value + " * " + instr.src2.value + ";");
+            emitLine(result_type + " " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " * " + sanitizeName(instr.src2.value) + ";");
             variable_types[instr.dest.value] = result_type;
             break;
         }
@@ -355,14 +375,14 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             std::string type1 = (it1 != variable_types.end()) ? it1->second : "int64_t";
             std::string type2 = (it2 != variable_types.end()) ? it2->second : "int64_t";
             std::string result_type = getResultType(type1, type2);
-            emitLine(result_type + " " + instr.dest.value + " = " + instr.src1.value + " / " + instr.src2.value + ";");
+            emitLine(result_type + " " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " / " + sanitizeName(instr.src2.value) + ";");
             variable_types[instr.dest.value] = result_type;
             break;
         }
             
         case IROpcode::MOD: {
             // Modulo typically only works with integers, so keep as int64_t
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " % " + instr.src2.value + ";");
+            emitLine("int64_t " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " % " + sanitizeName(instr.src2.value) + ";");
             variable_types[instr.dest.value] = "int64_t";
             break;
         }
@@ -372,67 +392,67 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             std::string type = (it != variable_types.end()) ? it->second : "int64_t";
             // Keep same type for negation
             if (type == "double") {
-                emitLine("double " + instr.dest.value + " = -" + instr.src1.value + ";");
+                emitLine("double " + sanitizeName(instr.dest.value) + " = -" + sanitizeName(instr.src1.value) + ";");
             } else {
-                emitLine("int64_t " + instr.dest.value + " = -" + instr.src1.value + ";");
+                emitLine("int64_t " + sanitizeName(instr.dest.value) + " = -" + sanitizeName(instr.src1.value) + ";");
             }
             variable_types[instr.dest.value] = type;
             break;
         }
             
         case IROpcode::EQ:
-            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " == " + instr.src2.value + ";");
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " == " + sanitizeName(instr.src2.value) + ";");
             break;
             
         case IROpcode::NE:
-            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " != " + instr.src2.value + ";");
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " != " + sanitizeName(instr.src2.value) + ";");
             break;
             
         case IROpcode::LT:
-            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " < " + instr.src2.value + ";");
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " < " + sanitizeName(instr.src2.value) + ";");
             break;
             
         case IROpcode::LE:
-            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " <= " + instr.src2.value + ";");
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " <= " + sanitizeName(instr.src2.value) + ";");
             break;
             
         case IROpcode::GT:
-            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " > " + instr.src2.value + ";");
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " > " + sanitizeName(instr.src2.value) + ";");
             break;
             
         case IROpcode::GE:
-            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " >= " + instr.src2.value + ";");
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " >= " + sanitizeName(instr.src2.value) + ";");
             break;
             
         case IROpcode::AND:
-            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " && " + instr.src2.value + ";");
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " && " + sanitizeName(instr.src2.value) + ";");
             break;
             
         case IROpcode::OR:
-            emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " || " + instr.src2.value + ";");
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = " + sanitizeName(instr.src1.value) + " || " + sanitizeName(instr.src2.value) + ";");
             break;
             
         case IROpcode::NOT:
-            emitLine("bool " + instr.dest.value + " = !" + instr.src1.value + ";");
+            emitLine("bool " + sanitizeName(instr.dest.value) + " = !" + sanitizeName(instr.src1.value) + ";");
             break;
             
         case IROpcode::JUMP:
-            emitLine("goto " + instr.dest.value + ";");
+            emitLine("goto " + sanitizeName(instr.dest.value) + ";");
             break;
             
         case IROpcode::JUMP_IF_TRUE:
-            emitLine("if (" + instr.src1.value + ") goto " + instr.dest.value + ";");
+            emitLine("if (" + sanitizeName(instr.src1.value) + ") goto " + sanitizeName(instr.dest.value) + ";");
             break;
             
         case IROpcode::JUMP_IF_FALSE:
-            emitLine("if (!" + instr.src1.value + ") goto " + instr.dest.value + ";");
+            emitLine("if (!" + sanitizeName(instr.src1.value) + ") goto " + sanitizeName(instr.dest.value) + ";");
             break;
             
         case IROpcode::PARAM:
             // For now, just emit a comment - proper function calls need more context
             // PARAM uses src1 as the parameter value, not dest
             if (instr.dest.type != IROperandType::NONE) {
-                emitLine("// PARAM " + instr.dest.value);
+                emitLine("// PARAM " + sanitizeName(instr.dest.value));
             }
             break;
             
@@ -442,7 +462,7 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
                 // Special handling for print - this is incomplete
                 emitLine("// CALL print (not fully implemented)");
             } else {
-                emitLine("// CALL " + instr.src1.value + " (not fully implemented)");
+                emitLine("// CALL " + sanitizeName(instr.src1.value) + " (not fully implemented)");
             }
             break;
             
