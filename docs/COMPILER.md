@@ -97,7 +97,14 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
    - ✅ Large numbers, operator precedence
    - ✅ Deep nesting, complex expressions
    - ⚠️ Escape sequences in strings (lexer limitation)
-   - ⚠️ Function definitions incomplete
+   - ⚠️ **Function definitions incomplete**:
+     - ✅ IR Generator: Generates function labels, parameter declarations, body, and return instructions
+     - ❌ C Generator: No DEFINE_FUNCTION opcode handling - functions not emitted as C functions
+     - ❌ Missing: Function prologue/epilogue generation
+     - ❌ Missing: Parameter passing in generated C code
+     - ❌ Missing: Return value handling in generated C code
+     - ❌ Missing: Function call mechanism (CALL opcode only handles built-ins, user-defined functions not supported)
+     - ❌ Missing: Scope management for local variables
    - ⚠️ Other built-in functions incomplete (type, etc.)
    - ⚠️ Data structures not implemented
 
