@@ -35,7 +35,7 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 
 ## Implementation Status
 
-> **Current Focus (2025-12-03)**: The compiler is in active development with the interpreter fully functional. The C code generator works for basic programs (arithmetic, control flow, loops, built-in functions) but **user-defined functions are not yet supported** in compiled code due to architectural limitations. See Phase 1 below and IMPLEMENTATION_PLAN.md for the path forward.
+> **Current Focus (2025-12-03)**: The compiler is in active development with the interpreter fully functional. The C code generator works for basic programs (arithmetic, control flow, loops, built-in functions) and **basic user-defined functions** (65% of function tests pass). Functions with control flow (if/else, loops) have known limitations due to IR label scoping. See Phase 1 below and IMPLEMENTATION_PLAN.md for details.
 
 ### ✅ Fully Implemented (Production-Ready)
 

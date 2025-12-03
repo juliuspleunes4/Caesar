@@ -406,18 +406,17 @@ void CCodeGenerator::emitFunctionCall(const std::string& func_name,
     std::string sanitized_dest = sanitizeName(dest_reg);
     std::string sanitized_func = sanitizeName("func_" + func_name);
     
-    emitLine("int64_t " + sanitized_dest + " = " + sanitized_func + "(");
+    // Build complete call line before emitting
+    std::string call_line = "int64_t " + sanitized_dest + " = " + sanitized_func + "(";
     
     // Arguments
-    std::string arg_list;
     for (size_t i = 0; i < args.size(); i++) {
-        if (i > 0) arg_list += ", ";
-        arg_list += sanitizeName(args[i]);
+        if (i > 0) call_line += ", ";
+        call_line += sanitizeName(args[i]);
     }
     
-    // Complete the call
-    output.seekp(-1, std::ios_base::end);  // Remove last newline
-    output << arg_list << ");\n";
+    call_line += ");";
+    emitLine(call_line);
     
     variable_types[dest_reg] = "int64_t";
 }
@@ -466,7 +465,8 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             std::string dest_name = sanitizeName(instr.dest.value);
             std::string src_name = sanitizeName(instr.src1.value);
             
-            // Declare variable if not yet declared
+            // Declare and initialize in one line if not yet declared
+            // This avoids uninitialized variable warnings and is clearer
             if (variable_types.find(instr.dest.value) == variable_types.end()) {
                 emitLine(type + " " + dest_name + " = " + src_name + ";");
                 variable_types[instr.dest.value] = type;
@@ -1084,8 +1084,10 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
                 }
             }
             
-            // Process remaining instructions (main code that follows)
-            // Skip any immediate RETURN after the function (cleanup return)
+            // Process remaining instructions (main code that follows the function)
+            // Skip the second RETURN instruction after function RETURN
+            // The IR generator emits: RETURN %r2 (function return) followed by RETURN (cleanup)
+            // We need to skip this cleanup RETURN to avoid emitting "return 0;" in main
             size_t start_idx = func_end;
             if (start_idx < block.instructions.size() && 
                 block.instructions[start_idx].opcode == IROpcode::RETURN) {

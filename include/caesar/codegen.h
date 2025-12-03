@@ -95,10 +95,8 @@ public:
  */
 class CCodeGenerator : public CodeGenerator {
 private:
-    // Output buffers
+    // Code generation state
     int indent_level;
-    std::stringstream functions_output;  // Separate buffer for function definitions
-    std::stringstream main_output;       // Buffer for main() code
     
     // Type and state tracking
     std::unordered_map<std::string, std::string> variable_types;
