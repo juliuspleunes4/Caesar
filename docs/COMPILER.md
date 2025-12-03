@@ -84,9 +84,9 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
    - ✅ Control flow (if/else, goto, labels)
    - ✅ **While loops** (simple, nested, complex conditions, all edge cases)
    - ✅ **For loops with range()** (simple, start/stop, step, negative ranges, descending, nested, all edge cases)
-   - ✅ **print() built-in function** (NEW - single/multiple args, all types, loops, expressions)
-   - ✅ **Caesar runtime library** (NEW - runtime/caesar_runtime.h with CaesarValue system)
-   - ✅ **150 comprehensive tests pass** (135 previous + 15 print tests)
+   - ✅ **print() built-in function** (single/multiple args, all types, loops, expressions)
+   - ✅ **Self-contained C code generation** (inlined runtime, no external dependencies)
+   - ✅ **140 comprehensive tests pass** (15 basic + 20 edge + 15 strings + 20 floats + 24 mixed + 30 loops + 16 print)
    - ✅ Variable declaration tracking
    - ✅ Negative numbers, zero operations
    - ✅ Large numbers, operator precedence
