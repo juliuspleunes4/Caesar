@@ -419,6 +419,11 @@ void IRGenerator::visit(FunctionDefinition& node) {
     
     // Return (if no explicit return)
     emit(IRInstruction(IROpcode::RETURN));
+    
+    // Create new block for code after function definition
+    // This ensures main code doesn't get added to the function block
+    std::string main_cont_label = newLabel("main_");
+    newBlock(main_cont_label);
 }
 
 void IRGenerator::visit(ClassDefinition& node) {

@@ -107,4 +107,15 @@ int64_t func_get_five() {
 }
 
 int main() {
+main_0:
+    int64_t r1 = func_get_five();
+    int64_t result;
+    result = r1;
+    int64_t r2 = result;
+    {
+        CaesarValue args[1];
+        args[0].type = CAESAR_INT;
+        args[0].data.i = r2;
+        caesar_print(1, args);
+    }
 }
