@@ -135,7 +135,7 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 ```bash
 $ caesar program.csr
 # Currently falls back to interpreter
-# TODO: Execute compiled bytecode with VM
+# TODO: Execute compiled bytecode with VM (see docs/IMPLEMENTATION_PLAN.md Phase 2)
 
 $ caesar -i program.csr  
 # Uses tree-walking interpreter (fully working)

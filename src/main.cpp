@@ -201,7 +201,7 @@ int main(int argc, char* argv[]) {
             caesar::IRGenerator ir_gen;
             auto ir_blocks = ir_gen.generate(program.get());
             
-            // TODO: Implement proper bytecode VM execution
+            // TODO: Implement proper bytecode VM execution (see docs/IMPLEMENTATION_PLAN.md Phase 2)
             // For now, fall back to interpreter until VM is production-ready
             caesar::Interpreter interpreter;
             interpreter.interpret(program.get());
