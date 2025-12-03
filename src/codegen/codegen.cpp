@@ -229,16 +229,41 @@ bool CCodeGenerator::isStringLiteral(const std::string& value) const {
 }
 
 bool CCodeGenerator::isFloatLiteral(const std::string& value) const {
-    // Check if value contains a decimal point
-    return value.find('.') != std::string::npos && value.find('"') == std::string::npos;
+    // Check if value contains a decimal point and is a valid number
+    if (value.empty() || value.find('"') != std::string::npos) return false;
+    
+    size_t dot_pos = value.find('.');
+    if (dot_pos == std::string::npos) return false;
+    
+    // Basic validation: check if characters are digits, dot, or negative sign
+    for (size_t i = 0; i < value.length(); ++i) {
+        char c = value[i];
+        if (!std::isdigit(c) && c != '.' && c != '-' && c != '+') {
+            return false;
+        }
+    }
+    
+    // Ensure there's at least one digit before or after the dot
+    if (dot_pos > 0 && dot_pos < value.length() - 1) {
+        return true;
+    }
+    
+    return false;
 }
 
 std::string CCodeGenerator::getResultType(const std::string& type1, const std::string& type2) const {
     // Determine result type for binary operations
     // If either operand is double, result is double
     if (type1 == "double" || type2 == "double") return "double";
-    // If either is const char*, we shouldn't do arithmetic (but return int64_t as fallback)
-    if (type1 == "const char*" || type2 == "const char*") return "int64_t";
+    
+    // String arithmetic is not valid - this indicates a potential error
+    // For now, emit a comment warning and fall back to int64_t
+    // In production, this should throw an error
+    if (type1 == "const char*" || type2 == "const char*") {
+        // TODO: Add proper error handling for invalid string arithmetic
+        return "int64_t";  // Fallback for now
+    }
+    
     // If either is bool, treat as int64_t
     if (type1 == "bool" || type2 == "bool") return "int64_t";
     // Both int64_t

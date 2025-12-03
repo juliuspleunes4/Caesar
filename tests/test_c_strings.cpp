@@ -15,11 +15,15 @@
 #include <cassert>
 #include <fstream>
 #include <cstdlib>
+#include <unistd.h>
 
 using namespace caesar;
 
 // Helper to compile Caesar to C and verify GCC compilation
 std::pair<bool, std::string> compileToC(const std::string& caesar_code) {
+    std::string temp_c;
+    std::string temp_exe;
+    
     try {
         Lexer lexer(caesar_code);
         auto tokens = lexer.tokenize();
@@ -30,16 +34,20 @@ std::pair<bool, std::string> compileToC(const std::string& caesar_code) {
         auto c_gen = CodeGeneratorFactory::createCGenerator();
         std::string c_code = c_gen->generate(ir_blocks);
         
-        // Write and compile
-        std::string temp_c = "/tmp/test_str_" + std::to_string(rand()) + ".c";
-        std::string temp_exe = temp_c + ".out";
+        // Write and compile - use process ID for better uniqueness
+        temp_c = "/tmp/test_str_" + std::to_string(getpid()) + "_" + std::to_string(rand()) + ".c";
+        temp_exe = temp_c + ".out";
         std::ofstream out(temp_c);
         out << c_code;
         out.close();
         
         std::string compile_cmd = "gcc -std=c99 -o " + temp_exe + " " + temp_c + " 2>&1";
         FILE* pipe = popen(compile_cmd.c_str(), "r");
-        if (!pipe) return {false, "Failed to compile"};
+        if (!pipe) {
+            // Clean up before returning
+            remove(temp_c.c_str());
+            return {false, "Failed to compile"};
+        }
         
         char buffer[256];
         std::string compile_output;
@@ -48,6 +56,7 @@ std::pair<bool, std::string> compileToC(const std::string& caesar_code) {
         }
         int status = pclose(pipe);
         
+        // Always cleanup, even on failure
         remove(temp_c.c_str());
         remove(temp_exe.c_str());
         
@@ -57,6 +66,9 @@ std::pair<bool, std::string> compileToC(const std::string& caesar_code) {
         
         return {true, "Success"};
     } catch (const std::exception& e) {
+        // Ensure cleanup on exception
+        if (!temp_c.empty()) remove(temp_c.c_str());
+        if (!temp_exe.empty()) remove(temp_exe.c_str());
         return {false, std::string("Exception: ") + e.what()};
     }
 }
