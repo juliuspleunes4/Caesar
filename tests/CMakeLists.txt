@@ -62,6 +62,10 @@ target_link_libraries(test_c_floats caesar_lib)
 add_executable(test_c_mixed_types test_c_mixed_types.cpp)
 target_link_libraries(test_c_mixed_types caesar_lib)
 
+# C code generation loop tests
+add_executable(test_c_loops test_c_loops.cpp)
+target_link_libraries(test_c_loops caesar_lib)
+
 # Add tests to CTest
 add_test(NAME lexer_test COMMAND test_lexer)
 add_test(NAME parser_test COMMAND test_parser)
@@ -79,3 +83,4 @@ add_test(NAME c_edge_cases_test COMMAND test_c_edge_cases)
 add_test(NAME c_strings_test COMMAND test_c_strings)
 add_test(NAME c_floats_test COMMAND test_c_floats)
 add_test(NAME c_mixed_types_test COMMAND test_c_mixed_types)
+add_test(NAME c_loops_test COMMAND test_c_loops)

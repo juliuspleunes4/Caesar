@@ -66,7 +66,7 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 
 ### 🚧 Partial Implementation
 
-5. **C Code Generator** (82%)
+5. **C Code Generator** (83%)
    - ✅ Variables and assignments
    - ✅ All arithmetic operations (+, -, *, /, %, negation)
    - ✅ All comparison operators (==, !=, <, <=, >, >=)
@@ -81,13 +81,15 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
    - ✅ **Modulo operations** (positive, negative, large numbers)
    - ✅ **Proper C identifier generation** (sanitizes IR names)
    - ✅ Control flow (if/else, goto, labels)
-   - ✅ Loop structures (while, for, nested)
+   - ✅ **While loops** (simple, nested, complex conditions, all edge cases)
+   - ✅ **10 comprehensive while loop tests pass** (zero iterations, negative numbers, floats, deep nesting)
    - ✅ Variable declaration tracking
    - ✅ Negative numbers, zero operations
    - ✅ Large numbers, operator precedence
    - ✅ Deep nesting, complex expressions
-   - ✅ **95 comprehensive tests pass** (15 basic + 20 edge + 15 strings + 20 floats + 25 mixed types)
+   - ✅ **105 comprehensive tests pass** (95 previous + 10 while loops)
    - ⚠️ Escape sequences in strings (lexer limitation)
+   - ⚠️ **For loops** (IR generation incomplete - loop variable not properly generated)
    - ⚠️ Function calls incomplete
    - ⚠️ Built-in functions incomplete
    - ⚠️ Data structures not implemented
