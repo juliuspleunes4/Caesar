@@ -1255,13 +1255,13 @@ std::string CCodeGenerator::generate(const std::vector<BasicBlock>& blocks) {
                 if (ret_inst_it != instantiation_return_types.end()) {
                     return_type = ret_inst_it->second;
                 } else {
-                    auto ret_it = local_function_return_types.find(func_label);
-                    return_type = (ret_it != local_function_return_types.end()) ? ret_it->second : "int64_t";
+                    auto ret_it = function_return_types.find(func_label);
+                    return_type = (ret_it != function_return_types.end()) ? ret_it->second : "int64_t";
                 }
             } else {
                 func_name = safe_function_name(func_label);
-                auto ret_it = local_function_return_types.find(func_label);
-                return_type = (ret_it != local_function_return_types.end()) ? ret_it->second : "int64_t";
+                auto ret_it = function_return_types.find(func_label);
+                return_type = (ret_it != function_return_types.end()) ? ret_it->second : "int64_t";
             }
             
             output << return_type << " " << func_name << "(";

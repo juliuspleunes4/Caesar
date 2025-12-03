@@ -390,7 +390,7 @@ int main(int argc, char* argv[]) {
             int result = system(compile_cmd.c_str());
             
             // Clean up temp file
-            remove(temp_c_file.c_str());
+            // remove(temp_c_file.c_str());  // Keep for debugging
             
             if (result == 0) {
                 std::cout << "[SUCCESS] Compiled to: " << output_file << "\n";
