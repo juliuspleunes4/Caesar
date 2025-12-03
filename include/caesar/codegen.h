@@ -103,6 +103,8 @@ private:
     std::string indent() const;
     std::string convertConstant(const std::string& value) const;
     bool isStringLiteral(const std::string& value) const;
+    bool isFloatLiteral(const std::string& value) const;
+    std::string getResultType(const std::string& type1, const std::string& type2) const;
     
 public:
     CCodeGenerator() : CodeGenerator(TargetArch::BYTECODE), indent_level(0) {}

@@ -228,6 +228,23 @@ bool CCodeGenerator::isStringLiteral(const std::string& value) const {
     return !value.empty() && value[0] == '"' && value[value.length()-1] == '"';
 }
 
+bool CCodeGenerator::isFloatLiteral(const std::string& value) const {
+    // Check if value contains a decimal point
+    return value.find('.') != std::string::npos && value.find('"') == std::string::npos;
+}
+
+std::string CCodeGenerator::getResultType(const std::string& type1, const std::string& type2) const {
+    // Determine result type for binary operations
+    // If either operand is double, result is double
+    if (type1 == "double" || type2 == "double") return "double";
+    // If either is const char*, we shouldn't do arithmetic (but return int64_t as fallback)
+    if (type1 == "const char*" || type2 == "const char*") return "int64_t";
+    // If either is bool, treat as int64_t
+    if (type1 == "bool" || type2 == "bool") return "int64_t";
+    // Both int64_t
+    return "int64_t";
+}
+
 void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
     switch (instr.opcode) {
         case IROpcode::LOAD_CONST: {
@@ -240,6 +257,9 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             } else if (isStringLiteral(converted_value)) {
                 type = "const char*";
                 emitLine("const char* " + instr.dest.value + " = " + converted_value + ";");
+            } else if (isFloatLiteral(converted_value)) {
+                type = "double";
+                emitLine("double " + instr.dest.value + " = " + converted_value + ";");
             } else {
                 type = "int64_t";
                 emitLine("int64_t " + instr.dest.value + " = " + converted_value + ";");
@@ -271,29 +291,69 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
             break;
         }
             
-        case IROpcode::ADD:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " + " + instr.src2.value + ";");
+        case IROpcode::ADD: {
+            auto it1 = variable_types.find(instr.src1.value);
+            auto it2 = variable_types.find(instr.src2.value);
+            std::string type1 = (it1 != variable_types.end()) ? it1->second : "int64_t";
+            std::string type2 = (it2 != variable_types.end()) ? it2->second : "int64_t";
+            std::string result_type = getResultType(type1, type2);
+            emitLine(result_type + " " + instr.dest.value + " = " + instr.src1.value + " + " + instr.src2.value + ";");
+            variable_types[instr.dest.value] = result_type;
             break;
+        }
             
-        case IROpcode::SUB:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " - " + instr.src2.value + ";");
+        case IROpcode::SUB: {
+            auto it1 = variable_types.find(instr.src1.value);
+            auto it2 = variable_types.find(instr.src2.value);
+            std::string type1 = (it1 != variable_types.end()) ? it1->second : "int64_t";
+            std::string type2 = (it2 != variable_types.end()) ? it2->second : "int64_t";
+            std::string result_type = getResultType(type1, type2);
+            emitLine(result_type + " " + instr.dest.value + " = " + instr.src1.value + " - " + instr.src2.value + ";");
+            variable_types[instr.dest.value] = result_type;
             break;
+        }
             
-        case IROpcode::MUL:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " * " + instr.src2.value + ";");
+        case IROpcode::MUL: {
+            auto it1 = variable_types.find(instr.src1.value);
+            auto it2 = variable_types.find(instr.src2.value);
+            std::string type1 = (it1 != variable_types.end()) ? it1->second : "int64_t";
+            std::string type2 = (it2 != variable_types.end()) ? it2->second : "int64_t";
+            std::string result_type = getResultType(type1, type2);
+            emitLine(result_type + " " + instr.dest.value + " = " + instr.src1.value + " * " + instr.src2.value + ";");
+            variable_types[instr.dest.value] = result_type;
             break;
+        }
             
-        case IROpcode::DIV:
-            emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " / " + instr.src2.value + ";");
+        case IROpcode::DIV: {
+            auto it1 = variable_types.find(instr.src1.value);
+            auto it2 = variable_types.find(instr.src2.value);
+            std::string type1 = (it1 != variable_types.end()) ? it1->second : "int64_t";
+            std::string type2 = (it2 != variable_types.end()) ? it2->second : "int64_t";
+            std::string result_type = getResultType(type1, type2);
+            emitLine(result_type + " " + instr.dest.value + " = " + instr.src1.value + " / " + instr.src2.value + ";");
+            variable_types[instr.dest.value] = result_type;
             break;
+        }
             
-        case IROpcode::MOD:
+        case IROpcode::MOD: {
+            // Modulo typically only works with integers, so keep as int64_t
             emitLine("int64_t " + instr.dest.value + " = " + instr.src1.value + " % " + instr.src2.value + ";");
+            variable_types[instr.dest.value] = "int64_t";
             break;
+        }
             
-        case IROpcode::NEG:
-            emitLine("int64_t " + instr.dest.value + " = -" + instr.src1.value + ";");
+        case IROpcode::NEG: {
+            auto it = variable_types.find(instr.src1.value);
+            std::string type = (it != variable_types.end()) ? it->second : "int64_t";
+            // Keep same type for negation
+            if (type == "double") {
+                emitLine("double " + instr.dest.value + " = -" + instr.src1.value + ";");
+            } else {
+                emitLine("int64_t " + instr.dest.value + " = -" + instr.src1.value + ";");
+            }
+            variable_types[instr.dest.value] = type;
             break;
+        }
             
         case IROpcode::EQ:
             emitLine("bool " + instr.dest.value + " = " + instr.src1.value + " == " + instr.src2.value + ";");
