@@ -373,9 +373,6 @@ int main() {
     std::cout << "C Code Generation Test Suite\n";
     std::cout << "========================================\n\n";
     
-    int passed = 0;
-    int total = 15;
-    
     // Run all tests
     test_simple_arithmetic();
     test_all_arithmetic();

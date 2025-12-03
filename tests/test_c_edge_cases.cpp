@@ -49,7 +49,7 @@ std::pair<bool, std::string> compileToC(const std::string& caesar_code) {
         int status = pclose(pipe);
         
         remove(temp_c.c_str());
-        if (temp_exe.c_str()) remove(temp_exe.c_str());
+        remove(temp_exe.c_str());
         
         if (status != 0) {
             return {false, "Compilation failed: " + compile_output};
