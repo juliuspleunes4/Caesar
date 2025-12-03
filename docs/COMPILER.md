@@ -69,7 +69,7 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 
 ### 🚧 Partial Implementation
 
-5. **C Code Generator** (75% - functions not working)
+5. **C Code Generator** (78% - functions not working, escape sequences complete)
    - ✅ Variables and assignments
    - ✅ All arithmetic operations (+, -, *, /, %, negation)
    - ✅ All comparison operators (==, !=, <, <=, >, >=)
@@ -94,12 +94,12 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
    - ✅ **abs() built-in function** (positive/negative int/float, zero, bool conversion, nested calls)
    - ✅ **type() built-in function** (returns type name string for all types, nested calls, comparisons) (NEW)
    - ✅ **Self-contained C code generation** (inlined runtime, no external dependencies)
-   - ✅ **230 comprehensive tests pass** (15 basic + 20 edge + 15 strings + 20 floats + 24 mixed + 30 loops + 16 print + 15 len + 15 str + 15 int + 15 float + 15 abs + 15 type)
+   - ✅ **Escape sequences in strings** (\n, \t, \r, \\, \", \', \0 properly escaped for C)
+   - ✅ **250 comprehensive tests pass** (15 basic + 20 edge + 15 strings + 20 floats + 24 mixed + 30 loops + 16 print + 15 len + 15 str + 15 int + 15 float + 15 abs + 15 type + 20 escape sequences)
    - ✅ Variable declaration tracking
    - ✅ Negative numbers, zero operations
    - ✅ Large numbers, operator precedence
    - ✅ Deep nesting, complex expressions
-   - ⚠️ Escape sequences in strings (lexer limitation)
    - ⚠️ **Function definitions incomplete** - Major architectural issue:
      - ✅ IR Generator: Generates function labels, parameter declarations, body, and return instructions
      - ❌ C Generator: Functions emitted as **labels inside main()** instead of proper C functions

@@ -108,6 +108,7 @@ private:
     std::string getResultType(const std::string& type1, const std::string& type2) const;
     std::string sanitizeName(const std::string& name) const;
     std::string getCaesarType(const std::string& ir_operand) const;
+    std::string escapeCString(const std::string& str) const;
     
 public:
     CCodeGenerator() : CodeGenerator(TargetArch::BYTECODE), indent_level(0) {}

@@ -310,6 +310,35 @@ std::string CCodeGenerator::getCaesarType(const std::string& ir_operand) const {
     return "CAESAR_INT";  // Default to int
 }
 
+std::string CCodeGenerator::escapeCString(const std::string& str) const {
+    // Escape special characters for C string literals
+    // Input should already have quotes, e.g., "hello\nworld"
+    if (str.length() < 2 || (str[0] != '"' && str[0] != '\'')) {
+        return str;  // Not a string literal
+    }
+    
+    std::string result;
+    result += str[0];  // Opening quote
+    
+    // Process the content between quotes
+    for (size_t i = 1; i < str.length() - 1; ++i) {
+        char c = str[i];
+        switch (c) {
+            case '\n': result += "\\n"; break;
+            case '\t': result += "\\t"; break;
+            case '\r': result += "\\r"; break;
+            case '\\': result += "\\\\"; break;
+            case '\"': result += "\\\""; break;
+            case '\'': result += "\\'"; break;
+            case '\0': result += "\\0"; break;
+            default: result += c; break;
+        }
+    }
+    
+    result += str[str.length() - 1];  // Closing quote
+    return result;
+}
+
 void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
     switch (instr.opcode) {
         case IROpcode::LOAD_CONST: {
@@ -322,7 +351,9 @@ void CCodeGenerator::emitInstruction(const IRInstruction& instr) {
                 emitLine("bool " + dest_name + " = " + converted_value + ";");
             } else if (isStringLiteral(converted_value)) {
                 type = "const char*";
-                emitLine("const char* " + dest_name + " = " + converted_value + ";");
+                // Escape the string literal for C
+                std::string escaped = escapeCString(converted_value);
+                emitLine("const char* " + dest_name + " = " + escaped + ";");
             } else if (isFloatLiteral(converted_value)) {
                 type = "double";
                 emitLine("double " + dest_name + " = " + converted_value + ";");
