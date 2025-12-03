@@ -95,9 +95,21 @@ public:
  */
 class CCodeGenerator : public CodeGenerator {
 private:
+    struct FunctionInfo {
+        std::string name;                    // Function name (e.g., "add")
+        std::string label;                   // IR label (e.g., "func_add")
+        std::vector<std::string> parameters; // Parameter names
+        bool has_return_value;               // Whether function returns a value
+    };
+    
     int indent_level;
     std::unordered_map<std::string, std::string> variable_types;
     std::vector<std::string> pending_params;  // For tracking PARAM instructions before CALL
+    
+    // Function generation support
+    std::unordered_map<std::string, FunctionInfo> function_registry;  // Map label -> FunctionInfo
+    std::stringstream functions_code;  // Buffer for generated function definitions
+    std::string current_function;      // Current function being generated (empty if in main)
     
     void emitLine(const std::string& line);
     void emitInstruction(const IRInstruction& instr);
@@ -108,6 +120,14 @@ private:
     std::string getResultType(const std::string& type1, const std::string& type2) const;
     std::string sanitizeName(const std::string& name) const;
     std::string getCaesarType(const std::string& ir_operand) const;
+    
+    // Function generation helpers
+    void collectFunctions(const std::vector<BasicBlock>& blocks);
+    void generateFunctionForwardDeclarations();
+    void generateFunctionDefinition(const std::string& label, const BasicBlock& block, 
+                                    const std::vector<BasicBlock>& all_blocks, size_t& block_idx);
+    bool isFunctionLabel(const std::string& label) const;
+    bool isBuiltInFunction(const std::string& name) const;
     
 public:
     CCodeGenerator() : CodeGenerator(TargetArch::BYTECODE), indent_level(0) {}

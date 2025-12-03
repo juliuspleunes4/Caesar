@@ -67,7 +67,7 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 
 ### 🚧 Partial Implementation
 
-5. **C Code Generator** (95%)
+5. **C Code Generator** (92%)
    - ✅ Variables and assignments
    - ✅ All arithmetic operations (+, -, *, /, %, negation)
    - ✅ All comparison operators (==, !=, <, <=, >, >=)
@@ -90,22 +90,22 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
    - ✅ **int() built-in function** (string parsing, float truncation, bool conversion, identity, all types)
    - ✅ **float() built-in function** (int→float, string parsing, bool conversion, identity, nested calls)
    - ✅ **abs() built-in function** (positive/negative int/float, zero, bool conversion, nested calls)
-   - ✅ **User-defined functions** (definitions, parameters, return values, recursion, multiple functions)
-   - ✅ **Function forward declarations** (proper C function prototypes)
-   - ✅ **Function name mangling** (func_name_arity{N}_{types} for type-based overloading)
    - ✅ **Self-contained C code generation** (inlined runtime, no external dependencies)
    - ✅ **215 comprehensive tests pass** (15 basic + 20 edge + 15 strings + 20 floats + 24 mixed + 30 loops + 16 print + 15 len + 15 str + 15 int + 15 float + 15 abs)
    - ✅ Variable declaration tracking
    - ✅ Negative numbers, zero operations
    - ✅ Large numbers, operator precedence
    - ✅ Deep nesting, complex expressions
-   - ✅ **User-defined functions** (definitions, parameters, return values, forward declarations)
-   - ✅ **Function calls** (user-defined functions, proper argument passing)
-   - ✅ **Recursive functions** (factorial, fibonacci, etc.)
-   - ✅ **Multiple functions** (functions calling other functions)
-   - ✅ **Function name mangling** (func_name_arity{N} for overloading support)
    - ⚠️ Escape sequences in strings (lexer limitation)
-   - ⚠️ **Default parameters** (generates arity variants but missing default value wrapper functions)
+   - ⚠️ **Function definitions incomplete**:
+     - ✅ IR Generator: Generates function labels, parameter declarations, body, and return instructions
+     - ❌ C Generator: No DEFINE_FUNCTION opcode handling - functions not emitted as C functions
+     - ❌ Missing: Function prologue/epilogue generation
+     - ❌ Missing: Parameter passing in generated C code
+     - ❌ Missing: Return value handling in generated C code
+     - ❌ Missing: Function call mechanism (CALL opcode only handles built-ins, user-defined functions not supported)
+     - ❌ Missing: Scope management for local variables
+     - 📝 Note: Full function support exists in `feat/compiler` branch with monomorphization
    - ⚠️ Other built-in functions incomplete (type, input, etc.)
    - ⚠️ Data structures not implemented (lists, dicts, tuples)
 
@@ -152,14 +152,13 @@ Caesar is transitioning from a tree-walking interpreter to a true compiler with 
 - Lexing and parsing all Caesar syntax
 - Interpreting all language features
 - Generating IR for most features
-- **C code generation for most features** (arithmetic, control flow, loops, functions, built-ins)
-- **User-defined functions in C** (definitions, calls, recursion, multiple functions)
+- **C code generation for basic features** (arithmetic, control flow, loops, built-ins)
 - **6 built-in functions in C** (print, len, str, int, float, abs)
 - Basic assembly generation structure
 
 **What Doesn't Work Yet:**
 - **Bytecode VM execution**: Falls back to interpreter
-- **Default parameter handling**: Generates arity variants but missing wrapper functions
+- **User-defined functions in compiled C code**: IR generates function labels, but C generator doesn't emit C functions (see `feat/compiler` branch for working implementation)
 - **Some built-in functions**: input, type, isinstance, etc.
 - **Data structures in compiled code**: Lists, dicts, tuples need runtime support
 - **Classes**: Not fully implemented anywhere
@@ -190,11 +189,9 @@ $ caesar -i program.csr
   - Mixed type operations: 24 sub-tests
   - Loop constructs: 30 sub-tests
   - Built-in functions: 81 sub-tests (print, len, str, int, float, abs)
-  - **Function definitions: Manual testing** (no params, with params, recursion, multiple functions)
-  - **Total: 221+ comprehensive C codegen tests**
+  - **Total: 215 comprehensive C codegen tests**
 - Integration tests ✅
-- **Manual verification**: User-defined functions (params, return, recursion, multiple functions) ✅
-- **Missing**: Automated function tests, default parameter tests, VM execution tests, end-to-end compilation with execution tests
+- **Missing**: Function compilation tests, default parameter tests, VM execution tests, end-to-end compilation with execution tests
 
 ## Compilation Architecture
 

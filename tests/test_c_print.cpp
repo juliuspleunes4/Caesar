@@ -3,21 +3,37 @@
 #include <sstream>
 #include <cstdlib>
 #include <ctime>
+#ifdef _WIN32
+#include <windows.h>
+#include <process.h>
+#define getpid _getpid
+#else
 #include <unistd.h>
 #include <sys/wait.h>
+#endif
 
 const int TOTAL_TESTS = 15;
 
 bool runTest(const std::string& caesar_code, const std::string& test_name, const std::string& expected_output) {
     // Generate unique temp filenames using multiple entropy sources
+#ifdef _WIN32
+    const char* temp_dir = std::getenv("TEMP");
+    if (!temp_dir) temp_dir = ".";
+    std::string temp_prefix = std::string(temp_dir) + "\\caesar_print_test_" +
+                            std::to_string(time(nullptr)) + "_" +
+                            std::to_string(getpid()) + "_" +
+                            std::to_string(rand());
+    std::string exec_file = temp_prefix + "_exec.exe";
+#else
     std::string temp_prefix = "/tmp/caesar_print_test_" +
                             std::to_string(time(nullptr)) + "_" +
                             std::to_string(getpid()) + "_" +
                             std::to_string(rand());
+    std::string exec_file = temp_prefix + "_exec";
+#endif
     
     std::string csr_file = temp_prefix + ".csr";
     std::string c_file = temp_prefix + ".c";
-    std::string exec_file = temp_prefix + "_exec";
     
     // Write Caesar code to file
     std::ofstream csr_out(csr_file);
@@ -35,7 +51,11 @@ bool runTest(const std::string& caesar_code, const std::string& test_name, const
     }
     
     // Compile C code
+#ifdef _WIN32
+    cmd = "C:\\msys64\\mingw64\\bin\\gcc.exe " + c_file + " -o " + exec_file + " 2>&1";
+#else
     cmd = "gcc -I/home/runner/work/Caesar/Caesar " + c_file + " -o " + exec_file + " 2>&1";
+#endif
     result = system(cmd.c_str());
     if (result != 0) {
         std::cerr << "✗ " << test_name << ": Failed to compile C code\n";

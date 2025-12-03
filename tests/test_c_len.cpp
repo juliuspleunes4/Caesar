@@ -8,9 +8,17 @@
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
+#include <ctime>
+#ifdef _WIN32
+#include <windows.h>
+#include <process.h>
+#define getpid _getpid
+#define popen _popen
+#define pclose _pclose
+#else
 #include <unistd.h>
 #include <sys/wait.h>
-#include <ctime>
+#endif
 
 const int TOTAL_TESTS = 15;
 
@@ -18,12 +26,21 @@ const int TOTAL_TESTS = 15;
 bool compileAndRunCaesar(const std::string& code, std::string& output) {
     // Generate unique temp filenames with multiple entropy sources
     srand(time(NULL) ^ getpid() ^ rand());
+#ifdef _WIN32
+    const char* temp_dir = std::getenv("TEMP");
+    if (!temp_dir) temp_dir = ".";
+    std::string temp_prefix = std::string(temp_dir) + "\\test_len_" + std::to_string(getpid()) + "_" + std::to_string(rand());
+    std::string temp_file = temp_prefix + ".csr";
+    std::string c_file = temp_prefix + ".c";
+    std::string exe_file = temp_prefix + ".exe";
+#else
     std::string temp_file = "/tmp/test_len_" + std::to_string(getpid()) + "_" + 
                            std::to_string(rand()) + ".csr";
     std::string c_file = "/tmp/test_len_" + std::to_string(getpid()) + "_" + 
                         std::to_string(rand()) + ".c";
     std::string exe_file = "/tmp/test_len_" + std::to_string(getpid()) + "_" + 
                           std::to_string(rand()) + ".exe";
+#endif
     
     // Write Caesar code to temp file
     std::ofstream ofs(temp_file);
@@ -48,7 +65,11 @@ bool compileAndRunCaesar(const std::string& code, std::string& output) {
     c_check.close();
     
     // Compile C code with GCC
+#ifdef _WIN32
+    cmd = "C:\\msys64\\mingw64\\bin\\gcc.exe -o " + exe_file + " " + c_file + " 2>&1";
+#else
     cmd = "gcc -o " + exe_file + " " + c_file + " 2>&1";
+#endif
     pipe = popen(cmd.c_str(), "r");
     if (!pipe) {
         remove(temp_file.c_str());
